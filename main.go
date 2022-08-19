@@ -31,6 +31,13 @@ func uploadContent(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 
+	if _, err := os.Stat("assets"); os.IsNotExist(err) {
+		err := os.Mkdir("assets", 0777)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	thirdparty.EncryptFile(bytes, file)
 	content := service.UploadContent("assets/encrypted.bin")
 	os.Remove("assets/encrypted.bin")
