@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -32,6 +33,7 @@ func uploadContent(w http.ResponseWriter, r *http.Request) {
 
 	thirdparty.EncryptFile(bytes, file)
 	content := service.UploadContent("assets/encrypted.bin")
+	os.Remove("assets/encrypted.bin")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(content)
