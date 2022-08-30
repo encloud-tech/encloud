@@ -19,7 +19,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to our API\n")
 }
 
-func uploadContent(w http.ResponseWriter, r *http.Request) {
+func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 	file, _, err := r.FormFile("data")
 	if err != nil {
 		panic(err)
@@ -46,13 +46,13 @@ func uploadContent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(content)
 }
 
-func fetchContent(w http.ResponseWriter, r *http.Request) {
+func FetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	content := service.FetchContentByCid(id)
 	json.NewEncoder(w).Encode(content)
 }
 
-func fetchAllContents(w http.ResponseWriter, r *http.Request) {
+func FetchAllContentsHandler(w http.ResponseWriter, r *http.Request) {
 	contents := service.FetchAllContents()
 	json.NewEncoder(w).Encode(contents)
 }
@@ -60,9 +60,9 @@ func fetchAllContents(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", home)
-	router.HandleFunc("/contents", fetchAllContents).Methods("GET")
-	router.HandleFunc("/contents/{id}", fetchContent).Methods("GET")
-	router.HandleFunc("/content", uploadContent).Methods("POST")
+	router.HandleFunc("/contents", FetchAllContentsHandler).Methods("GET")
+	router.HandleFunc("/contents/{id}", FetchContentHandler).Methods("GET")
+	router.HandleFunc("/content", UploadContentHandler).Methods("POST")
 
 	srv := &http.Server{
 		Handler: router,
