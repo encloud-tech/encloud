@@ -7,3 +7,5 @@ manufacturer,brand,model,type,ev,date,country,units,average_price,total_sales
 "Honda","Honda","XR-V","SUV","","2022-02-24","China",537,21523.902082053053,11558335.41806249
 "Honda","Honda","XR-V","SUV","","2022-02-24","France",153,20724.411656743563,3170834.9834817653
 "Honda","Honda","XR-V","SUV","","2022-02-24","Germany",35,21762.989212617933,761704.6224416277
+"Honda","Honda","XR-V","SUV","","2022-02-24","Australia",156,24724.411656743563,3570834.9834817653
+"Honda","Honda","XR-V","SUV","","2022-02-24","Argentina",48,22762.989212617933,781704.6224416277

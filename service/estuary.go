@@ -72,6 +72,34 @@ func UploadContent(filePath string) UploadResponse {
 	return responseObject
 }
 
+func DownloadContent(cid string) string {
+	filepath := "assets/downloaded.bin"
+
+	// Create blank file
+	file, err := os.Create(filepath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client := &http.Client{}
+
+	log.Print("Start download data request")
+	resp, err := client.Get(constants.EstuaryDownloadApiUrl + "/" + cid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	log.Print("Download data received")
+
+	if _, err := io.Copy(file, resp.Body); err != nil {
+		log.Fatalf("file write err: %v", err.Error())
+	}
+
+	defer file.Close()
+
+	return filepath
+}
+
 func doMultipartApiRequest(method string, url string, filePath string) []byte {
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)

@@ -9,10 +9,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gorilla/mux"
 )
+
+type Keys struct {
+	PublicKey  string `json:"PublicKey"`
+	PrivateKey string `json:"PrivateKey"`
+}
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
@@ -20,14 +26,17 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
-	file, _, err := r.FormFile("data")
+	file, handler, err := r.FormFile("data")
+	kek := r.Form.Get("public_key")
+	timestamp := time.Now().Unix()
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
 
-	bytes := make([]byte, 32) //generate a random 32 byte key for AES-256
-	if _, err := rand.Read(bytes); err != nil {
+	//generate a random 32 byte key for AES-256
+	dek := make([]byte, 32)
+	if _, err := rand.Read(dek); err != nil {
 		panic(err.Error())
 	}
 
@@ -38,8 +47,17 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	thirdparty.EncryptFile(bytes, file)
+	thirdparty.EncryptFile(dek, file)
 	content := service.UploadContent("assets/encrypted.bin")
+	if content.CID != "" {
+		encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
+		if err != nil {
+			panic(err.Error())
+		}
+		fileData := service.FileMetadata{Timestamp: timestamp, Name: handler.Filename, Size: int(handler.Size), FileType: filepath.Ext(handler.Filename), Dek: encryptedDek, Cid: content.CID}
+		service.Store(kek, fileData)
+	}
+
 	os.Remove("assets/encrypted.bin")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -47,29 +65,45 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchContentHandler(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-	content := service.FetchContentByCid(id)
-	json.NewEncoder(w).Encode(content)
+	r.ParseForm()
+	kek := r.FormValue("public_key")
+	privateKey := r.FormValue("private_key")
+	fileMetaData := service.Fetch(kek)
+	decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
+	if err != nil {
+		panic(err.Error())
+	}
+	filepath := service.DownloadContent(fileMetaData.Cid)
+	thirdparty.DecryptFile(decryptedDek, filepath)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	os.Remove("assets/downloaded.bin")
+	json.NewEncoder(w).Encode(fileMetaData)
 }
 
-func FetchAllContentsHandler(w http.ResponseWriter, r *http.Request) {
-	contents := service.FetchAllContents()
-	json.NewEncoder(w).Encode(contents)
+func GenerateKeyPairHandler(w http.ResponseWriter, r *http.Request) {
+	thirdparty.InitCrypto()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	response := Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()}
+	os.Remove(".keys/.idRsaPub")
+	os.Remove(".keys/.idRsa")
+	json.NewEncoder(w).Encode(response)
 }
 
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", home)
-	router.HandleFunc("/contents", FetchAllContentsHandler).Methods("GET")
-	router.HandleFunc("/contents/{id}", FetchContentHandler).Methods("GET")
-	router.HandleFunc("/content", UploadContentHandler).Methods("POST")
+	router.HandleFunc("/generate-key-pair", GenerateKeyPairHandler).Methods("GET")
+	router.HandleFunc("/upload-content", UploadContentHandler).Methods("POST")
+	router.HandleFunc("/fetch-content", FetchContentHandler).Methods("POST")
 
 	srv := &http.Server{
 		Handler: router,
 		Addr:    "127.0.0.1:9000",
 		// Good practice to enforce timeouts for servers you create!
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		ReadTimeout:  60 * time.Second,
 	}
 	log.Fatal(srv.ListenAndServe())
 }
