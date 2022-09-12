@@ -51,29 +51,33 @@ func Decrypt(ciphertext []byte, key []byte) ([]byte, error) {
 	return gcm.Open(nil, nonce, ciphertext, nil)
 }
 
-func EncryptFile(key []byte, file multipart.File) {
+func EncryptFile(key []byte, file multipart.File) error {
 	// Reading file
 	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, file); err != nil {
 		log.Fatalf("cipher err: %v", err.Error())
+		return err
 	}
 
 	// Creating block of algorithm
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		log.Fatalf("cipher err: %v", err.Error())
+		return err
 	}
 
 	// Creating GCM mode
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
 		log.Fatalf("cipher GCM err: %v", err.Error())
+		return err
 	}
 
 	// Generating random nonce
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		log.Fatalf("nonce  err: %v", err.Error())
+		return err
 	}
 
 	// Decrypt file
@@ -83,27 +87,32 @@ func EncryptFile(key []byte, file multipart.File) {
 	err = ioutil.WriteFile("assets/encrypted.bin", cipherText, 0777)
 	if err != nil {
 		log.Fatalf("write file err: %v", err.Error())
+		return err
 	}
 
+	return nil
 }
 
-func DecryptFile(key []byte, filepath string) {
+func DecryptFile(key []byte, filepath string) error {
 	// Reading encrypted file
 	cipherText, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("read file err: %v", err.Error())
+		return err
 	}
 
 	// Creating block of algorithm
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		log.Fatalf("cipher err: %v", err.Error())
+		return err
 	}
 
 	// Creating GCM mode
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
 		log.Fatalf("cipher GCM err: %v", err.Error())
+		return err
 	}
 
 	// Deattached nonce and decrypt
@@ -112,11 +121,15 @@ func DecryptFile(key []byte, filepath string) {
 	plainText, err := gcm.Open(nil, nonce, cipherText, nil)
 	if err != nil {
 		log.Fatalf("decrypt file err: %v", err.Error())
+		return err
 	}
 
 	// Writing decryption content
 	err = ioutil.WriteFile("assets/decrypted.txt", plainText, 0777)
 	if err != nil {
 		log.Fatalf("write file err: %v", err.Error())
+		return err
 	}
+
+	return nil
 }

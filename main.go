@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"filecoin-encrypted-data-storage/service"
+	"filecoin-encrypted-data-storage/storage/badger"
 	thirdparty "filecoin-encrypted-data-storage/third_party"
 	"fmt"
 	"log"
@@ -14,6 +15,34 @@ import (
 
 	"github.com/gorilla/mux"
 )
+
+type GenerateKeyPairResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
+	Data       Keys
+}
+
+type UploadContentResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
+	Data       service.UploadResponse
+}
+
+type FetchContentResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
+	Data       badger.FileData
+}
+
+type FetchByCIDContentResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
+	Data       service.Metadata
+}
 
 type Keys struct {
 	PublicKey  string `json:"PublicKey"`
@@ -26,66 +55,147 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	file, handler, err := r.FormFile("data")
 	kek := r.Form.Get("public_key")
 	timestamp := time.Now().Unix()
 	if err != nil {
-		panic(err)
+		response := UploadContentResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       service.UploadResponse{},
+		}
+		json.NewEncoder(w).Encode(response)
 	}
 	defer file.Close()
 
 	//generate a random 32 byte key for AES-256
 	dek := make([]byte, 32)
 	if _, err := rand.Read(dek); err != nil {
-		panic(err.Error())
+		response := UploadContentResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       service.UploadResponse{},
+		}
+		json.NewEncoder(w).Encode(response)
 	}
 
 	if _, err := os.Stat("assets"); os.IsNotExist(err) {
 		err := os.Mkdir("assets", 0777)
 		if err != nil {
-			panic(err)
+			response := UploadContentResponse{
+				Status:     "fail",
+				StatusCode: http.StatusInternalServerError,
+				Message:    err.Error(),
+				Data:       service.UploadResponse{},
+			}
+			json.NewEncoder(w).Encode(response)
 		}
 	}
 
-	thirdparty.EncryptFile(dek, file)
+	err = thirdparty.EncryptFile(dek, file)
+	if err != nil {
+		response := UploadContentResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       service.UploadResponse{},
+		}
+		json.NewEncoder(w).Encode(response)
+	}
 	content := service.UploadContent("assets/encrypted.bin")
 	if content.CID != "" {
 		encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
 		if err != nil {
-			panic(err.Error())
+			response := UploadContentResponse{
+				Status:     "fail",
+				StatusCode: http.StatusInternalServerError,
+				Message:    err.Error(),
+				Data:       content,
+			}
+			json.NewEncoder(w).Encode(response)
 		}
-		fileData := service.FileMetadata{Timestamp: timestamp, Name: handler.Filename, Size: int(handler.Size), FileType: filepath.Ext(handler.Filename), Dek: encryptedDek, Cid: content.CID}
-		service.Store(kek, fileData)
+		fileData := badger.FileMetadata{Timestamp: timestamp, Name: handler.Filename, Size: int(handler.Size), FileType: filepath.Ext(handler.Filename), Dek: encryptedDek, Cid: content.CID}
+		service.Store(kek+"-"+content.CID, fileData)
 	}
 
 	os.Remove("assets/encrypted.bin")
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(content)
+	response := UploadContentResponse{
+		Status:     "success",
+		StatusCode: http.StatusCreated,
+		Message:    "Content uploaded successfully.",
+		Data:       content,
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func FetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	kek := r.FormValue("public_key")
-	privateKey := r.FormValue("private_key")
 	fileMetaData := service.Fetch(kek)
+	w.Header().Set("Content-Type", "application/json")
+	os.Remove("assets/downloaded.bin")
+	response := FetchContentResponse{
+		Status:     "success",
+		StatusCode: http.StatusFound,
+		Message:    "Content fetched successfully.",
+		Data:       fileMetaData,
+	}
+	json.NewEncoder(w).Encode(response)
+}
+
+func FetchContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	r.ParseForm()
+	kek := r.FormValue("public_key")
+	privateKey := r.FormValue("private_key")
+	cid := r.FormValue("cid")
+	fileMetaData := service.FetchByCid(kek + "-" + cid)
 	decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 	if err != nil {
-		panic(err.Error())
+		response := FetchByCIDContentResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       fileMetaData,
+		}
+		json.NewEncoder(w).Encode(response)
 	}
 	filepath := service.DownloadContent(fileMetaData.Cid)
-	thirdparty.DecryptFile(decryptedDek, filepath)
-	w.Header().Set("Content-Type", "application/json")
+	err = thirdparty.DecryptFile(decryptedDek, filepath)
+	if err != nil {
+		response := FetchByCIDContentResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       fileMetaData,
+		}
+		json.NewEncoder(w).Encode(response)
+	}
 	w.WriteHeader(http.StatusCreated)
 	os.Remove("assets/downloaded.bin")
-	json.NewEncoder(w).Encode(fileMetaData)
+	response := FetchByCIDContentResponse{
+		Status:     "success",
+		StatusCode: http.StatusFound,
+		Message:    "Content fetched successfully.",
+		Data:       fileMetaData,
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func GenerateKeyPairHandler(w http.ResponseWriter, r *http.Request) {
 	thirdparty.InitCrypto()
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	response := Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()}
+	response := GenerateKeyPairResponse{
+		Status:     "success",
+		StatusCode: http.StatusCreated,
+		Message:    "Keys generated successfully.",
+		Data:       Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()},
+	}
 	os.Remove(".keys/.idRsaPub")
 	os.Remove(".keys/.idRsa")
 	json.NewEncoder(w).Encode(response)
@@ -97,13 +207,14 @@ func main() {
 	router.HandleFunc("/generate-key-pair", GenerateKeyPairHandler).Methods("GET")
 	router.HandleFunc("/upload-content", UploadContentHandler).Methods("POST")
 	router.HandleFunc("/fetch-content", FetchContentHandler).Methods("POST")
+	router.HandleFunc("/fetch-content-by-cid", FetchContentByCIDHandler).Methods("POST")
 
 	srv := &http.Server{
 		Handler: router,
 		Addr:    "127.0.0.1:9000",
 		// Good practice to enforce timeouts for servers you create!
-		WriteTimeout: 60 * time.Second,
-		ReadTimeout:  60 * time.Second,
+		WriteTimeout: 90 * time.Second,
+		ReadTimeout:  90 * time.Second,
 	}
 	log.Fatal(srv.ListenAndServe())
 }

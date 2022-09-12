@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"encoding/gob"
 	"filecoin-encrypted-data-storage/config"
-	"fmt"
-
 	"filecoin-encrypted-data-storage/storage/badger"
+	"fmt"
 )
 
-type FileMetadata struct {
+type Metadata struct {
 	Timestamp int64
 	Name      string
 	Size      int
@@ -30,7 +29,7 @@ func initDB() *badger.Storage {
 	return badger
 }
 
-func Store(key string, fileMetaData FileMetadata) {
+func Store(key string, fileMetaData badger.FileMetadata) {
 	badger := initDB()
 	var b bytes.Buffer
 	e := gob.NewEncoder(&b)
@@ -42,10 +41,10 @@ func Store(key string, fileMetaData FileMetadata) {
 	badger.Close()
 }
 
-func Fetch(key string) FileMetadata {
+func FetchByCid(key string) Metadata {
 	badger := initDB()
-	val := badger.Read(key)
-	var metaDataDecode FileMetadata
+	val := badger.ReadByCid(key)
+	var metaDataDecode Metadata
 	d := gob.NewDecoder(bytes.NewReader(val))
 	if err := d.Decode(&metaDataDecode); err != nil {
 		panic(err)
@@ -53,4 +52,11 @@ func Fetch(key string) FileMetadata {
 
 	badger.Close()
 	return metaDataDecode
+}
+
+func Fetch(key string) badger.FileData {
+	badger := initDB()
+	val := badger.Read(key)
+	badger.Close()
+	return val
 }
