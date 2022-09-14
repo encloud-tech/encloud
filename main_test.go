@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"filecoin-encrypted-data-storage/types"
 	"io"
 	"io/ioutil"
 	"log"
@@ -33,15 +34,16 @@ func TestGenerateKeyPairHandler(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 
-	var responseObject GenerateKeyPairResponse
+	var responseObject types.GenerateKeyPairResponse
 	json.Unmarshal(data, &responseObject)
-
+	log.Println(responseObject)
 	PublicKey = responseObject.Data.PublicKey
 	PrivateKey = responseObject.Data.PrivateKey
 	assert.NotNil(t, responseObject.Data)
 }
 
 func TestUploadContentHandler(t *testing.T) {
+	log.Println(PublicKey)
 	filePath := "testdata/Provider2InputData.csv"
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
@@ -64,13 +66,15 @@ func TestUploadContentHandler(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 
-	var responseObject UploadContentResponse
+	var responseObject types.UploadContentResponse
 	json.Unmarshal(data, &responseObject)
+	log.Println(responseObject)
 	Cid = responseObject.Data.CID
 	assert.NotNil(t, responseObject.Data)
 }
 
 func TestFetchContentHandler(t *testing.T) {
+	log.Println(PublicKey)
 	param := url.Values{}
 	param.Set("public_key", PublicKey)
 
@@ -85,9 +89,9 @@ func TestFetchContentHandler(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 
-	var responseObject FetchContentResponse
+	var responseObject types.FetchContentResponse
 	json.Unmarshal(data, &responseObject)
-
+	log.Println(responseObject)
 	assert.NotNil(t, responseObject.Data)
 }
 
@@ -111,7 +115,7 @@ func TestFetchContentByCIDHandler(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 
-	var responseObject FetchByCIDContentResponse
+	var responseObject types.FetchByCIDContentResponse
 	json.Unmarshal(data, &responseObject)
 	log.Println(responseObject)
 	assert.NotNil(t, responseObject.Data)

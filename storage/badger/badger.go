@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"filecoin-encrypted-data-storage/config"
+	"filecoin-encrypted-data-storage/types"
 	"fmt"
 	"log"
 	"os"
@@ -11,17 +12,6 @@ import (
 
 	"github.com/dgraph-io/badger/v3"
 )
-
-type FileData []FileMetadata
-
-type FileMetadata struct {
-	Timestamp int64
-	Name      string
-	Size      int
-	FileType  string
-	Cid       string
-	Dek       []byte
-}
 
 // New func implements the storage interface
 func New(config *config.ConfYaml) *Storage {
@@ -75,8 +65,8 @@ func (s *Storage) Create(key string, val []byte) {
 	}
 }
 
-func (s *Storage) Read(key string) FileData {
-	var ival FileData
+func (s *Storage) Read(key string) types.FileData {
+	var ival types.FileData
 	err := s.db.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
@@ -84,7 +74,7 @@ func (s *Storage) Read(key string) FileData {
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
 			item := it.Item()
 			err := item.Value(func(v []byte) error {
-				var metaDataDecode FileMetadata
+				var metaDataDecode types.FileMetadata
 				d := gob.NewDecoder(bytes.NewReader(v))
 				if err := d.Decode(&metaDataDecode); err != nil {
 					panic(err)

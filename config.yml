@@ -1,0 +1,9 @@
+estuary:
+  base_api_url: "https://api.estuary.tech"
+  download_api_url: "https://dweb.link/ipfs"
+  shuttle_api_url: "https://shuttle-4.estuary.tech"
+  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"
+
+stat:
+  badgerdb:
+    path: "badger.db"

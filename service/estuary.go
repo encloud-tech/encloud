@@ -3,7 +3,8 @@ package service
 import (
 	"bytes"
 	"encoding/json"
-	"filecoin-encrypted-data-storage/constants"
+	"filecoin-encrypted-data-storage/config"
+	"filecoin-encrypted-data-storage/types"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,66 +14,57 @@ import (
 	"path/filepath"
 )
 
-type Contents []Content
-type ByCID []struct {
-	Content ByCidResponse
+// New func implements the storage interface
+func New(config *config.ConfYaml) *Estuary {
+	return &Estuary{
+		config: config,
+	}
 }
 
-type Content struct {
-	Name string `json:"name"`
-	CID  string `json:"cid"`
+type Estuary struct {
+	config *config.ConfYaml
 }
 
-type UploadResponse struct {
-	CID       string
-	EstuaryId int
-}
-
-type ByCidResponse struct {
-	Name string
-	CID  string
-}
-
-func FetchAllContents() Contents {
+func (e *Estuary) FetchAllContents() types.Contents {
 	log.Print("Start fetching data from service")
-	response := doApiRequest(
+	response := e.doApiRequest(
 		"GET",
-		constants.EstuaryApiBaseUrl+"/content/list",
+		e.config.Estuary.BaseApiUrl+"/content/list",
 		nil,
 	)
-	var responseObject Contents
+	var responseObject types.Contents
 	json.Unmarshal(response, &responseObject)
 	log.Print("Data fetched from service: ", responseObject)
 	return responseObject
 }
 
-func FetchContentByCid(cid string) ByCID {
+func (e *Estuary) FetchContentByCid(cid string) types.ByCID {
 	log.Print("Start fetching data from service")
-	response := doApiRequest(
+	response := e.doApiRequest(
 		"GET",
-		constants.EstuaryApiBaseUrl+"/content/by-cid/"+cid,
+		e.config.Estuary.BaseApiUrl+"/content/by-cid/"+cid,
 		nil,
 	)
-	var responseObject ByCID
+	var responseObject types.ByCID
 	json.Unmarshal(response, &responseObject)
 	log.Print("Data fetched from service: ", responseObject)
 	return responseObject
 }
 
-func UploadContent(filePath string) UploadResponse {
+func (e *Estuary) UploadContent(filePath string) types.UploadResponse {
 	log.Print("Start upload data request")
-	response := doMultipartApiRequest(
+	response := e.doMultipartApiRequest(
 		"POST",
-		constants.EstuaryApiShuttleBaseUrl+"/content/add",
+		e.config.Estuary.ShuttleApiUrl+"/content/add",
 		filePath,
 	)
-	var responseObject UploadResponse
+	var responseObject types.UploadResponse
 	json.Unmarshal(response, &responseObject)
 	log.Print("Data received from upload request: ", responseObject)
 	return responseObject
 }
 
-func DownloadContent(cid string) string {
+func (e *Estuary) DownloadContent(cid string) string {
 	filepath := "assets/downloaded.bin"
 
 	// Create blank file
@@ -84,7 +76,7 @@ func DownloadContent(cid string) string {
 	client := &http.Client{}
 
 	log.Print("Start download data request")
-	resp, err := client.Get(constants.EstuaryDownloadApiUrl + "/" + cid)
+	resp, err := client.Get(e.config.Estuary.DownloadApiUrl + "/" + cid)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -100,7 +92,7 @@ func DownloadContent(cid string) string {
 	return filepath
 }
 
-func doMultipartApiRequest(method string, url string, filePath string) []byte {
+func (e *Estuary) doMultipartApiRequest(method string, url string, filePath string) []byte {
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
 	file, _ := os.Open(filePath)
@@ -119,7 +111,7 @@ func doMultipartApiRequest(method string, url string, filePath string) []byte {
 		log.Fatal(err)
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
-	req.Header.Set("authorization", "Bearer "+constants.EstuaryApiToken)
+	req.Header.Set("authorization", "Bearer "+e.config.Estuary.Token)
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
@@ -135,7 +127,7 @@ func doMultipartApiRequest(method string, url string, filePath string) []byte {
 	return responseData
 }
 
-func doApiRequest(method string, url string, body io.Reader) []byte {
+func (e *Estuary) doApiRequest(method string, url string, body io.Reader) []byte {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -143,7 +135,7 @@ func doApiRequest(method string, url string, body io.Reader) []byte {
 	}
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("authorization", "Bearer "+constants.EstuaryApiToken)
+	req.Header.Add("authorization", "Bearer "+e.config.Estuary.Token)
 	response, err := client.Do(req)
 	if err != nil {
 		log.Panic(err.Error())
