@@ -73,7 +73,7 @@ func TestUploadContentHandler(t *testing.T) {
 	assert.NotNil(t, responseObject.Data)
 }
 
-func TestFetchContentHandler(t *testing.T) {
+func TestListContentHandler(t *testing.T) {
 	log.Println(PublicKey)
 	param := url.Values{}
 	param.Set("public_key", PublicKey)
@@ -81,7 +81,7 @@ func TestFetchContentHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/fetch-content", strings.NewReader(param.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
-	FetchContentHandler(w, req)
+	ListContentHandler(w, req)
 	res := w.Result()
 	defer res.Body.Close()
 	data, err := ioutil.ReadAll(res.Body)
@@ -89,13 +89,13 @@ func TestFetchContentHandler(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 
-	var responseObject types.FetchContentResponse
+	var responseObject types.ListContentResponse
 	json.Unmarshal(data, &responseObject)
 	log.Println(responseObject)
 	assert.NotNil(t, responseObject.Data)
 }
 
-func TestFetchContentByCIDHandler(t *testing.T) {
+func TestRetrieveContentByCIDHandler(t *testing.T) {
 	log.Println(PublicKey)
 	log.Println(PrivateKey)
 	log.Println(Cid)
@@ -107,7 +107,7 @@ func TestFetchContentByCIDHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/fetch-content-by-cid", strings.NewReader(param.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
-	FetchContentByCIDHandler(w, req)
+	RetrieveContentByCIDHandler(w, req)
 	res := w.Result()
 	defer res.Body.Close()
 	data, err := ioutil.ReadAll(res.Body)
@@ -115,7 +115,7 @@ func TestFetchContentByCIDHandler(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 
-	var responseObject types.FetchByCIDContentResponse
+	var responseObject types.RetrieveByCIDContentResponse
 	json.Unmarshal(data, &responseObject)
 	log.Println(responseObject)
 	assert.NotNil(t, responseObject.Data)
