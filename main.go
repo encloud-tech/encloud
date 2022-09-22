@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"encoding/json"
+	"filecoin-encrypted-data-storage/cmd"
 	"filecoin-encrypted-data-storage/config"
 	"filecoin-encrypted-data-storage/service"
 	thirdparty "filecoin-encrypted-data-storage/third_party"
@@ -102,13 +103,13 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func FetchContentHandler(w http.ResponseWriter, r *http.Request) {
+func ListContentHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	kek := r.FormValue("public_key")
 	fileMetaData := service.Fetch(kek)
 	w.Header().Set("Content-Type", "application/json")
 	os.Remove("assets/downloaded.bin")
-	response := types.FetchContentResponse{
+	response := types.ListContentResponse{
 		Status:     "success",
 		StatusCode: http.StatusFound,
 		Message:    "Content fetched successfully.",
@@ -117,7 +118,7 @@ func FetchContentHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func FetchContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
+func RetrieveContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
 	cfg, _ := config.LoadConf("config.yml")
 	estuaryService := service.New(cfg)
 
@@ -129,7 +130,7 @@ func FetchContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
 	fileMetaData := service.FetchByCid(kek + "-" + cid)
 	decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 	if err != nil {
-		response := types.FetchByCIDContentResponse{
+		response := types.RetrieveByCIDContentResponse{
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
@@ -140,7 +141,7 @@ func FetchContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
 	filepath := estuaryService.DownloadContent(fileMetaData.Cid)
 	err = thirdparty.DecryptFile(decryptedDek, filepath)
 	if err != nil {
-		response := types.FetchByCIDContentResponse{
+		response := types.RetrieveByCIDContentResponse{
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
@@ -150,7 +151,7 @@ func FetchContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	os.Remove("assets/downloaded.bin")
-	response := types.FetchByCIDContentResponse{
+	response := types.RetrieveByCIDContentResponse{
 		Status:     "success",
 		StatusCode: http.StatusFound,
 		Message:    "Content fetched successfully.",
@@ -179,8 +180,8 @@ func main() {
 	router.HandleFunc("/", home)
 	router.HandleFunc("/generate-key-pair", GenerateKeyPairHandler).Methods("GET")
 	router.HandleFunc("/upload-content", UploadContentHandler).Methods("POST")
-	router.HandleFunc("/fetch-content", FetchContentHandler).Methods("POST")
-	router.HandleFunc("/fetch-content-by-cid", FetchContentByCIDHandler).Methods("POST")
+	router.HandleFunc("/list-content", ListContentHandler).Methods("POST")
+	router.HandleFunc("/fetch-content-by-cid", RetrieveContentByCIDHandler).Methods("POST")
 
 	srv := &http.Server{
 		Handler: router,
@@ -189,5 +190,7 @@ func main() {
 		WriteTimeout: 90 * time.Second,
 		ReadTimeout:  90 * time.Second,
 	}
+
+	cmd.Execute()
 	log.Fatal(srv.ListenAndServe())
 }
