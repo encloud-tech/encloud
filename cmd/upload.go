@@ -8,6 +8,7 @@ import (
 	thirdparty "filecoin-encrypted-data-storage/third_party"
 	"filecoin-encrypted-data-storage/types"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,74 +17,79 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var uploadContentCmd = &cobra.Command{
-	Use:   "upload",
-	Short: "Upload your content to filecoin storage",
-	Long:  `Upload your content to filecoin storage which is encrypted using your public key`,
-	Run: func(cmd *cobra.Command, args []string) {
-		cfg, _ := config.LoadConf("config.yml")
-		estuaryService := service.New(cfg)
+func UploadContentCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "upload",
+		Short: "Upload your content to filecoin storage",
+		Long:  `Upload your content to filecoin storage which is encrypted using your public key`,
+		Run: func(cmd *cobra.Command, args []string) {
+			cfg, _ := config.LoadConf("./../config.yml")
+			estuaryService := service.New(cfg)
 
-		kek, _ := cmd.Flags().GetString("publicKey")
-		path, _ := cmd.Flags().GetString("filePath")
-		timestamp := time.Now().Unix()
-		file, err := os.Open(path)
-		if err != nil {
-			fmt.Println("File open error : ", err)
-			os.Exit(-1)
-		}
+			kek, _ := cmd.Flags().GetString("publicKey")
+			path, _ := cmd.Flags().GetString("filePath")
+			timestamp := time.Now().Unix()
+			file, err := os.Open(path)
+			if err != nil {
+				fmt.Println("File open error : ", err)
+				os.Exit(-1)
+			}
 
-		defer file.Close()
+			defer file.Close()
 
-		fileInfo, _ := file.Stat()
+			fileInfo, _ := file.Stat()
 
-		//generate a random 32 byte key for AES-256
-		dek := make([]byte, 32)
-		if _, err := rand.Read(dek); err != nil {
-			fmt.Println(err)
-		}
+			//generate a random 32 byte key for AES-256
+			dek := make([]byte, 32)
+			if _, err := rand.Read(dek); err != nil {
+				fmt.Println(err)
+			}
 
-		if _, err := os.Stat("assets"); os.IsNotExist(err) {
-			err := os.Mkdir("assets", 0777)
+			if _, err := os.Stat("assets"); os.IsNotExist(err) {
+				err := os.Mkdir("assets", 0777)
+				if err != nil {
+					fmt.Println(err)
+				}
+			}
+
+			err = thirdparty.EncryptFile(dek, file)
 			if err != nil {
 				fmt.Println(err)
 			}
-		}
+			content := estuaryService.UploadContent("assets/encrypted.bin")
+			if content.CID != "" {
+				log.Println(kek)
+				encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
+				if err != nil {
+					fmt.Println("err" + err.Error())
+				}
+				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: content.CID}
+				service.Store(kek+"-"+content.CID, fileData)
+			}
 
-		err = thirdparty.EncryptFile(dek, file)
-		if err != nil {
-			fmt.Println(err)
-		}
-		content := estuaryService.UploadContent("assets/encrypted.bin")
-		if content.CID != "" {
-			encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
+			os.Remove("assets/encrypted.bin")
+			response := types.UploadContentResponse{
+				Status:     "success",
+				StatusCode: http.StatusCreated,
+				Message:    "Content uploaded successfully.",
+				Data:       content,
+			}
+			encoded, err := json.Marshal(response)
 			if err != nil {
 				fmt.Println(err)
+				return
 			}
-			fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: content.CID}
-			service.Store(kek+"-"+content.CID, fileData)
-		}
+			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
+		},
+	}
 
-		os.Remove("assets/encrypted.bin")
-		response := types.UploadContentResponse{
-			Status:     "success",
-			StatusCode: http.StatusCreated,
-			Message:    "Content uploaded successfully.",
-			Data:       content,
-		}
-		encoded, err := json.Marshal(response)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Println(string(encoded))
-	},
+	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
+	cmd.Flags().StringP("filePath", "f", "", "Enter your file path")
+	cmd.MarkFlagRequired("publicKey")
+	cmd.MarkFlagRequired("filepath")
+	return cmd
 }
 
 func init() {
-	rootCmd.AddCommand(uploadContentCmd)
-	uploadContentCmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
-	uploadContentCmd.Flags().StringP("filePath", "f", "", "Enter your file path")
-	uploadContentCmd.MarkFlagRequired("publicKey")
-	uploadContentCmd.MarkFlagRequired("filepath")
+	RootCmd.AddCommand(UploadContentCmd())
 }

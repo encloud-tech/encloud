@@ -11,8 +11,8 @@ import (
 
 var cfgFile string
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+// RootCmd represents the base command when called without any subcommands
+var RootCmd = &cobra.Command{
 	Use:   "gupt",
 	Short: "gupt is encrypted data storage tool.",
 	Long: `gupt is upload and download data on filecoin 
@@ -25,9 +25,9 @@ var rootCmd = &cobra.Command{
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -39,9 +39,9 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
-	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
-	viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
+	RootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
+	viper.BindPFlag("useViper", RootCmd.PersistentFlags().Lookup("viper"))
 }
 
 // initConfig reads in config file and ENV variables if set.
