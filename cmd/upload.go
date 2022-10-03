@@ -23,7 +23,7 @@ func UploadContentCmd() *cobra.Command {
 		Short: "Upload your content to filecoin storage",
 		Long:  `Upload your content to filecoin storage which is encrypted using your public key`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, _ := config.LoadConf("./../config.yml")
+			cfg, _ := config.LoadConf("./config.yml")
 			estuaryService := service.New(cfg)
 
 			kek, _ := cmd.Flags().GetString("publicKey")
