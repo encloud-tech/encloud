@@ -7,6 +7,8 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/json"
+	"filecoin-encrypted-data-storage/config"
+	"filecoin-encrypted-data-storage/service"
 	thirdparty "filecoin-encrypted-data-storage/third_party"
 	"fmt"
 	"io"
@@ -198,38 +200,7 @@ func (upload *fileUpload) WriteChunk(ctx context.Context, offset int64, src io.R
 	err = ioutil.WriteFile(upload.binPath, cipherText, 0777)
 	if err != nil {
 		log.Fatalf("write file err: %v", err.Error())
-		// return err
 	}
-
-	// payload := &bytes.Buffer{}
-	// writer := multipart.NewWriter(payload)
-	// fileddd, _ := os.Open(upload.binPath)
-	// defer fileddd.Close()
-	// part1, _ := writer.CreateFormFile("data", upload.binPath)
-	// _, _ = io.Copy(part1, fileddd)
-	// writer.Close()
-
-	// log.Print("Start api call")
-	// client := &http.Client{}
-	// req, err := http.NewRequest("POST", "https://shuttle-4.estuary.tech/content/add", payload)
-
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// req.Header.Set("Content-Type", writer.FormDataContentType())
-	// req.Header.Set("authorization", "Bearer EST3aeaa99b-bb41-4f53-9e31-c3e61ecf1772ARY")
-	// res, err := client.Do(req)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer res.Body.Close()
-
-	// responseData, err := ioutil.ReadAll(res.Body)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// log.Print("Return api call response: ", string(responseData))
 
 	upload.info.Offset += n
 	return n, err
@@ -289,47 +260,9 @@ func (upload *fileUpload) writeInfo() error {
 }
 
 func (upload *fileUpload) FinishUpload(ctx context.Context) error {
-	// DecryptFile(upload.dek, upload.binPath)
-	return nil
-}
-
-func DecryptFile(key []byte, filepath string) error {
-	// Reading encrypted file
-	cipherText, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		log.Fatalf("read file err: %v", err.Error())
-		return err
-	}
-
-	// Creating block of algorithm
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		log.Fatalf("cipher err: %v", err.Error())
-		return err
-	}
-
-	// Creating GCM mode
-	gcm, err := cipher.NewGCM(block)
-	if err != nil {
-		log.Fatalf("cipher GCM err: %v", err.Error())
-		return err
-	}
-
-	// Deattached nonce and decrypt
-	nonce := cipherText[:gcm.NonceSize()]
-	cipherText = cipherText[gcm.NonceSize():]
-	plainText, err := gcm.Open(nil, nonce, cipherText, nil)
-	if err != nil {
-		log.Fatalf("decrypt file err: %v", err.Error())
-		return err
-	}
-
-	// Writing decryption content
-	err = ioutil.WriteFile("uploads/decrypted.txt", plainText, 0777)
-	if err != nil {
-		log.Fatalf("write file err: %v", err.Error())
-		return err
-	}
-
+	cfg, _ := config.LoadConf("config.yml")
+	estuaryService := service.New(cfg)
+	content := estuaryService.UploadContent(upload.binPath)
+	log.Println(content)
 	return nil
 }
