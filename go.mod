@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/dgraph-io/badger/v3 v3.2103.2
+	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.13.0
 	github.com/tus/tusd v1.9.2
 )
@@ -28,6 +29,7 @@ require (
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/flatbuffers v1.12.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/klauspost/compress v1.12.3 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect

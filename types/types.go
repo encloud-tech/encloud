@@ -46,14 +46,14 @@ type UploadContentResponse struct {
 	Data       UploadResponse
 }
 
-type FetchContentResponse struct {
+type ListContentResponse struct {
 	Status     string
 	StatusCode int
 	Message    string
 	Data       FileData
 }
 
-type FetchByCIDContentResponse struct {
+type RetrieveByCIDContentResponse struct {
 	Status     string
 	StatusCode int
 	Message    string
