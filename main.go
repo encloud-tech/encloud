@@ -6,7 +6,6 @@ import (
 	"filecoin-encrypted-data-storage/cmd"
 	"filecoin-encrypted-data-storage/config"
 	"filecoin-encrypted-data-storage/service"
-	estuarystore "filecoin-encrypted-data-storage/storage/tusd"
 	thirdparty "filecoin-encrypted-data-storage/third_party"
 	"filecoin-encrypted-data-storage/types"
 	"fmt"
@@ -17,7 +16,6 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	tusd "github.com/tus/tusd/pkg/handler"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -184,38 +182,6 @@ func main() {
 	router.HandleFunc("/upload-content", UploadContentHandler).Methods("POST")
 	router.HandleFunc("/list-content", ListContentHandler).Methods("POST")
 	router.HandleFunc("/fetch-content-by-cid", RetrieveContentByCIDHandler).Methods("POST")
-
-	store := estuarystore.New("./assets")
-
-	composer := tusd.NewStoreComposer()
-	store.UseIn(composer)
-
-	handler, err := tusd.NewHandler(tusd.Config{
-		BasePath:              "/files/",
-		StoreComposer:         composer,
-		NotifyCompleteUploads: true,
-		PreUploadCreateCallback: func(hook tusd.HookEvent) error {
-			hook.Upload.MetaData["filename"] = hook.HTTPRequest.Header.Get("filename")
-			return nil
-		},
-	})
-
-	if err != nil {
-		fmt.Printf("Unable to create handler: %s", err)
-	}
-
-	go func() {
-		for {
-			event := <-handler.CompleteUploads
-			fmt.Printf("Upload %s finished\n", event.Upload.ID)
-		}
-	}()
-
-	customHandler := http.StripPrefix("/files", handler)
-	handler.Middleware(customHandler)
-	router.HandleFunc("/files", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		customHandler.ServeHTTP(w, req)
-	})).Methods("POST")
 
 	srv := &http.Server{
 		Handler: router,
