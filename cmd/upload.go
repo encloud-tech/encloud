@@ -52,7 +52,7 @@ func UploadContentCmd() *cobra.Command {
 				}
 			}
 
-			err = thirdparty.EncryptFile(dek, file)
+			err = thirdparty.EncryptFile(dek, path, "assets/encrypted.bin")
 			if err != nil {
 				fmt.Println(err)
 			}

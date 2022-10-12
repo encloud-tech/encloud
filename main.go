@@ -68,7 +68,7 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err = thirdparty.EncryptFile(dek, file)
+	err = thirdparty.EncryptFile(dek, handler.Filename, "assets/encrypted.bin")
 	if err != nil {
 		response := types.UploadContentResponse{
 			Status:     "fail",
@@ -219,10 +219,10 @@ func main() {
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "127.0.0.1:9000",
+		Addr:    "127.0.0.1:8080",
 		// Good practice to enforce timeouts for servers you create!
-		WriteTimeout: 90 * time.Second,
-		ReadTimeout:  90 * time.Second,
+		WriteTimeout: 900 * time.Second,
+		ReadTimeout:  900 * time.Second,
 	}
 
 	cmd.Execute()
