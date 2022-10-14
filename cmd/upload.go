@@ -28,6 +28,8 @@ func UploadContentCmd() *cobra.Command {
 
 			kek, _ := cmd.Flags().GetString("publicKey")
 			path, _ := cmd.Flags().GetString("filePath")
+			isUploadInChunks, _ := cmd.Flags().GetBool("isUploadInChunks")
+			uploadChunkSize, _ := cmd.Flags().GetInt64("uploadChunkSize")
 			timestamp := time.Now().Unix()
 			file, err := os.Open(path)
 			if err != nil {
@@ -56,35 +58,57 @@ func UploadContentCmd() *cobra.Command {
 			if err != nil {
 				fmt.Println(err)
 			}
-			content := estuaryService.UploadContent("assets/encrypted.bin")
-			if content.CID != "" {
-				log.Println(kek)
-				encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
-				if err != nil {
-					fmt.Println("err" + err.Error())
-				}
-				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: content.CID}
-				service.Store(kek+"-"+content.CID, fileData)
-			}
 
-			os.Remove("assets/encrypted.bin")
-			response := types.UploadContentResponse{
-				Status:     "success",
-				StatusCode: http.StatusCreated,
-				Message:    "Content uploaded successfully.",
-				Data:       content,
+			if isUploadInChunks {
+				var cids []string
+				cids = estuaryService.ChunkUploadContent("assets/encrypted.bin", uploadChunkSize)
+				response := types.ChunkUploadContentResponse{
+					Status:     "success",
+					StatusCode: http.StatusCreated,
+					Message:    "Content uploaded successfully.",
+					Data:       cids,
+				}
+
+				os.Remove("assets/encrypted.bin")
+				encoded, err := json.Marshal(response)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
+			} else {
+				content := estuaryService.UploadContent("assets/encrypted.bin")
+				if content.CID != "" {
+					log.Println(kek)
+					encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
+					if err != nil {
+						fmt.Println("err" + err.Error())
+					}
+					fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: content.CID}
+					service.Store(kek+"-"+content.CID, fileData)
+				}
+
+				os.Remove("assets/encrypted.bin")
+				response := types.UploadContentResponse{
+					Status:     "success",
+					StatusCode: http.StatusCreated,
+					Message:    "Content uploaded successfully.",
+					Data:       content,
+				}
+				encoded, err := json.Marshal(response)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 			}
-			encoded, err := json.Marshal(response)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 		},
 	}
 
 	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
 	cmd.Flags().StringP("filePath", "f", "", "Enter your file path")
+	cmd.Flags().BoolP("isUploadInChunks", "i", false, "Do you want to upload in chunks?")
+	cmd.Flags().Int64P("uploadChunkSize", "s", 200, "Enter upload chunk size in Mbs")
 	cmd.MarkFlagRequired("publicKey")
 	cmd.MarkFlagRequired("filepath")
 	return cmd

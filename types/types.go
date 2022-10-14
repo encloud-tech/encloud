@@ -46,6 +46,13 @@ type UploadContentResponse struct {
 	Data       UploadResponse
 }
 
+type ChunkUploadContentResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
+	Data       []string
+}
+
 type ListContentResponse struct {
 	Status     string
 	StatusCode int

@@ -2,7 +2,7 @@ estuary:
   base_api_url: "https://api.estuary.tech"
   download_api_url: "https://dweb.link/ipfs"
   shuttle_api_url: "https://shuttle-4.estuary.tech"
-  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"
+  token: "EST26a02640-bab9-4f86-8bd5-08d2076b8bf0ARY"
 
 stat:
   badgerdb:
