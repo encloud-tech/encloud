@@ -19,7 +19,9 @@ estuary:
   shuttle_api_url: "https://shuttle-4.estuary.tech"
   download_api_url: "https://dweb.link/ipfs"
   base_api_url: "https://api.estuary.tech",
-  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"	
+  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"
+  uploadChunkSize: 200
+  isUploadInChunks: false
 stat:
   badgerdb:
     path: "badger.db"
@@ -33,10 +35,12 @@ type ConfYaml struct {
 
 // SectionEstuary is sub section of config.
 type SectionEstuary struct {
-	ShuttleApiUrl  string `yaml:"shuttle_api_url"`
-	DownloadApiUrl string `yaml:"download_api_url"`
-	BaseApiUrl     string `yaml:"base_api_url"`
-	Token          string `yaml:"token"`
+	ShuttleApiUrl    string `yaml:"shuttle_api_url"`
+	DownloadApiUrl   string `yaml:"download_api_url"`
+	BaseApiUrl       string `yaml:"base_api_url"`
+	Token            string `yaml:"token"`
+	UploadChunkSize  int64  `yaml:"uploadChunkSize"`
+	IsUploadInChunks bool   `yaml:"isUploadInChunks"`
 }
 
 // SectionStat is sub section of config.
@@ -84,6 +88,8 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	conf.Estuary.DownloadApiUrl = viper.GetString("estuary.download_api_url")
 	conf.Estuary.ShuttleApiUrl = viper.GetString("estuary.shuttle_api_url")
 	conf.Estuary.Token = viper.GetString("estuary.token")
+	conf.Estuary.UploadChunkSize = viper.GetInt64("estuary.uploadChunkSize")
+	conf.Estuary.IsUploadInChunks = viper.GetBool("estuary.isUploadInChunks")
 
 	// Stat Engine
 	conf.Stat.BadgerDB.Path = viper.GetString("stat.badgerdb.path")

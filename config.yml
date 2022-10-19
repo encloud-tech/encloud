@@ -3,6 +3,8 @@ estuary:
   download_api_url: "https://dweb.link/ipfs"
   shuttle_api_url: "https://shuttle-4.estuary.tech"
   token: "EST26a02640-bab9-4f86-8bd5-08d2076b8bf0ARY"
+  uploadChunkSize: 200
+  isUploadInChunks: false
 
 stat:
   badgerdb:

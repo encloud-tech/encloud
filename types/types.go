@@ -28,7 +28,7 @@ type FileMetadata struct {
 	Name      string
 	Size      int
 	FileType  string
-	Cid       string
+	Cid       []string
 	Dek       []byte
 }
 
@@ -43,14 +43,11 @@ type UploadContentResponse struct {
 	Status     string
 	StatusCode int
 	Message    string
-	Data       UploadResponse
+	Data       Uuid
 }
 
-type ChunkUploadContentResponse struct {
-	Status     string
-	StatusCode int
-	Message    string
-	Data       []string
+type Uuid struct {
+	Uuid string
 }
 
 type ListContentResponse struct {

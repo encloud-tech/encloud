@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
@@ -24,13 +25,22 @@ func RetrieveByCidCmd() *cobra.Command {
 
 			kek, _ := cmd.Flags().GetString("publicKey")
 			privateKey, _ := cmd.Flags().GetString("privateKey")
-			cid, _ := cmd.Flags().GetString("cid")
-			fileMetaData := service.FetchByCid(kek + "-" + cid)
+			uuid, _ := cmd.Flags().GetString("uuid")
+			fileMetaData := service.FetchByCid(kek + ":" + uuid)
 			decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 			if err != nil {
 				fmt.Println(err)
 			}
-			filepath := estuaryService.DownloadContent(fileMetaData.Cid)
+			fmt.Println(fileMetaData)
+			filepath := "assets/downloaded.bin"
+			var wg sync.WaitGroup
+			// limit to four downloads at a time, this is called a semaphore
+			limiter := make(chan struct{}, 4)
+			for i, link := range fileMetaData.Cid {
+				wg.Add(1)
+				go estuaryService.DownloadContent(&wg, limiter, i, link, filepath)
+			}
+			wg.Wait()
 			err = thirdparty.DecryptFile(decryptedDek, filepath)
 			if err != nil {
 				fmt.Println(err)
@@ -53,10 +63,10 @@ func RetrieveByCidCmd() *cobra.Command {
 
 	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
 	cmd.Flags().StringP("privateKey", "k", "", "Enter your private key")
-	cmd.Flags().StringP("cid", "c", "", "Enter your cid")
+	cmd.Flags().StringP("uuid", "u", "", "Enter your uuid")
 	cmd.MarkFlagRequired("publicKey")
 	cmd.MarkFlagRequired("privateKey")
-	cmd.MarkFlagRequired("cid")
+	cmd.MarkFlagRequired("uuid")
 	return cmd
 }
 

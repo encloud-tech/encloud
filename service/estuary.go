@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -103,46 +104,43 @@ func (e *Estuary) ChunkUploadContent(filePath string, chunkSize int64) []string 
 		response := e.doMultipartApiRequest(
 			"POST",
 			e.config.Estuary.ShuttleApiUrl+"/content/add",
-			filePath,
+			"assets/"+rs+".csv",
 		)
 		var responseObject types.UploadResponse
 		json.Unmarshal(response, &responseObject)
 		log.Print("Data received from upload request: ", responseObject)
 		if responseObject.CID != "" {
 			os.Remove("assets/" + rs + ".csv")
-			cids = append(cids, "https://dweb.link/ipfs/"+responseObject.CID)
+			cids = append(cids, responseObject.CID)
 		}
 	}
 
 	return cids
 }
 
-func (e *Estuary) DownloadContent(cid string) string {
-	filepath := "assets/downloaded.bin"
-
-	// Create blank file
-	file, err := os.Create(filepath)
-	if err != nil {
-		log.Fatal(err)
-	}
+func (e *Estuary) DownloadContent(wg *sync.WaitGroup, sema chan struct{}, fileNum int, cid string, filepath string) {
+	fmt.Println(cid)
+	sema <- struct{}{}
+	defer func() {
+		<-sema
+		wg.Done()
+	}()
 
 	client := &http.Client{}
-
-	log.Print("Start download data request")
-	resp, err := client.Get(e.config.Estuary.DownloadApiUrl + "/" + cid)
+	res, err := client.Get(e.config.Estuary.DownloadApiUrl + "/" + cid)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer resp.Body.Close()
-	log.Print("Download data received")
+	defer res.Body.Close()
 
-	if _, err := io.Copy(file, resp.Body); err != nil {
-		log.Fatalf("file write err: %v", err.Error())
+	f, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
 	}
 
-	defer file.Close()
+	io.Copy(f, res.Body)
 
-	return filepath
+	defer f.Close()
 }
 
 func (e *Estuary) doMultipartApiRequest(method string, url string, filePath string) []byte {
