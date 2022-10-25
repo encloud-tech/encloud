@@ -24,11 +24,12 @@ type ByCidResponse struct {
 type FileData []FileMetadata
 
 type FileMetadata struct {
+	Uuid      string
 	Timestamp int64
 	Name      string
 	Size      int
 	FileType  string
-	Cid       string
+	Cid       []string
 	Dek       []byte
 }
 
@@ -43,7 +44,11 @@ type UploadContentResponse struct {
 	Status     string
 	StatusCode int
 	Message    string
-	Data       UploadResponse
+	Data       Uuid
+}
+
+type Uuid struct {
+	Uuid string
 }
 
 type ListContentResponse struct {
@@ -63,4 +68,10 @@ type RetrieveByCIDContentResponse struct {
 type Keys struct {
 	PublicKey  string `json:"PublicKey"`
 	PrivateKey string `json:"PrivateKey"`
+}
+
+type ErrorResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
 }

@@ -36,8 +36,8 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	var uploadContentResponseObject types.UploadContentResponse
 	json.Unmarshal(uploadContentBuf.Bytes(), &uploadContentResponseObject)
 	assert.NotNil(t, uploadContentResponseObject.Data)
-	CID := uploadContentResponseObject.Data.CID
-	log.Println("cid: " + CID)
+	Uuid := uploadContentResponseObject.Data.Uuid
+	log.Println("Uuid: " + Uuid)
 
 	// Now we fetch list of file meta data from database.
 	listContentBuf := new(bytes.Buffer)
@@ -56,7 +56,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	retrieveContentByCidCmd := RetrieveByCidCmd()
 	retrieveContentByCidCmd.SetOut(retrieveContentByCidBuf)
 	retrieveContentByCidCmd.SetErr(retrieveContentByCidBuf)
-	retrieveContentByCidCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-c", CID})
+	retrieveContentByCidCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid})
 	retrieveContentByCidCmd.Execute()
 	var retrieveContentByCidResponseObject types.RetrieveByCIDContentResponse
 	json.Unmarshal(retrieveContentByCidBuf.Bytes(), &retrieveContentByCidResponseObject)

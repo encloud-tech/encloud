@@ -7,40 +7,47 @@ import (
 	thirdparty "filecoin-encrypted-data-storage/third_party"
 	"filecoin-encrypted-data-storage/types"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/spf13/cobra"
 )
 
-func RetrieveByCidCmd() *cobra.Command {
+func ShareCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "retrieve-by-cid",
-		Short: "Retrieve specific uploaded content using your cid",
-		Long:  `Retrieve specific uploaded content using your cid and decrypt it using your private key`,
+		Use:   "share",
+		Short: "Share uploaded content to other user",
+		Long:  `Share uploaded content with your cid and dek to another user`,
 		Run: func(cmd *cobra.Command, args []string) {
 			cfg, _ := config.LoadConf("./config.yml")
-			estuaryService := service.New(cfg)
 
 			kek, _ := cmd.Flags().GetString("publicKey")
 			privateKey, _ := cmd.Flags().GetString("privateKey")
 			uuid, _ := cmd.Flags().GetString("uuid")
+			email, _ := cmd.Flags().GetString("email")
 			fileMetaData := service.FetchByCid(kek + ":" + uuid)
 			decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			filepath := estuaryService.DownloadContent(fileMetaData.Cid[0])
-			err = thirdparty.DecryptFile(decryptedDek, filepath)
+			fmt.Println(decryptedDek)
+
+			// Writing decryption dek
+			err = ioutil.WriteFile("assets/dek.txt", decryptedDek, 0777)
 			if err != nil {
-				fmt.Println(err)
+				log.Fatalf("write file err: %v", err.Error())
 			}
-			os.Remove("assets/downloaded.bin")
+
+			subject := "Share content"
+			r := service.NewRequest([]string{email}, subject, cfg)
+			r.Send("./templates/share.html", map[string]string{"cid": fileMetaData.Cid[0]})
+
 			response := types.RetrieveByCIDContentResponse{
 				Status:     "success",
 				StatusCode: http.StatusFound,
-				Message:    "Content fetched successfully.",
+				Message:    "Content shared successfully.",
 				Data:       fileMetaData,
 			}
 			encoded, err := json.Marshal(response)
@@ -55,12 +62,14 @@ func RetrieveByCidCmd() *cobra.Command {
 	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
 	cmd.Flags().StringP("privateKey", "k", "", "Enter your private key")
 	cmd.Flags().StringP("uuid", "u", "", "Enter your uuid")
+	cmd.Flags().StringP("email", "e", "", "Enter email which you want to share")
 	cmd.MarkFlagRequired("publicKey")
 	cmd.MarkFlagRequired("privateKey")
 	cmd.MarkFlagRequired("uuid")
+	cmd.MarkFlagRequired("email")
 	return cmd
 }
 
 func init() {
-	RootCmd.AddCommand(RetrieveByCidCmd())
+	RootCmd.AddCommand(ShareCmd())
 }
