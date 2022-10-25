@@ -35,7 +35,6 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
-			Data:       types.UploadResponse{},
 		}
 		json.NewEncoder(w).Encode(response)
 	}
@@ -48,7 +47,6 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
-			Data:       types.UploadResponse{},
 		}
 		json.NewEncoder(w).Encode(response)
 	}
@@ -60,36 +58,38 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 				Status:     "fail",
 				StatusCode: http.StatusInternalServerError,
 				Message:    err.Error(),
-				Data:       types.UploadResponse{},
 			}
 			json.NewEncoder(w).Encode(response)
 		}
 	}
 
-	err = thirdparty.EncryptFile(dek, file)
+	err = thirdparty.EncryptFile(dek, filepath.Base(handler.Filename), "assets/encrypted.bin")
 	if err != nil {
-		response := types.UploadContentResponse{
+		response := types.ErrorResponse{
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
-			Data:       types.UploadResponse{},
 		}
 		json.NewEncoder(w).Encode(response)
 	}
+
+	var cids []string
+	var uuid = thirdparty.GenerateUuid()
 	content := estuaryService.UploadContent("assets/encrypted.bin")
-	if content.CID != "" {
+	cids = append(cids, content.CID)
+
+	if cids != nil {
 		encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
 		if err != nil {
-			response := types.UploadContentResponse{
+			response := types.ErrorResponse{
 				Status:     "fail",
 				StatusCode: http.StatusInternalServerError,
 				Message:    err.Error(),
-				Data:       content,
 			}
 			json.NewEncoder(w).Encode(response)
 		}
-		fileData := types.FileMetadata{Timestamp: timestamp, Name: handler.Filename, Size: int(handler.Size), FileType: filepath.Ext(handler.Filename), Dek: encryptedDek, Cid: content.CID}
-		service.Store(kek+"-"+content.CID, fileData)
+		fileData := types.FileMetadata{Timestamp: timestamp, Name: handler.Filename, Size: int(handler.Size), FileType: filepath.Ext(handler.Filename), Dek: encryptedDek, Cid: cids, Uuid: uuid}
+		service.Store(kek+"-"+uuid, fileData)
 	}
 
 	os.Remove("assets/encrypted.bin")
@@ -98,7 +98,7 @@ func UploadContentHandler(w http.ResponseWriter, r *http.Request) {
 		Status:     "success",
 		StatusCode: http.StatusCreated,
 		Message:    "Content uploaded successfully.",
-		Data:       content,
+		Data:       types.Uuid{Uuid: uuid},
 	}
 	json.NewEncoder(w).Encode(response)
 }
@@ -126,8 +126,8 @@ func RetrieveContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	kek := r.FormValue("public_key")
 	privateKey := r.FormValue("private_key")
-	cid := r.FormValue("cid")
-	fileMetaData := service.FetchByCid(kek + "-" + cid)
+	uuid := r.FormValue("uuid")
+	fileMetaData := service.FetchByCid(kek + "-" + uuid)
 	decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 	if err != nil {
 		response := types.RetrieveByCIDContentResponse{
@@ -138,7 +138,7 @@ func RetrieveContentByCIDHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		json.NewEncoder(w).Encode(response)
 	}
-	filepath := estuaryService.DownloadContent(fileMetaData.Cid)
+	filepath := estuaryService.DownloadContent(fileMetaData.Cid[0])
 	err = thirdparty.DecryptFile(decryptedDek, filepath)
 	if err != nil {
 		response := types.RetrieveByCIDContentResponse{

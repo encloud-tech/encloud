@@ -20,7 +20,7 @@ import (
 
 var PublicKey string
 var PrivateKey string
-var Cid string
+var Uuid string
 
 func TestGenerateKeyPairHandler(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/generate-key-pair", strings.NewReader(""))
@@ -69,7 +69,7 @@ func TestUploadContentHandler(t *testing.T) {
 	var responseObject types.UploadContentResponse
 	json.Unmarshal(data, &responseObject)
 	log.Println(responseObject)
-	Cid = responseObject.Data.CID
+	Uuid = responseObject.Data.Uuid
 	assert.NotNil(t, responseObject.Data)
 }
 
@@ -98,11 +98,11 @@ func TestListContentHandler(t *testing.T) {
 func TestRetrieveContentByCIDHandler(t *testing.T) {
 	log.Println(PublicKey)
 	log.Println(PrivateKey)
-	log.Println(Cid)
+	log.Println(Uuid)
 	param := url.Values{}
 	param.Set("public_key", PublicKey)
 	param.Set("private_key", PrivateKey)
-	param.Set("cid", Cid)
+	param.Set("Uuid", Uuid)
 
 	req := httptest.NewRequest(http.MethodPost, "/fetch-content-by-cid", strings.NewReader(param.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")

@@ -19,7 +19,13 @@ estuary:
   shuttle_api_url: "https://shuttle-4.estuary.tech"
   download_api_url: "https://dweb.link/ipfs"
   base_api_url: "https://api.estuary.tech",
-  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"	
+  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"
+email:
+  server: "smtp.mailtrap.io",
+  port: 2525,
+  username: "6ebe1922975389",
+  password: "16812d042cf6a3",
+  from: "noreply@bond180.com"
 stat:
   badgerdb:
     path: "badger.db"
@@ -28,6 +34,7 @@ stat:
 // ConfYaml is config structure.
 type ConfYaml struct {
 	Estuary SectionEstuary `yaml:"estuary"`
+	Email   EmailStat      `yaml:"email"`
 	Stat    SectionStat    `yaml:"stat"`
 }
 
@@ -37,6 +44,15 @@ type SectionEstuary struct {
 	DownloadApiUrl string `yaml:"download_api_url"`
 	BaseApiUrl     string `yaml:"base_api_url"`
 	Token          string `yaml:"token"`
+}
+
+// EmailStat is sub section of config.
+type EmailStat struct {
+	Server   string `yaml:"server"`
+	Port     int64  `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	From     string `yaml:"from"`
 }
 
 // SectionStat is sub section of config.
@@ -84,6 +100,13 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	conf.Estuary.DownloadApiUrl = viper.GetString("estuary.download_api_url")
 	conf.Estuary.ShuttleApiUrl = viper.GetString("estuary.shuttle_api_url")
 	conf.Estuary.Token = viper.GetString("estuary.token")
+
+	// email
+	conf.Email.Server = viper.GetString("email.server")
+	conf.Email.Username = viper.GetString("email.username")
+	conf.Email.Password = viper.GetString("email.password")
+	conf.Email.From = viper.GetString("email.from")
+	conf.Email.Port = viper.GetInt64("email.port")
 
 	// Stat Engine
 	conf.Stat.BadgerDB.Path = viper.GetString("stat.badgerdb.path")

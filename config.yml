@@ -2,8 +2,13 @@ estuary:
   base_api_url: "https://api.estuary.tech"
   download_api_url: "https://dweb.link/ipfs"
   shuttle_api_url: "https://shuttle-4.estuary.tech"
-  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"
-
+  token: "EST26a02640-bab9-4f86-8bd5-08d2076b8bf0ARY"
+email:
+  server: "smtp.mailtrap.io"
+  port: 2525
+  username: "ac984e52bfd35d"
+  password: "861b495c076713"
+  from: "noreply@bond180.com"
 stat:
   badgerdb:
     path: "badger.db"

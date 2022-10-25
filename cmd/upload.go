@@ -8,7 +8,6 @@ import (
 	thirdparty "filecoin-encrypted-data-storage/third_party"
 	"filecoin-encrypted-data-storage/types"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -18,12 +17,12 @@ import (
 )
 
 func UploadContentCmd() *cobra.Command {
+	cfg, _ := config.LoadConf("./config.yml")
 	cmd := &cobra.Command{
 		Use:   "upload",
 		Short: "Upload your content to filecoin storage",
 		Long:  `Upload your content to filecoin storage which is encrypted using your public key`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, _ := config.LoadConf("./config.yml")
 			estuaryService := service.New(cfg)
 
 			kek, _ := cmd.Flags().GetString("publicKey")
@@ -52,19 +51,23 @@ func UploadContentCmd() *cobra.Command {
 				}
 			}
 
-			err = thirdparty.EncryptFile(dek, file)
+			err = thirdparty.EncryptFile(dek, path, "assets/encrypted.bin")
 			if err != nil {
 				fmt.Println(err)
 			}
+
+			var cids []string
+			var uuid = thirdparty.GenerateUuid()
 			content := estuaryService.UploadContent("assets/encrypted.bin")
-			if content.CID != "" {
-				log.Println(kek)
+			cids = append(cids, content.CID)
+
+			if cids != nil {
 				encryptedDek, err := thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
 				if err != nil {
 					fmt.Println("err" + err.Error())
 				}
-				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: content.CID}
-				service.Store(kek+"-"+content.CID, fileData)
+				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid}
+				service.Store(kek+":"+uuid, fileData)
 			}
 
 			os.Remove("assets/encrypted.bin")
@@ -72,7 +75,7 @@ func UploadContentCmd() *cobra.Command {
 				Status:     "success",
 				StatusCode: http.StatusCreated,
 				Message:    "Content uploaded successfully.",
-				Data:       content,
+				Data:       types.Uuid{Uuid: uuid},
 			}
 			encoded, err := json.Marshal(response)
 			if err != nil {
