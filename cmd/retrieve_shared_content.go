@@ -36,7 +36,7 @@ func RetrieveSharedContentCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("dek", "d", "", "Enter your dek")
+	cmd.Flags().StringP("dek", "d", "", "Enter your dek path")
 	cmd.Flags().StringP("cid", "c", "", "Enter your cid")
 	cmd.MarkFlagRequired("dek")
 	cmd.MarkFlagRequired("cid")

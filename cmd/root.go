@@ -13,9 +13,9 @@ var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "gupt",
-	Short: "gupt is encrypted data storage tool.",
-	Long: `gupt is upload and download data on filecoin 
+	Use:   "encloud",
+	Short: "encloud is encrypted data storage tool.",
+	Long: `encloud is upload and download data on filecoin 
 			network using estuary api. 
 			It also encrypt and decrypt data
 			using rsa algorithm`,
