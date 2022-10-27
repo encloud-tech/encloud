@@ -2,14 +2,12 @@ module filecoin-encrypted-data-storage
 
 go 1.18
 
-require (
-	github.com/gorilla/mux v1.8.0
-	github.com/stretchr/testify v1.8.0
-)
+require github.com/stretchr/testify v1.8.0
 
 require (
 	github.com/dgraph-io/badger/v3 v3.2103.2
 	github.com/google/uuid v1.3.0
+	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/shirou/gopsutil/v3 v3.22.9
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.13.0

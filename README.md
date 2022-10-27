@@ -13,5 +13,13 @@ A filecoin-encrypted-data-storage made in Go framework. It is able to upload and
     > go run . list -p `<GENERATED_PUBLIC_KEY>`
 4) Retreive data from filecoin server. This command decrypt your data using dek. It also decrypt your dek using generated private key. 
 
-    > go run . retrieve-by-cid -p `<GENERATED_PUBLIC_KEY>` -k `<GENERATED_PRIVATE_KEY>` -u `<UUID>`       
+    > go run . retrieve-by-cid -p `<GENERATED_PUBLIC_KEY>` -k `<GENERATED_PRIVATE_KEY>` -u `<UUID>`
 
+## Share content
+1) Share your content to other user using your cid and dek.
+
+    > go run . share -e `<EMAIL>` -p `<GENERATED_PUBLIC_KEY>` -k `<GENERATED_PRIVATE_KEY>` -u `<UUID>`
+
+2) Retrieve shared content from other user using your cid and dek.
+
+    > go run . retrieve-shared-content -c `<RECEIVED_CID_OF_YOUR_EMAIL>` -d `<RECEIVED_DEK_FILE_PATH>`

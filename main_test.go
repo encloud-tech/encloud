@@ -4,119 +4,89 @@ import (
 	"bytes"
 	"encoding/json"
 	"filecoin-encrypted-data-storage/types"
-	"io"
-	"io/ioutil"
 	"log"
-	"mime/multipart"
-	"net/http"
-	"net/http/httptest"
-	"net/url"
-	"os"
-	"strings"
 	"testing"
+
+	"filecoin-encrypted-data-storage/cmd"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var PublicKey string
-var PrivateKey string
-var Uuid string
+func TestGenerateKeyPairCommand(t *testing.T) {
+	// First we have generate key pair to encrypt and decrypt dek.
+	generateKeyPairBuf := new(bytes.Buffer)
+	generateKeyPairCmd := cmd.GenerateKeyPairCmd()
+	generateKeyPairCmd.SetOut(generateKeyPairBuf)
+	generateKeyPairCmd.SetErr(generateKeyPairBuf)
+	generateKeyPairCmd.Execute()
+	var generateKeyPairResponseObject types.GenerateKeyPairResponse
+	json.Unmarshal(generateKeyPairBuf.Bytes(), &generateKeyPairResponseObject)
+	assert.NotNil(t, generateKeyPairResponseObject.Data)
+	publicKey := generateKeyPairResponseObject.Data.PublicKey
+	privateKey := generateKeyPairResponseObject.Data.PrivateKey
+	log.Println("public key:" + publicKey)
+	log.Println("private key:" + privateKey)
 
-func TestGenerateKeyPairHandler(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/generate-key-pair", strings.NewReader(""))
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	w := httptest.NewRecorder()
-	GenerateKeyPairHandler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
-
-	var responseObject types.GenerateKeyPairResponse
-	json.Unmarshal(data, &responseObject)
-	log.Println(responseObject)
-	PublicKey = responseObject.Data.PublicKey
-	PrivateKey = responseObject.Data.PrivateKey
-	assert.NotNil(t, responseObject.Data)
-}
-
-func TestUploadContentHandler(t *testing.T) {
-	log.Println(PublicKey)
+	// After that we can upload encrypted file using dek which is also encrypted using generated public key.
 	filePath := "testdata/Provider2InputData.csv"
-	body := new(bytes.Buffer)
-	writer := multipart.NewWriter(body)
-	file, _ := os.Open(filePath)
-	defer file.Close()
-	part, _ := writer.CreateFormFile("data", filePath)
-	_, _ = io.Copy(part, file)
-	pkw, _ := writer.CreateFormField("public_key")
-	pkw.Write([]byte(PublicKey))
-	writer.Close()
+	uploadContentCmd := cmd.UploadContentCmd()
+	uploadContentBuf := new(bytes.Buffer)
+	uploadContentCmd.SetOut(uploadContentBuf)
+	uploadContentCmd.SetErr(uploadContentBuf)
+	uploadContentCmd.SetArgs([]string{"-p", publicKey, "-f", filePath})
+	uploadContentCmd.Execute()
+	var uploadContentResponseObject types.UploadContentResponse
+	json.Unmarshal(uploadContentBuf.Bytes(), &uploadContentResponseObject)
+	assert.NotNil(t, uploadContentResponseObject.Data)
+	Uuid := uploadContentResponseObject.Data.Uuid
+	log.Println("Uuid: " + Uuid)
 
-	req := httptest.NewRequest(http.MethodPost, "/upload-content", body)
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-	w := httptest.NewRecorder()
-	UploadContentHandler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
+	// Now we fetch list of file meta data from database.
+	listContentBuf := new(bytes.Buffer)
+	listContentsCmd := cmd.ListContentsCmd()
+	listContentsCmd.SetOut(listContentBuf)
+	listContentsCmd.SetErr(listContentBuf)
+	listContentsCmd.SetArgs([]string{"-p", publicKey})
+	listContentsCmd.Execute()
+	var listContentResponseObject types.ListContentResponse
+	json.Unmarshal(listContentBuf.Bytes(), &listContentResponseObject)
+	assert.NotNil(t, listContentResponseObject.Data)
+	log.Println(listContentResponseObject.Data)
 
-	var responseObject types.UploadContentResponse
-	json.Unmarshal(data, &responseObject)
-	log.Println(responseObject)
-	Uuid = responseObject.Data.Uuid
-	assert.NotNil(t, responseObject.Data)
-}
+	// // Finally, we have retrieved uploaded content using cid.
+	retrieveContentByCidBuf := new(bytes.Buffer)
+	retrieveContentByCidCmd := cmd.RetrieveByCidCmd()
+	retrieveContentByCidCmd.SetOut(retrieveContentByCidBuf)
+	retrieveContentByCidCmd.SetErr(retrieveContentByCidBuf)
+	retrieveContentByCidCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid})
+	retrieveContentByCidCmd.Execute()
+	var retrieveContentByCidResponseObject types.RetrieveByCIDContentResponse
+	json.Unmarshal(retrieveContentByCidBuf.Bytes(), &retrieveContentByCidResponseObject)
+	assert.NotNil(t, retrieveContentByCidResponseObject.Data)
+	log.Println(retrieveContentByCidResponseObject.Data)
 
-func TestListContentHandler(t *testing.T) {
-	log.Println(PublicKey)
-	param := url.Values{}
-	param.Set("public_key", PublicKey)
+	// Share content via email.
+	shareBuf := new(bytes.Buffer)
+	shareCmd := cmd.ShareCmd()
+	shareCmd.SetOut(shareBuf)
+	shareCmd.SetErr(shareBuf)
+	shareCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-e", "test@encloud.test"})
+	shareCmd.Execute()
+	var shareResponseObject types.RetrieveByCIDContentResponse
+	json.Unmarshal(shareBuf.Bytes(), &shareResponseObject)
+	assert.NotNil(t, shareResponseObject.Data)
+	cid := shareResponseObject.Data.Cid[0]
+	log.Println(shareResponseObject.Data)
 
-	req := httptest.NewRequest(http.MethodPost, "/fetch-content", strings.NewReader(param.Encode()))
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	w := httptest.NewRecorder()
-	ListContentHandler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
-
-	var responseObject types.ListContentResponse
-	json.Unmarshal(data, &responseObject)
-	log.Println(responseObject)
-	assert.NotNil(t, responseObject.Data)
-}
-
-func TestRetrieveContentByCIDHandler(t *testing.T) {
-	log.Println(PublicKey)
-	log.Println(PrivateKey)
-	log.Println(Uuid)
-	param := url.Values{}
-	param.Set("public_key", PublicKey)
-	param.Set("private_key", PrivateKey)
-	param.Set("Uuid", Uuid)
-
-	req := httptest.NewRequest(http.MethodPost, "/fetch-content-by-cid", strings.NewReader(param.Encode()))
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	w := httptest.NewRecorder()
-	RetrieveContentByCIDHandler(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
-
-	var responseObject types.RetrieveByCIDContentResponse
-	json.Unmarshal(data, &responseObject)
-	log.Println(responseObject)
-	assert.NotNil(t, responseObject.Data)
+	// Retrieve shared content.
+	retrieveSharedContentBuf := new(bytes.Buffer)
+	retrieveSharedContentCmd := cmd.RetrieveSharedContentCmd()
+	retrieveSharedContentCmd.SetOut(retrieveSharedContentBuf)
+	retrieveSharedContentCmd.SetErr(retrieveSharedContentBuf)
+	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", "assets/dek.txt"})
+	retrieveSharedContentCmd.Execute()
+	var retrieveSharedContentResponseObject types.RetrieveByCIDContentResponse
+	json.Unmarshal(retrieveSharedContentBuf.Bytes(), &retrieveSharedContentResponseObject)
+	assert.NotNil(t, retrieveSharedContentResponseObject.Data)
+	log.Println(retrieveSharedContentResponseObject.Data)
 }
