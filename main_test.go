@@ -3,11 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"filecoin-encrypted-data-storage/types"
 	"log"
 	"testing"
 
-	"filecoin-encrypted-data-storage/cmd"
+	"encloud/cmd"
+	"encloud/types"
 
 	"github.com/stretchr/testify/assert"
 )

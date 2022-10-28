@@ -3,8 +3,8 @@ package badger
 import (
 	"bytes"
 	"encoding/gob"
-	"filecoin-encrypted-data-storage/config"
-	"filecoin-encrypted-data-storage/types"
+	"encloud/config"
+	"encloud/types"
 	"fmt"
 	"log"
 	"os"

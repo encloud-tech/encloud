@@ -3,8 +3,8 @@ package service
 import (
 	"bytes"
 	"encoding/json"
-	"filecoin-encrypted-data-storage/config"
-	"filecoin-encrypted-data-storage/types"
+	"encloud/config"
+	"encloud/types"
 	"io"
 	"io/ioutil"
 	"log"

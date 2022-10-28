@@ -3,8 +3,8 @@ package service
 import (
 	"bytes"
 	"encoding/base64"
-	"filecoin-encrypted-data-storage/config"
-	thirdparty "filecoin-encrypted-data-storage/third_party"
+	"encloud/config"
+	thirdparty "encloud/third_party"
 	"fmt"
 	"html/template"
 	"log"

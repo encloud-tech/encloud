@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"encoding/json"
-	"filecoin-encrypted-data-storage/service"
-	thirdparty "filecoin-encrypted-data-storage/third_party"
-	"filecoin-encrypted-data-storage/types"
+	"encloud/service"
+	thirdparty "encloud/third_party"
+	"encloud/types"
 	"fmt"
 	"net/http"
 	"os"
