@@ -5,7 +5,6 @@ import (
 	"filecoin-encrypted-data-storage/service"
 	thirdparty "filecoin-encrypted-data-storage/third_party"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -24,7 +23,6 @@ func RetrieveSharedContentCmd() *cobra.Command {
 			cid, _ := cmd.Flags().GetString("cid")
 
 			dek := thirdparty.ReadFile(decryptedDekPath)
-			log.Println(dek)
 
 			filepath := estuaryService.DownloadContent(cid)
 			err := thirdparty.DecryptFile(dek, filepath)

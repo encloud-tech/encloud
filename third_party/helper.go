@@ -1,6 +1,8 @@
 package thirdparty
 
 import (
+	"encoding/base64"
+	"encoding/pem"
 	"io/ioutil"
 	"log"
 	"os"
@@ -27,4 +29,22 @@ func ReadFile(fileName string) []byte {
 	}
 
 	return data
+}
+
+func ReadKeyFile(filePath string) string {
+	f, _ := os.Open(filePath)
+	keyData, err := ioutil.ReadAll(f)
+	if err != nil {
+		log.Printf("ERROR: fail get idrsa, %s", err.Error())
+		os.Exit(1)
+	}
+
+	keyBlock, _ := pem.Decode(keyData)
+	if keyBlock == nil {
+		log.Printf("ERROR: fail get idrsa, invalid key")
+		os.Exit(1)
+	}
+
+	// encode base64 key data
+	return base64.StdEncoding.EncodeToString(keyBlock.Bytes)
 }
