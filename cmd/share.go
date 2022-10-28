@@ -1,4 +1,4 @@
-package cmd
+package encloud
 
 import (
 	"encoding/json"
@@ -22,10 +22,26 @@ func ShareCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			cfg, _ := config.LoadConf("./config.yml")
 
-			kek, _ := cmd.Flags().GetString("publicKey")
-			privateKey, _ := cmd.Flags().GetString("privateKey")
+			kek := ""
+			privateKey := ""
+			publicKey, _ := cmd.Flags().GetString("publicKey")
+			pk, _ := cmd.Flags().GetString("privateKey")
 			uuid, _ := cmd.Flags().GetString("uuid")
 			email, _ := cmd.Flags().GetString("email")
+			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
+			readPrivateKeyFromPath, _ := cmd.Flags().GetBool("readPrivateKeyFromPath")
+			if readPublicKeyFromPath {
+				kek = thirdparty.ReadKeyFile(publicKey)
+			} else {
+				kek = publicKey
+			}
+
+			if readPrivateKeyFromPath {
+				privateKey = thirdparty.ReadKeyFile(pk)
+			} else {
+				privateKey = pk
+			}
+
 			fileMetaData := service.FetchByCid(kek + ":" + uuid)
 			decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 			if err != nil {
@@ -63,6 +79,8 @@ func ShareCmd() *cobra.Command {
 	cmd.Flags().StringP("privateKey", "k", "", "Enter your private key")
 	cmd.Flags().StringP("uuid", "u", "", "Enter your uuid")
 	cmd.Flags().StringP("email", "e", "", "Enter email which you want to share")
+	cmd.Flags().BoolP("readPublicKeyFromPath", "r", false, "Do you want public key read from path you have entered?")
+	cmd.Flags().BoolP("readPrivateKeyFromPath", "o", false, "Do you want private key read from path you have entered?")
 	cmd.MarkFlagRequired("publicKey")
 	cmd.MarkFlagRequired("privateKey")
 	cmd.MarkFlagRequired("uuid")

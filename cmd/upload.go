@@ -25,8 +25,15 @@ func UploadContentCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			estuaryService := service.New(cfg)
 
-			kek, _ := cmd.Flags().GetString("publicKey")
+			kek := ""
+			publicKey, _ := cmd.Flags().GetString("publicKey")
 			path, _ := cmd.Flags().GetString("filePath")
+			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
+			if readPublicKeyFromPath {
+				kek = thirdparty.ReadKeyFile(publicKey)
+			} else {
+				kek = publicKey
+			}
 			timestamp := time.Now().Unix()
 			file, err := os.Open(path)
 			if err != nil {
@@ -87,6 +94,7 @@ func UploadContentCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
+	cmd.Flags().BoolP("readPublicKeyFromPath", "r", false, "Do you want public key read from path you have entered?")
 	cmd.Flags().StringP("filePath", "f", "", "Enter your file path")
 	cmd.MarkFlagRequired("publicKey")
 	cmd.MarkFlagRequired("filepath")
