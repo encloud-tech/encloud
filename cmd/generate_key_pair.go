@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	thirdparty "encloud/third_party"
+	"encloud/types"
 	"encoding/json"
-	thirdparty "filecoin-encrypted-data-storage/third_party"
-	"filecoin-encrypted-data-storage/types"
 	"fmt"
 	"net/http"
 	"os"

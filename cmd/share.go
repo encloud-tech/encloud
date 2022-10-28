@@ -1,11 +1,11 @@
-package encloud
+package cmd
 
 import (
+	"encloud/config"
+	"encloud/service"
+	thirdparty "encloud/third_party"
+	"encloud/types"
 	"encoding/json"
-	"filecoin-encrypted-data-storage/config"
-	"filecoin-encrypted-data-storage/service"
-	thirdparty "filecoin-encrypted-data-storage/third_party"
-	"filecoin-encrypted-data-storage/types"
 	"fmt"
 	"io/ioutil"
 	"log"

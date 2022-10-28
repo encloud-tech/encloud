@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"filecoin-encrypted-data-storage/config"
-	"filecoin-encrypted-data-storage/service"
-	thirdparty "filecoin-encrypted-data-storage/third_party"
+	"encloud/config"
+	"encloud/service"
+	thirdparty "encloud/third_party"
 	"fmt"
 	"os"
 

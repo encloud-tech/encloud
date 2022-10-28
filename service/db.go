@@ -3,9 +3,9 @@ package service
 import (
 	"bytes"
 	"encoding/gob"
-	"filecoin-encrypted-data-storage/config"
-	"filecoin-encrypted-data-storage/storage/badger"
-	"filecoin-encrypted-data-storage/types"
+	"encloud/config"
+	"encloud/storage/badger"
+	"encloud/types"
 	"fmt"
 )
 

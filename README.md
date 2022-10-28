@@ -1,6 +1,6 @@
-# Filecoin-encrypted-data-storage
+# Encloud
 
-A filecoin-encrypted-data-storage made in Go framework. It is able to upload and download encrypted data to filecoin.
+A encloud made in Go framework. It is able to upload and download encrypted data to filecoin.
 
 ## Steps To Execution
 1) Generate key pair to encrypt & decrypt dek. Run below command to root path of the project to generate key pair

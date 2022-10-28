@@ -1,8 +1,6 @@
 package main
 
-import (
-	"filecoin-encrypted-data-storage/cmd"
-)
+import "encloud/cmd"
 
 func main() {
 	cmd.Execute()
