@@ -2,9 +2,9 @@ package badger
 
 import (
 	"bytes"
-	"encoding/gob"
 	"encloud/config"
 	"encloud/types"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"os"
@@ -39,7 +39,7 @@ func (s *Storage) Init() error {
 		dbPath = os.TempDir() + "badger"
 	}
 	s.opts = badger.DefaultOptions(dbPath)
-
+	s.opts.Logger = nil
 	s.db, err = badger.Open(s.opts)
 
 	return err

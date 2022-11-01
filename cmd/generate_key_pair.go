@@ -26,7 +26,7 @@ func GenerateKeyPairCmd() *cobra.Command {
 			}
 			os.Remove(".keys/.idRsaPub")
 			os.Remove(".keys/.idRsa")
-			encoded, err := json.Marshal(response)
+			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
 				fmt.Println(err)
 				return

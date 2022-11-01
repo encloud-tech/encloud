@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"encoding/json"
 	"encloud/config"
 	"encloud/service"
 	thirdparty "encloud/third_party"
 	"encloud/types"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -59,7 +59,7 @@ func RetrieveByCidCmd() *cobra.Command {
 				Message:    "Content fetched successfully.",
 				Data:       fileMetaData,
 			}
-			encoded, err := json.Marshal(response)
+			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
 				fmt.Println(err)
 				return
