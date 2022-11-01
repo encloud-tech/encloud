@@ -19,7 +19,9 @@ var RootCmd = &cobra.Command{
 			network. It helps in key generation and management, file encryption and key mapping and upload and retrieval of data from the Filecoin network`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) { fmt.Println("Welcome to our CLI!") },
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(`Encloud is a CLI tool for on-boarding sensitive data to Filecoin.`)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

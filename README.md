@@ -31,6 +31,8 @@ go mod tidy
 # enable encloud cli command
 go install .
 ```
+## Configuration
+The default required configuration are in **config.yaml** file under the project root. You can modify any property set in the config file as per your requirements.
 
 ## Command reference
 1) Generate RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the RSA key pair
