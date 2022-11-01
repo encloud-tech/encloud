@@ -66,7 +66,7 @@ func ShareCmd() *cobra.Command {
 				Message:    "Content shared successfully.",
 				Data:       fileMetaData,
 			}
-			encoded, err := json.Marshal(response)
+			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
 				fmt.Println(err)
 				return

@@ -1,50 +1,71 @@
 # Encloud
 
-A encloud made in Go framework. It is able to upload and download encrypted data to filecoin.
+Encloud is a toolkit for making sensitive data useful for Web3. The Encloud CLI enables clients to easily on-board 
+sensitive data to the Filecoin network. 
 
-## Development server
+Encloud CLI is a lightweight utility that allows clients to 
+
+- Generate encryption keys
+- Manage file and encryption metadata in a local or remote KV store
+- Upload encrypted files to Filecoin
+- Retrieve encrypted files from Filecoin and decrypt them
+- Share encrypted files by transferring the DEK to a specified email
+
+Encloud currently uses the Estuary API to upload and retrieve data from Filecoin. This allows clients to interact with the 
+Filecoin network without needing to deal with crypto wallets, tokens or deal making with Filecoin storage providers as 
+Estuary manages this in the background.
+
+We plan to add more flows to enable clients to control their deal making with specific Storage Providers.
+To this end we want to integrate with Singularity and its deal preparation module to  generate encrypted CAR files and make deals
+with specific storage providers.
+
+## Prerequisites
+- Golang 1.18 or higher
+
+## CLI Setup
  
  ```bash
+# go module sync
 go mod tidy
 
 # enable encloud cli command
 go install .
 ```
 
-## Steps To Execution
-1) Generate key pair to encrypt & decrypt dek. Run below command to root path of the project to generate key pair
-    > go run . generate-key-pair
-2) Upload encrypted data to filecoin server. This command encrypted your data using dek. It also encrypt your dek using generated public key. 
+## Command reference
+1) Generate RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the RSA key pair
+    > encloud generate-key-pair
 
-    > go run . upload -p `<GENERATED_PUBLIC_KEY>` -f `<UPLOAD_FILE_PATH>` 
+2) Upload encrypted data to Filecoin. This command encrypts the specified file using a newly generated DEK. The DEK is encrypted using the KEK and the metadata is stored on the local KV store. 
 
-    Read public key from path option allowing to pass public key filepath instead of publickey.
+    > encloud upload -p `<KEK_PUBLIC_KEY>` -f `<UPLOAD_FILE_PATH>` 
 
-    > go run . upload -p `<GENERATED_PUBLIC_KEY_PATH>` -f `<UPLOAD_FILE_PATH>` -r true
-3) List your uploaded data. 
+    Read the KEK public key from a file path instead of raw text.
 
-    > go run . list -p `<GENERATED_PUBLIC_KEY>`
+    > encloud upload -p `<KEK_PUBLIC_KEY_FILE_PATH>` -f `<UPLOAD_FILE_PATH>` -r true
+3) List uploaded files and associated metadata. Metadata is used to query and retrieve the files from Filecoin. 
 
-    Read public key from path option allowing to pass public key filepath instead of publickey.
+    > encloud list -p `<KEK_PUBLIC_KEY>`
 
-    > go run . list -p `<GENERATED_PUBLIC_KEY_PATH>` -r true
-4) Retreive data from filecoin server. This command decrypt your data using dek. It also decrypt your dek using generated private key. 
+   Read the KEK public key from a file path instead of raw text.
 
-    > go run . retrieve-by-cid -p `<GENERATED_PUBLIC_KEY>` -k `<GENERATED_PRIVATE_KEY>` -u `<UUID>`
+    > encloud list -p `<KEK_PUBLIC_KEY_FILE_PATH>` -r true
+4) Retrieve data from Filecoin with a specific CID. This command decrypts encrypted data on Filecoin using the relevant DEK. The DEK is stored in encrypted form in the metadata and is itself decrypted first using the KEK Private Key. 
 
-    Read key from path option allowing to pass key path instead of key value. For public key pass r flag with true value and for private key pass o flag with true value
+    > encloud retrieve-by-cid -p `<KEK_PUBLIC_KEY>` -k `<KEK_PRIVATE_KEY>` -u `<UUID>`
 
-    > go run . retrieve-by-cid -p `<GENERATED_PUBLIC_KEY_PATH>` -k `<GENERATED_PRIVATE_KEY_PATH>` -u `<UUID>` -r true -o true
+   Read the KEK public and private keys from a file path instead of raw text. For KEK public key pass `r` flag with `true` and for private key pass `o` flag with `true`
 
-## Share content
-1) Share your content to other user using your cid and dek.
+    > encloud retrieve-by-cid -p `<KEK_PUBLIC_KEY_FILE_PATH>` -k `<KEK_PRIVATE_KEY_PATH>` -u `<UUID>` -r true -o true
+   
+1) Share your files with other users using the CID and DEK.
 
-    > go run . share -e `<EMAIL>` -p `<GENERATED_PUBLIC_KEY>` -k `<GENERATED_PRIVATE_KEY>` -u `<UUID>`
+    > encloud share -e `<EMAIL>` -p `<KEK_PUBLIC_KEY>` -k `<KEK_PRIVATE_KEY>` -u `<UUID>`
 
-    Read key from path option allowing to pass key path instead of key value. For public key pass r flag with true value and for private key pass o flag with true value
+   Read the KEK public and private keys from a file path instead of raw text. For KEK public key pass `r` flag with `true` and for private key pass `o` flag with `true`
 
-    > go run . share -e `<EMAIL>` -p `<GENERATED_PUBLIC_KEY_PATH>` -k `<GENERATED_PRIVATE_KEY_PATH>` -u `<UUID>` -r true -o true
+    > encloud share -e `<EMAIL>` -p `<KEK_PUBLIC_KEY_PATH>` -k `<KEK_PRIVATE_KEY_PATH>` -u `<UUID>` -r true -o true
 
-2) Retrieve shared content from other user using your cid and dek.
+2) Retrieve shared content from other users using your CID and DEK.
 
-    > go run . retrieve-shared-content -c `<RECEIVED_CID_OF_YOUR_EMAIL>` -d `<RECEIVED_DEK_FILE_PATH>`
+    > encloud retrieve-shared-content -c `<RECEIVED_CID_OF_YOUR_EMAIL>` -d `<RECEIVED_DEK_FILE_PATH>`
