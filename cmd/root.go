@@ -14,11 +14,9 @@ var cfgFile string
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "encloud",
-	Short: "encloud is encrypted data storage tool.",
-	Long: `encloud is upload and download data on filecoin 
-			network using estuary api. 
-			It also encrypt and decrypt data
-			using rsa algorithm`,
+	Short: "encloud is a CLI tool for on-boarding sensitive data to Filecoin.",
+	Long: `encloud is a CLI tool that enables upload and retrieval of sensitive data from the Filecoin 
+			network. It helps in key generation and management, file encryption and key mapping and upload and retrieval of data from the Filecoin network`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) { fmt.Println("Welcome to our CLI!") },
