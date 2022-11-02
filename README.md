@@ -5,13 +5,13 @@ sensitive data to the Filecoin network.
 
 Encloud CLI is a lightweight utility that allows clients to 
 
-- Generate encryption keys
+- Generate their RSA encryption keys
 - Manage file and encryption metadata in a local or remote KV store
 - Upload encrypted files to Filecoin
 - Retrieve encrypted files from Filecoin and decrypt them
 - Share encrypted files by transferring the DEK to a specified email
 
-Encloud currently uses the Estuary API to upload and retrieve data from Filecoin. This allows clients to interact with the 
+Encloud currently uses the [Estuary](https://estuary.tech/) API to upload and retrieve data from Filecoin. This allows clients to interact with the 
 Filecoin network without needing to deal with crypto wallets, tokens or deal making with Filecoin storage providers as 
 Estuary manages this in the background.
 
@@ -71,3 +71,13 @@ The default required configuration are in **config.yaml** file under the project
 2) Retrieve shared content from other users using your CID and DEK.
 
     > encloud retrieve-shared-content -c `<RECEIVED_CID_OF_YOUR_EMAIL>` -d `<RECEIVED_DEK_FILE_PATH>`
+
+
+## Future features
+- Distributed key management for KEKs 
+- Encryption and chunking for performant file uploads 
+- Integration with Singularity's Deal Preparation Framework to generate encrypted CAR files
+- UI for clients and storage providers
+
+## License 
+[AGPL3.0](https://github.com/encloud-tech/encloud/blob/main/LICENSE)
