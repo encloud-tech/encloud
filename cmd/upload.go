@@ -65,7 +65,10 @@ func UploadContentCmd() *cobra.Command {
 
 			var cids []string
 			var uuid = thirdparty.GenerateUuid()
-			content := estuaryService.UploadContent("assets/encrypted.bin")
+			content, err := estuaryService.UploadContent("assets/encrypted.bin")
+			if err != nil {
+				fmt.Println(err)
+			}
 			cids = append(cids, content.CID)
 
 			if cids != nil {
