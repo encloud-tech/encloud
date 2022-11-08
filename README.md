@@ -19,6 +19,8 @@ We plan to add more flows to enable clients to control their deal making with sp
 To this end we want to integrate with Singularity and its deal preparation module to  generate encrypted CAR files and make deals
 with specific storage providers.
 
+Read [**here**](docs/DESIGN.md) for detailed **design and architecture** 
+
 ## Prerequisites
 - Golang 1.18 or higher
 
