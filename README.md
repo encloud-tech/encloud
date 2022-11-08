@@ -1,4 +1,4 @@
-# Encloud
+<img src=".github/EncloudLogoSmall.png" alt="180Protocol Logo" width="40%"/>
 
 Encloud is a toolkit for making sensitive data useful for Web3. The Encloud CLI enables clients to easily on-board 
 sensitive data to the Filecoin network. 
@@ -75,9 +75,15 @@ The default required configuration are in **config.yaml** file under the project
 
 ## Future features
 - Distributed key management for KEKs 
-- Encryption and chunking for performant file uploads 
-- Integration with Singularity's Deal Preparation Framework to generate encrypted CAR files
+- Chunking for performant file uploads 
+- Integration with Singularity's Deal Preparation Framework to generate encrypted CAR files for SP ingestion
 - UI for clients and storage providers
+
+## Support
+
+* Please file an issue to get help or report a bug.
+* Storage Providers and Clients : we want to work with you to integrate our tooling and offer bespoke support, please reach
+out at [contact@encloud.tech](mailto:contact@encloud.tech)
 
 ## License 
 [AGPL3.0](https://github.com/encloud-tech/encloud/blob/main/LICENSE)
