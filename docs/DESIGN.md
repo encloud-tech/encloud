@@ -1,4 +1,4 @@
-# Design and approach 
+# Design and architecture 
 
 Encloud Encryption and Storage CLI was born out of a [grant](https://github.com/filecoin-project/devgrants/issues/631) from the Filecoin Foundation. Today the Filecoin network is largely
 relevant for public data sets owing to its open nature and content addressable design. Therefore, the Filecoin ecosystems has
