@@ -3,7 +3,7 @@
 Encloud is a toolkit for making sensitive data useful for Web3. The Encloud CLI enables clients to easily on-board 
 sensitive data to the Filecoin network. 
 
-Encloud CLI is a lightweight utility that allows clients to 
+Encloud Encryption and Storage CLI is a lightweight utility that allows clients to 
 
 - Generate their RSA encryption keys
 - Manage file and encryption metadata in a local or remote KV store
@@ -11,7 +11,7 @@ Encloud CLI is a lightweight utility that allows clients to
 - Retrieve encrypted files from Filecoin and decrypt them
 - Share encrypted files by transferring the DEK to a specified email
 
-Encloud currently uses the [Estuary](https://estuary.tech/) API to upload and retrieve data from Filecoin. This allows clients to interact with the 
+Encloud currently uses the [**Estuary**](https://estuary.tech/) API to upload and retrieve data from Filecoin. This allows clients to interact with the 
 Filecoin network without needing to deal with crypto wallets, tokens or deal making with Filecoin storage providers as 
 Estuary manages this in the background.
 
@@ -23,6 +23,7 @@ Read [**here**](docs/DESIGN.md) for detailed **design and architecture**
 
 ## Prerequisites
 - Golang 1.18 or higher
+- Estuary API account and key. Read [more](docs/CONFIG.md)
 
 ## CLI Setup
  
