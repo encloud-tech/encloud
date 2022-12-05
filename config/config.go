@@ -14,12 +14,20 @@ var IdRsa = ".keys/.idRsa"
 var IdRsaPub = ".keys/.idRsaPub"
 var KeySize = 3072
 
+var SaltSize = 32                  // in bytes
+var NonceSize = 24                 // in bytes. taken from aead.NonceSize()
+var EncryptionKeySize = uint32(32) // KeySize is 32 bytes (256 bits).
+var KeyTime = uint32(5)
+var KeyMemory = uint32(1024 * 64) // KeyMemory in KiB. here, 64 MiB.
+var KeyThreads = uint8(4)
+var ChunkSize = 1024 * 32 // chunkSize in bytes. here, 32 KiB.
+
 var defaultConf = []byte(`
 estuary:
   shuttle_api_url: "https://shuttle-4.estuary.tech"
   download_api_url: "https://dweb.link/ipfs"
   base_api_url: "https://api.estuary.tech",
-  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"
+  token: "ESTad52ad4c-8c67-4ce5-b884-ffa408f65c0fARY"
 email:
   server: "smtp.mailtrap.io",
   port: 2525,

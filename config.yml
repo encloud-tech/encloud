@@ -2,7 +2,7 @@ estuary:
   base_api_url: "https://api.estuary.tech"
   download_api_url: "https://dweb.link/ipfs"
   shuttle_api_url: "https://shuttle-4.estuary.tech"
-  token: "ESTc18f68ea-346f-4ff9-b222-2083dceba39dARY"
+  token: "ESTad52ad4c-8c67-4ce5-b884-ffa408f65c0fARY"
 email:
   server: "smtp.mailtrap.io"
   port: 2525
