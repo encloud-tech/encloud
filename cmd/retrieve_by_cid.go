@@ -48,10 +48,18 @@ func RetrieveByCidCmd() *cobra.Command {
 			}
 
 			filepath := estuaryService.DownloadContent(fileMetaData.Cid[0])
-			err = thirdparty.DecryptFile(decryptedDek, filepath)
-			if err != nil {
-				fmt.Println(err)
+			if fileMetaData.EncryptedBy == "aes" {
+				err = thirdparty.DecryptWithAES(decryptedDek, filepath, "assets/decrypted.csv")
+				if err != nil {
+					fmt.Println(err)
+				}
+			} else {
+				err = thirdparty.DecryptWithChacha20poly1305(decryptedDek, filepath, "assets/decrypted.csv")
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
+
 			os.Remove("assets/downloaded.bin")
 			response := types.RetrieveByCIDContentResponse{
 				Status:     "success",

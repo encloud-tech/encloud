@@ -24,13 +24,14 @@ type ByCidResponse struct {
 type FileData []FileMetadata
 
 type FileMetadata struct {
-	Uuid      string
-	Timestamp int64
-	Name      string
-	Size      int
-	FileType  string
-	Cid       []string
-	Dek       []byte
+	Uuid        string
+	Timestamp   int64
+	Name        string
+	Size        int
+	FileType    string
+	Cid         []string
+	Dek         []byte
+	EncryptedBy string
 }
 
 type GenerateKeyPairResponse struct {
