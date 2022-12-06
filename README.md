@@ -41,13 +41,13 @@ The default required configuration are in **config.yaml** file under the project
 1) Generate RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the RSA key pair
     > encloud generate-key-pair
 
-2) Upload encrypted data to Filecoin. This command encrypts the specified file using a newly generated DEK. The DEK is encrypted using the KEK and the metadata is stored on the local KV store. 
+2) Upload encrypted data to Filecoin. This command encrypts the specified file using a newly generated DEK. The DEK is encrypted using the KEK and the metadata is stored on the local KV store. This command also provide encryption type options which are aes or chacha20 to encrypt dek.
 
-    > encloud upload -p `<KEK_PUBLIC_KEY>` -f `<UPLOAD_FILE_PATH>` 
+    > encloud upload -p `<KEK_PUBLIC_KEY>` -f `<UPLOAD_FILE_PATH>` -e `<ENCRYPTION_TYPE>` 
 
     Read the KEK public key from a file path instead of raw text.
 
-    > encloud upload -p `<KEK_PUBLIC_KEY_FILE_PATH>` -f `<UPLOAD_FILE_PATH>` -r true
+    > encloud upload -p `<KEK_PUBLIC_KEY_FILE_PATH>` -f `<UPLOAD_FILE_PATH>` -e `<ENCRYPTION_TYPE>` -r true
 3) List uploaded files and associated metadata. Metadata is used to query and retrieve the files from Filecoin. 
 
     > encloud list -p `<KEK_PUBLIC_KEY>`
