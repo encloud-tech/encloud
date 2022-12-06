@@ -48,8 +48,6 @@ func ShareCmd() *cobra.Command {
 				fmt.Println(err)
 			}
 
-			fmt.Println(decryptedDek)
-
 			// Writing decryption dek
 			err = ioutil.WriteFile("assets/dek.txt", decryptedDek, 0777)
 			if err != nil {
@@ -58,7 +56,7 @@ func ShareCmd() *cobra.Command {
 
 			subject := "Share content"
 			r := service.NewRequest([]string{email}, subject, cfg)
-			r.Send("./templates/share.html", map[string]string{"cid": fileMetaData.Cid[0]})
+			r.Send("./templates/share.html", map[string]string{"cid": fileMetaData.Cid[0], "encryptionBy": fileMetaData.EncryptedBy})
 
 			response := types.RetrieveByCIDContentResponse{
 				Status:     "success",

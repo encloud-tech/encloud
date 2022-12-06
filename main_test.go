@@ -33,7 +33,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	uploadContentBuf := new(bytes.Buffer)
 	uploadContentCmd.SetOut(uploadContentBuf)
 	uploadContentCmd.SetErr(uploadContentBuf)
-	uploadContentCmd.SetArgs([]string{"-p", publicKey, "-f", filePath})
+	uploadContentCmd.SetArgs([]string{"-p", publicKey, "-f", filePath, "-e", "chacha20"})
 	uploadContentCmd.Execute()
 	var uploadContentResponseObject types.UploadContentResponse
 	json.Unmarshal(uploadContentBuf.Bytes(), &uploadContentResponseObject)
@@ -53,7 +53,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	assert.NotNil(t, listContentResponseObject.Data)
 	log.Println(listContentResponseObject.Data)
 
-	// // Finally, we have retrieved uploaded content using cid.
+	// Finally, we have retrieved uploaded content using cid.
 	retrieveContentByCidBuf := new(bytes.Buffer)
 	retrieveContentByCidCmd := cmd.RetrieveByCidCmd()
 	retrieveContentByCidCmd.SetOut(retrieveContentByCidBuf)
