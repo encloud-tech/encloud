@@ -56,7 +56,7 @@ func ShareCmd() *cobra.Command {
 
 			subject := "Share content"
 			r := service.NewRequest([]string{email}, subject, cfg)
-			r.Send("./templates/share.html", map[string]string{"cid": fileMetaData.Cid[0], "encryptionBy": fileMetaData.EncryptedBy})
+			r.Send("./templates/share.html", map[string]string{"cid": fileMetaData.Cid[0], "dekType": fileMetaData.DekType})
 
 			response := types.RetrieveByCIDContentResponse{
 				Status:     "success",

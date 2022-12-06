@@ -28,7 +28,7 @@ func UploadContentCmd() *cobra.Command {
 			kek := ""
 			publicKey, _ := cmd.Flags().GetString("publicKey")
 			path, _ := cmd.Flags().GetString("filePath")
-			encryptionType, _ := cmd.Flags().GetString("encryptionType")
+			dekType, _ := cmd.Flags().GetString("dekType")
 			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
 			if readPublicKeyFromPath {
 				kek = thirdparty.ReadKeyFile(publicKey)
@@ -59,7 +59,7 @@ func UploadContentCmd() *cobra.Command {
 				}
 			}
 
-			if encryptionType == "aes" {
+			if dekType == "aes" {
 				err = thirdparty.EncryptWithAES(dek, path, "assets/encrypted.bin")
 				if err != nil {
 					fmt.Println(err)
@@ -84,7 +84,7 @@ func UploadContentCmd() *cobra.Command {
 				if err != nil {
 					fmt.Println("err" + err.Error())
 				}
-				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, EncryptedBy: encryptionType}
+				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, DekType: dekType}
 				service.Store(kek+":"+uuid, fileData)
 			}
 
@@ -107,7 +107,7 @@ func UploadContentCmd() *cobra.Command {
 	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
 	cmd.Flags().BoolP("readPublicKeyFromPath", "r", false, "Do you want public key read from path you have entered?")
 	cmd.Flags().StringP("filePath", "f", "", "Enter your file path")
-	cmd.Flags().StringP("encryptionType", "e", "chacha20", "Enter which type of encryption do you want?")
+	cmd.Flags().StringP("dekType", "e", "chacha20", "Enter which type of encryption do you want?")
 	cmd.MarkFlagRequired("publicKey")
 	cmd.MarkFlagRequired("filepath")
 	return cmd
