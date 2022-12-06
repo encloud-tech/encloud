@@ -48,7 +48,7 @@ func RetrieveByCidCmd() *cobra.Command {
 			}
 
 			filepath := estuaryService.DownloadContent(fileMetaData.Cid[0])
-			if fileMetaData.EncryptedBy == "aes" {
+			if fileMetaData.DekType == "aes" {
 				err = thirdparty.DecryptWithAES(decryptedDek, filepath, "assets/decrypted.csv")
 				if err != nil {
 					fmt.Println(err)

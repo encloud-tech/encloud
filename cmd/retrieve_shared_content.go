@@ -21,12 +21,12 @@ func RetrieveSharedContentCmd() *cobra.Command {
 
 			decryptedDekPath, _ := cmd.Flags().GetString("dek")
 			cid, _ := cmd.Flags().GetString("cid")
-			encryptionType, _ := cmd.Flags().GetString("encryptionType")
+			dekType, _ := cmd.Flags().GetString("dekType")
 
 			dek := thirdparty.ReadFile(decryptedDekPath)
 
 			filepath := estuaryService.DownloadContent(cid)
-			if encryptionType == "aes" {
+			if dekType == "aes" {
 				err := thirdparty.DecryptWithAES(dek, filepath, "assets/decrypted.csv")
 				if err != nil {
 					fmt.Println(err)
@@ -44,10 +44,10 @@ func RetrieveSharedContentCmd() *cobra.Command {
 
 	cmd.Flags().StringP("dek", "d", "", "Enter your dek path")
 	cmd.Flags().StringP("cid", "c", "", "Enter your cid")
-	cmd.Flags().StringP("encryptionType", "e", "", "Enter encryption type")
+	cmd.Flags().StringP("dekType", "e", "", "Enter DEK type")
 	cmd.MarkFlagRequired("dek")
 	cmd.MarkFlagRequired("cid")
-	cmd.MarkFlagRequired("encryptionType")
+	cmd.MarkFlagRequired("dekType")
 	return cmd
 }
 
