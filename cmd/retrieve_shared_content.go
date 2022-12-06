@@ -25,7 +25,7 @@ func RetrieveSharedContentCmd() *cobra.Command {
 			dek := thirdparty.ReadFile(decryptedDekPath)
 
 			filepath := estuaryService.DownloadContent(cid)
-			err := thirdparty.Decrypt(dek, filepath, "assets/decrypted.csv")
+			err := thirdparty.DecryptWithAES(dek, filepath, "assets/decrypted.csv")
 			if err != nil {
 				fmt.Println(err)
 			}
