@@ -53,7 +53,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	assert.NotNil(t, listContentResponseObject.Data)
 	log.Println(listContentResponseObject.Data)
 
-	// // Finally, we have retrieved uploaded content using cid.
+	// Finally, we have retrieved uploaded content using cid.
 	retrieveContentByCidBuf := new(bytes.Buffer)
 	retrieveContentByCidCmd := cmd.RetrieveByCidCmd()
 	retrieveContentByCidCmd.SetOut(retrieveContentByCidBuf)

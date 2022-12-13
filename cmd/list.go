@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encloud/config"
 	"encloud/service"
 	thirdparty "encloud/third_party"
 	"encloud/types"
@@ -18,6 +19,8 @@ func ListContentsCmd() *cobra.Command {
 		Short: "List your uploaded contents",
 		Long:  `List your uploaded contents data which contains file meta informations`,
 		Run: func(cmd *cobra.Command, args []string) {
+			cfg, _ := config.LoadConf()
+			dbService := service.NewDB(cfg)
 			kek := ""
 			publicKey, _ := cmd.Flags().GetString("publicKey")
 			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
@@ -26,7 +29,7 @@ func ListContentsCmd() *cobra.Command {
 			} else {
 				kek = publicKey
 			}
-			fileMetaData := service.Fetch(kek)
+			fileMetaData := dbService.Fetch(thirdparty.DigestString(kek))
 			os.Remove("assets/downloaded.bin")
 			response := types.ListContentResponse{
 				Status:     "success",

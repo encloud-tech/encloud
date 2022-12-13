@@ -16,19 +16,26 @@ var KeySize = 3072
 
 var defaultConf = []byte(`
 estuary:
-  shuttle_api_url: "https://shuttle-4.estuary.tech"
-  download_api_url: "https://dweb.link/ipfs"
-  base_api_url: "https://api.estuary.tech",
-  token: "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY"
+  base_api_url: 'https://api.estuary.tech'
+  download_api_url: 'https://dweb.link/ipfs'
+  shuttle_api_url: 'https://shuttle-4.estuary.tech'
+  token: EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY
 email:
-  server: "smtp.mailtrap.io",
-  port: 2525,
-  username: "6ebe1922975389",
-  password: "16812d042cf6a3",
-  from: "noreply@bond180.com"
+  server: smtp.mailtrap.io
+  port: 2525
+  username: ac984e52bfd35d
+  password: 861b495c076713
+  from: noreply@bond180.com
 stat:
+  storageType: badgerdb
   badgerdb:
-    path: "badger.db"
+    path: badger.db
+  couchbase:
+    host: localhost
+    username: Administrator
+    password: Encloud@2022
+    bucketName: encloud
+
 `)
 
 // ConfYaml is config structure.
@@ -57,12 +64,22 @@ type EmailStat struct {
 
 // SectionStat is sub section of config.
 type SectionStat struct {
-	BadgerDB SectionBadgerDB `yaml:"badgerdb"`
+	BadgerDB    SectionBadgerDB `yaml:"badgerdb"`
+	Couchbase   SectionCouchbae `yaml:"couchbase"`
+	StorageType string          `yaml:"storageType"`
 }
 
 // SectionBadgerDB is sub section of config.
 type SectionBadgerDB struct {
 	Path string `yaml:"path"`
+}
+
+// SectionCouchbae is sub section of config.
+type SectionCouchbae struct {
+	Host       string `yaml:"host"`
+	Username   string `yaml:"username"`
+	Password   string `yaml:"password"`
+	BucketName string `yaml:"bucketName"`
 }
 
 // LoadConf load config from file and read in environment variables that match
@@ -109,7 +126,12 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	conf.Email.Port = viper.GetInt64("email.port")
 
 	// Stat Engine
+	conf.Stat.StorageType = viper.GetString("stat.storageType")
 	conf.Stat.BadgerDB.Path = viper.GetString("stat.badgerdb.path")
+	conf.Stat.Couchbase.Host = viper.GetString("stat.couchbase.host")
+	conf.Stat.Couchbase.Username = viper.GetString("stat.couchbase.username")
+	conf.Stat.Couchbase.Password = viper.GetString("stat.couchbase.password")
+	conf.Stat.Couchbase.BucketName = viper.GetString("stat.couchbase.bucketName")
 
 	return conf, nil
 }
