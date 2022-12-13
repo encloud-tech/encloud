@@ -17,13 +17,14 @@ import (
 )
 
 func UploadContentCmd() *cobra.Command {
-	cfg, _ := config.LoadConf("./config.yml")
+	cfg, _ := config.LoadConf()
 	cmd := &cobra.Command{
 		Use:   "upload",
 		Short: "Upload your content to filecoin storage",
 		Long:  `Upload your content to filecoin storage which is encrypted using your public key`,
 		Run: func(cmd *cobra.Command, args []string) {
 			estuaryService := service.New(cfg)
+			dbService := service.NewDB(cfg)
 
 			kek := ""
 			publicKey, _ := cmd.Flags().GetString("publicKey")
@@ -84,8 +85,9 @@ func UploadContentCmd() *cobra.Command {
 				if err != nil {
 					fmt.Println("err" + err.Error())
 				}
-				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, DekType: dekType}
-				service.Store(kek+":"+uuid, fileData)
+				hash := thirdparty.DigestString(kek)
+				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType}
+				dbService.Store(hash+":"+uuid, fileData)
 			}
 
 			os.Remove("assets/encrypted.bin")

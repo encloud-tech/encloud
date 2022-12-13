@@ -20,7 +20,8 @@ func ShareCmd() *cobra.Command {
 		Short: "Share uploaded content to other user",
 		Long:  `Share uploaded content with your cid and dek to another user`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, _ := config.LoadConf("./config.yml")
+			cfg, _ := config.LoadConf()
+			dbService := service.NewDB(cfg)
 
 			kek := ""
 			privateKey := ""
@@ -42,7 +43,7 @@ func ShareCmd() *cobra.Command {
 				privateKey = pk
 			}
 
-			fileMetaData := service.FetchByCid(kek + ":" + uuid)
+			fileMetaData := dbService.FetchByCid(thirdparty.DigestString(kek) + ":" + uuid)
 			decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 			if err != nil {
 				fmt.Println(err)

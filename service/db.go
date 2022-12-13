@@ -2,53 +2,89 @@ package service
 
 import (
 	"bytes"
-	"encoding/gob"
 	"encloud/config"
 	"encloud/storage/badger"
+	"encloud/storage/couchbase"
 	"encloud/types"
+	"encoding/gob"
 	"fmt"
 )
 
-func initDB() *badger.Storage {
+// New func implements the storage interface
+func NewDB(config *config.ConfYaml) *DB {
+	return &DB{
+		config: config,
+	}
+}
+
+type DB struct {
+	config *config.ConfYaml
+}
+
+func initBadgerDB() *badger.Storage {
 	cfg, _ := config.LoadConf()
 
 	badger := badger.New(cfg)
 	err := badger.Init()
 	if err != nil {
-		fmt.Printf("ERROR saving to badger db : %s\n", err)
+		fmt.Printf("Error in initializing badger db : %s\n", err)
 	}
 
 	return badger
 }
 
-func Store(key string, fileMetaData types.FileMetadata) {
-	badger := initDB()
-	var b bytes.Buffer
-	e := gob.NewEncoder(&b)
-	if err := e.Encode(fileMetaData); err != nil {
-		panic(err)
+func initCouchBaseDB() *couchbase.Storage {
+	cfg, _ := config.LoadConf()
+
+	couchbase := couchbase.New(cfg)
+	err := couchbase.Init()
+	if err != nil {
+		fmt.Printf("Error in initializing couchbase db : %s\n", err)
 	}
 
-	badger.Create(key, b.Bytes())
-	badger.Close()
+	return couchbase
 }
 
-func FetchByCid(key string) types.FileMetadata {
-	badger := initDB()
-	val := badger.ReadByCid(key)
-	var metaDataDecode types.FileMetadata
-	d := gob.NewDecoder(bytes.NewReader(val))
-	if err := d.Decode(&metaDataDecode); err != nil {
-		panic(err)
+func (d *DB) Store(key string, fileMetaData types.FileMetadata) {
+	if d.config.Stat.StorageType == "couchbase" {
+		couchbase := initCouchBaseDB()
+		couchbase.Create(key, fileMetaData)
+	} else {
+		badger := initBadgerDB()
+		var b bytes.Buffer
+		e := gob.NewEncoder(&b)
+		if err := e.Encode(fileMetaData); err != nil {
+			panic(err)
+		}
+
+		badger.Create(key, b.Bytes())
+		badger.Close()
+	}
+}
+
+func (d *DB) Fetch(key string) types.FileData {
+	var val types.FileData
+	if d.config.Stat.StorageType == "couchbase" {
+		couchbase := initCouchBaseDB()
+		val = couchbase.Read(key)
+	} else {
+		badger := initBadgerDB()
+		val = badger.Read(key)
+		badger.Close()
+	}
+	return val
+}
+
+func (d *DB) FetchByCid(key string) types.FileMetadata {
+	var val types.FileMetadata
+	if d.config.Stat.StorageType == "couchbase" {
+		couchbase := initCouchBaseDB()
+		val = couchbase.ReadByCid(key)
+	} else {
+		badger := initBadgerDB()
+		val = badger.ReadByCid(key)
+		badger.Close()
 	}
 
-	badger.Close()
-	return metaDataDecode
-}
-
-func Fetch(key string) types.FileData {
-	badger := initDB()
-	val := badger.Read(key)
-	badger.Close()
 	return val
 }
