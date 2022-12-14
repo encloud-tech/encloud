@@ -16,7 +16,7 @@ func RetrieveSharedContentCmd() *cobra.Command {
 		Short: "Retrieve specific uploaded content using your cid",
 		Long:  `Retrieve specific uploaded content using your cid and decrypt it using your private key`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, _ := config.LoadConf()
+			cfg, _ := config.LoadConf("./config.yaml")
 			estuaryService := service.New(cfg)
 
 			decryptedDekPath, _ := cmd.Flags().GetString("dek")

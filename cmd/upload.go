@@ -17,7 +17,7 @@ import (
 )
 
 func UploadContentCmd() *cobra.Command {
-	cfg, _ := config.LoadConf()
+	cfg, _ := config.LoadConf("./config.yaml")
 	cmd := &cobra.Command{
 		Use:   "upload",
 		Short: "Upload your content to filecoin storage",

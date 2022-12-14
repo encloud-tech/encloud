@@ -19,7 +19,7 @@ func ListContentsCmd() *cobra.Command {
 		Short: "List your uploaded contents",
 		Long:  `List your uploaded contents data which contains file meta informations`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, _ := config.LoadConf()
+			cfg, _ := config.LoadConf("./config.yaml")
 			dbService := service.NewDB(cfg)
 			kek := ""
 			publicKey, _ := cmd.Flags().GetString("publicKey")

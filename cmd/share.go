@@ -20,7 +20,7 @@ func ShareCmd() *cobra.Command {
 		Short: "Share uploaded content to other user",
 		Long:  `Share uploaded content with your cid and dek to another user`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, _ := config.LoadConf()
+			cfg, _ := config.LoadConf("./config.yaml")
 			dbService := service.NewDB(cfg)
 
 			kek := ""
