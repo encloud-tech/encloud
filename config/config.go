@@ -42,8 +42,10 @@ stat:
     host: localhost
     username: Administrator
     password: Encloud@2022
-    bucketName: encloud
-
+    bucket:
+      name: encloud
+      scope: file
+      collection: metadata
 `)
 
 // ConfYaml is config structure.
@@ -72,9 +74,9 @@ type EmailStat struct {
 
 // SectionStat is sub section of config.
 type SectionStat struct {
-	BadgerDB    SectionBadgerDB `yaml:"badgerdb"`
-	Couchbase   SectionCouchbae `yaml:"couchbase"`
-	StorageType string          `yaml:"storageType"`
+	BadgerDB    SectionBadgerDB  `yaml:"badgerdb"`
+	Couchbase   SectionCouchbase `yaml:"couchbase"`
+	StorageType string           `yaml:"storageType"`
 }
 
 // SectionBadgerDB is sub section of config.
@@ -83,11 +85,17 @@ type SectionBadgerDB struct {
 }
 
 // SectionCouchbae is sub section of config.
-type SectionCouchbae struct {
-	Host       string `yaml:"host"`
-	Username   string `yaml:"username"`
-	Password   string `yaml:"password"`
-	BucketName string `yaml:"bucketName"`
+type SectionCouchbase struct {
+	Host     string        `yaml:"host"`
+	Username string        `yaml:"username"`
+	Password string        `yaml:"password"`
+	Bucket   SectionBucket `yaml:"bucket"`
+}
+
+type SectionBucket struct {
+	Name       string `yaml:"name"`
+	Scope      string `yaml:"scope"`
+	Collection string `yaml:"collection"`
 }
 
 // LoadConf load config from file and read in environment variables that match
@@ -139,7 +147,9 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	conf.Stat.Couchbase.Host = viper.GetString("stat.couchbase.host")
 	conf.Stat.Couchbase.Username = viper.GetString("stat.couchbase.username")
 	conf.Stat.Couchbase.Password = viper.GetString("stat.couchbase.password")
-	conf.Stat.Couchbase.BucketName = viper.GetString("stat.couchbase.bucketName")
+	conf.Stat.Couchbase.Bucket.Name = viper.GetString("stat.couchbase.bucket.name")
+	conf.Stat.Couchbase.Bucket.Scope = viper.GetString("stat.couchbase.bucket.scope")
+	conf.Stat.Couchbase.Bucket.Collection = viper.GetString("stat.couchbase.bucket.collection")
 
 	return conf, nil
 }

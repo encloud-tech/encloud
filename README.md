@@ -64,6 +64,10 @@ Couchbase Server can be accessed using
 
  To create a bucket on couchbase server please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-buckets/create-bucket.html)
 
+#### Manage scope and collection on Couchbase Server
+
+To manage scope and collection of bucket on couchbase server please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-scopes-and-collections/manage-scopes-and-collections.html)
+
 #### Managing indexes on Couchbase Server
  To manage and create primary or seconadary indexex on couchbase server
  to fetch data please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-indexes/manage-indexes.html)

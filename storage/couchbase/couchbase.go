@@ -44,7 +44,7 @@ func (s *Storage) Init() error {
 		return err
 	}
 
-	s.bucket = s.cluster.Bucket(s.config.Stat.Couchbase.BucketName)
+	s.bucket = s.cluster.Bucket(s.config.Stat.Couchbase.Bucket.Name)
 
 	err = s.bucket.WaitUntilReady(10*time.Second, nil)
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *Storage) Init() error {
 }
 
 func (s *Storage) Create(key string, metadata types.FileMetadata) {
-	col := s.bucket.Scope("file").Collection("metadata")
+	col := s.bucket.Scope(s.config.Stat.Couchbase.Bucket.Scope).Collection(s.config.Stat.Couchbase.Bucket.Collection)
 
 	// Create and store a Document
 	_, err := col.Insert(key,
@@ -77,9 +77,9 @@ func (s *Storage) Create(key string, metadata types.FileMetadata) {
 }
 
 func (s *Storage) Read(key string) types.FileData {
-	col := s.bucket.Scope("file")
+	col := s.bucket.Scope(s.config.Stat.Couchbase.Bucket.Scope)
 	var ival types.FileData
-	query := "SELECT x.* FROM `metadata` x WHERE x.md5Hash='" + key + "';"
+	query := "SELECT x.* FROM `" + s.config.Stat.Couchbase.Bucket.Collection + "` x WHERE x.md5Hash='" + key + "';"
 	queryResult, err := col.Query(
 		query,
 		&gocb.QueryOptions{},
@@ -106,7 +106,7 @@ func (s *Storage) Read(key string) types.FileData {
 }
 
 func (s *Storage) ReadByCid(key string) types.FileMetadata {
-	col := s.bucket.Scope("file").Collection("metadata")
+	col := s.bucket.Scope(s.config.Stat.Couchbase.Bucket.Scope).Collection(s.config.Stat.Couchbase.Bucket.Collection)
 	queryResult, err := col.Get(key, nil)
 	if err != nil {
 		log.Fatal(err)
