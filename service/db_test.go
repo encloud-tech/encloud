@@ -11,7 +11,7 @@ import (
 func TestDBService(t *testing.T) {
 	cfg, err := config.LoadConf()
 	if err != nil {
-		panic("failed to load config.yml from file")
+		panic("failed to load config.yaml from file")
 	}
 	dbService := NewDB(cfg)
 

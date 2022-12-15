@@ -17,4 +17,7 @@ stat:
     host: localhost
     username: Administrator
     password: Encloud@2022
-    bucketName: encloud
+    bucket:
+      name: encloud
+      scope: file
+      collection: metadata

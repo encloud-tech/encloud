@@ -1,4 +1,4 @@
-<img src=".github/EncloudLogoSmall.png" alt="180Protocol Logo" width="40%"/>
+<img src=".github/EnCloud_RGB-03.png" alt="180Protocol Logo" width="30%" height="30%"/>
 
 Encloud is a toolkit for making sensitive data useful for Web3. The Encloud CLI enables clients to easily on-board 
 sensitive data to the Filecoin network. 
@@ -24,6 +24,7 @@ Read [**here**](docs/DESIGN.md) for detailed **design and architecture**
 ## Prerequisites
 - Golang 1.18 or higher
 - Estuary API account and key. Read [more](docs/CONFIG.md)
+- CouchbaseDB for metadata storage (optional)
 
 ## CLI Setup
  
@@ -34,47 +35,6 @@ go mod tidy
 # enable encloud cli command
 go install .
 ```
-## Configuration
-The default required configuration are in **config.yaml** file under the project root. You can modify any property set in the config file as per your requirements.
-
-To use couchbase storage option require couchbase server. Please follow below instruction to install and setup couchbase server locally.
-
-### Couchbase Server <a name="installation-cbs"></a>
-
-Couchbase Server is an open source, distributed, NoSQL document-oriented engagement database. It exposes a fast key-value store with managed cache for sub-millisecond data operations, purpose-built indexers for fast queries and a powerful query engine for executing SQL-like queries. 
-
-#### Installation
-
-To install Couchbase Server please follow the instructions [here](https://docs.couchbase.com/server/current/install/install-intro.html).
-
-#### Starting Couchbase Server
-
-Once Couchbase Server has been installed simply navigate to where it has been installed and start "Couchbase Server".
-
-To start Couchbase Server using Docker please see the documentation [here](https://docs.couchbase.com/server/6.0/getting-started/do-a-quick-install.html).
-
-#### Accessing Couchbase Server
-
-Couchbase Server can be accessed using
- * [CLI](https://docs.couchbase.com/server/current/cli/cli-intro.html)
- * [API](https://docs.couchbase.com/server/current/rest-api/rest-intro.html)
- * An [administration (web) portal](https://docs.couchbase.com/server/current/getting-started/look-at-the-results.html)
-
- #### Creating Bucket on Couchbase Server
-
- To create a bucket on couchbase server please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-buckets/create-bucket.html)
-
-#### Manage scope and collection on Couchbase Server
-
-To manage scope and collection of bucket on couchbase server please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-scopes-and-collections/manage-scopes-and-collections.html)
-
-#### Managing indexes on Couchbase Server
- To manage and create primary or seconadary indexex on couchbase server
- to fetch data please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-indexes/manage-indexes.html)
-
- #### Set credentials 
-
- Once Couchbase Server has been started and bucket has been created then set host, port, username, password and bucketName in **config.yaml** file.
 
 ## Command reference
 1) Generate RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the RSA key pair

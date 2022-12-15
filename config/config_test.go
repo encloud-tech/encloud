@@ -25,11 +25,11 @@ func (suite *ConfigTestSuite) SetupTest() {
 	var err error
 	suite.ConfDefault, err = LoadConf()
 	if err != nil {
-		panic("failed to load default config.yml")
+		panic("failed to load default config.yaml")
 	}
-	suite.Conf, err = LoadConf("testdata/config.yml")
+	suite.Conf, err = LoadConf("testdata/config.yaml")
 	if err != nil {
-		panic("failed to load config.yml from file")
+		panic("failed to load config.yaml from file")
 	}
 }
 
