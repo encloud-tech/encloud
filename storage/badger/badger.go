@@ -97,7 +97,7 @@ func (s *Storage) Read(key string) types.FileData {
 	return ival
 }
 
-func (s *Storage) ReadByCid(key string) []byte {
+func (s *Storage) ReadByCid(key string) types.FileMetadata {
 	var ival []byte
 	err := s.db.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte(key))
@@ -112,5 +112,10 @@ func (s *Storage) ReadByCid(key string) []byte {
 		log.Println("Failed to read data from the cache.", "key", string(key), "error", err)
 	}
 
-	return ival
+	var metaDataDecode types.FileMetadata
+	d := gob.NewDecoder(bytes.NewReader(ival))
+	if err := d.Decode(&metaDataDecode); err != nil {
+		panic(err)
+	}
+	return metaDataDecode
 }

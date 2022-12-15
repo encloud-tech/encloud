@@ -1,8 +1,10 @@
 package thirdparty
 
 import (
+	"crypto/md5"
 	"encoding/base64"
 	"encoding/pem"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -47,4 +49,8 @@ func ReadKeyFile(filePath string) string {
 
 	// encode base64 key data
 	return base64.StdEncoding.EncodeToString(keyBlock.Bytes)
+}
+
+func DigestString(s string) string {
+	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 }
