@@ -23,7 +23,7 @@ Read [**here**](docs/DESIGN.md) for detailed **design and architecture**
 
 ## Prerequisites
 - Golang 1.18 or higher
-- Estuary API account and key. Read [more](docs/CONFIG.md)
+- Estuary API account and key. Read [more](docs/CONFIG.md).
 - CouchbaseDB for metadata storage (optional)
 
 ## CLI Setup
@@ -40,7 +40,8 @@ go install .
 1) Generate RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the RSA key pair
     > encloud generate-key-pair
 
-2) Upload encrypted data to Filecoin. This command encrypts the specified file using a newly generated DEK. The DEK is encrypted using the KEK and the metadata is stored on the local KV store. This command also provides multiple DEK options to encrypt data - `aes` or `chacha20`.
+2) Upload encrypted data to Filecoin. This command encrypts the specified file using a newly generated DEK. The DEK is encrypted using the KEK and the metadata is stored on the local KV store. 
+   This command also provides multiple `DEK_TYPE` options to encrypt data - `aes` or `chacha20`.
 
     > encloud upload -p `<KEK_PUBLIC_KEY>` -f `<UPLOAD_FILE_PATH>` -e `<DEK_TYPE>` 
 
@@ -73,8 +74,7 @@ go install .
 2) Retrieve shared content from other users using your CID, DEK type and DEK.
 
     > encloud retrieve-shared-content -c `<RECEIVED_CID_OF_YOUR_EMAIL>` -d `<RECEIVED_DEK_FILE_PATH>` -e `<RECEIVED_DEK_TYPE>`
-
-
+   
 ## Future features
 - Distributed key management for KEKs 
 - Chunking for performant file uploads 

@@ -5,13 +5,14 @@ Encloud Encryption and Storage CLI provides an ability to configure the various 
 The following can be configured:
 
 * Filecoin on-boarding and deal making mechanism (Estuary support offered currently)
-* Metadata Storage Mechanism (BadgerDB support offered currently) 
+* Metadata Storage Mechanism (BadgerDB and Couchbase support offered) 
 * Email settings for sharing of DEKs for encrypted files on Filecoin
 
 ## Estuary 
 
 Encloud Encryption and Storage CLI uses Estuary as a means to onboard and retrieve data from the Filecoin network. Estuary requires the client
-to generate an API Key which can be requested [here](https://docs.estuary.tech/tutorial-get-an-api-key). 
+to generate an API Key which can be requested [here](https://docs.estuary.tech/tutorial-get-an-api-key). While filling out the request [form](https://docs.estuary.tech/get-invite-key)
+please mention "Encloud".
 
 The Estuary API key needs to be configured under [config.yaml](../config.yaml) as follows under the `estuary` section:
 
@@ -21,22 +22,6 @@ estuary:
   download_api_url: "https://dweb.link/ipfs"
   shuttle_api_url: "https://shuttle-4.estuary.tech"
   token: "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
-```
-
-## Email and sharing
-
-We utilize emails to share DEKs from the client directly to the email of an entity they want to share the data with. It is 
-worth noting that once the DEK is shared with an entity they can download the data from Filecoin and decrypt it.
-
-The following configs need to be made for emails under [config.yaml](../config.yaml), under the `email` section:
-
-```yaml
-email:
-  server: "smtp.acme.io"
-  port: 2525
-  username: "XXXXXXXXXXXXX"
-  password: "XXXXXXXXXXXXX"
-  from: "noreply@acme.com"
 ```
 
 ## Storage
@@ -50,7 +35,7 @@ To use BadgerDb use the following configuration under [config.yaml](../config.ya
 
 ```yaml
 stat:
-  storageType: couchbase
+  storageType: badgerdb
   badgerdb:
     path: badger.db
 ```
@@ -66,31 +51,35 @@ Couchbase server can be utilized as a KV store for metadata. Please follow below
 
 To install Couchbase Server please follow the instructions [here](https://docs.couchbase.com/server/current/install/install-intro.html).
 
-#### Starting Couchbase Server
+##### Starting Couchbase Server
 
 Once Couchbase Server has been installed simply navigate to where it has been installed and start "Couchbase Server".
 
 To start Couchbase Server using Docker please see the documentation [here](https://docs.couchbase.com/server/6.0/getting-started/do-a-quick-install.html).
 
-#### Accessing Couchbase Server
+##### Accessing Couchbase Server
 
 Couchbase Server can be accessed using
 * [CLI](https://docs.couchbase.com/server/current/cli/cli-intro.html)
 * [API](https://docs.couchbase.com/server/current/rest-api/rest-intro.html)
 * An [administration (web) portal](https://docs.couchbase.com/server/current/getting-started/look-at-the-results.html)
 
-#### Creating Bucket on Couchbase Server
+#### Setup
+Couchbase requires setting up a bucket to hold scopes, scopes that contain collection and collections that contain documents.
+These need to be setup before using Couchbase as a store
+
+##### Creating Bucket on Couchbase Server
 
 To create a bucket on couchbase server please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-buckets/create-bucket.html)
 
-#### Manage scope and collection on Couchbase Server
+##### Manage scope and collection on Couchbase Server
 
 To manage scope and collection of bucket on couchbase server please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-scopes-and-collections/manage-scopes-and-collections.html)
 
-#### Managing indexes on Couchbase Server
+##### Managing indexes on Couchbase Server
 To manage and create primary or secondary indexes on couchbase server to fetch data please follow the instructions [here](https://docs.couchbase.com/server/current/manage/manage-indexes/manage-indexes.html)
 
-#### Set credentials
+##### Set credentials
 
 Once Couchbase Server has been started and a bucket has been created then set the host, port, username, password and bucketName in **config.yaml** file.
 A scope and a collection needs to be created within the bucket to store documents. These params can also be set in the config.
@@ -108,4 +97,20 @@ stat:
       name: encloud
       scope: file
       collection: metadata
+```
+
+## Email and sharing
+
+We utilize emails to share DEKs from the client directly to the email of an entity they want to share the data with. It is
+worth noting that once the DEK is shared with an entity they can download the data from Filecoin and decrypt it.
+
+The following configs need to be made for emails under [config.yaml](../config.yaml), under the `email` section:
+
+```yaml
+email:
+  server: "smtp.acme.io"
+  port: 2525
+  username: "XXXXXXXXXXXXX"
+  password: "XXXXXXXXXXXXX"
+  from: "noreply@acme.com"
 ```
