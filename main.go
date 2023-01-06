@@ -1,6 +1,8 @@
 package main
 
-import "encloud/cmd"
+import (
+	"encloud/cmd"
+)
 
 func main() {
 	cmd.Execute()
