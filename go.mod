@@ -5,12 +5,13 @@ go 1.18
 require (
 	github.com/couchbase/gocb/v2 v2.6.0
 	github.com/dgraph-io/badger/v3 v3.2103.3
+	github.com/ecies/go/v2 v2.0.4
 	github.com/google/uuid v1.3.0
 	github.com/shirou/gopsutil/v3 v3.22.9
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.13.0
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
+	golang.org/x/crypto v0.0.0-20220507011949-2cf3adece122
 )
 
 require (
@@ -18,8 +19,10 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/couchbase/gocbcore/v10 v10.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/ethereum/go-ethereum v1.10.17 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
