@@ -5,7 +5,7 @@ sensitive data to the Filecoin network.
 
 Encloud Encryption and Storage CLI is a lightweight utility that allows clients to 
 
-- Generate their RSA encryption keys
+- Generate their ECIES/RSA encryption keys
 - Manage file and encryption metadata in a local or remote KV store
 - Upload encrypted files to Filecoin
 - Retrieve encrypted files from Filecoin and decrypt them
@@ -37,7 +37,7 @@ go install .
 ```
 
 ## Command reference
-1) Generate RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the RSA key pair
+1) Generate ECIES secp256k1 OR RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the ECIES/RSA key pair
     > encloud generate-key-pair
 
 2) Upload encrypted data to Filecoin. This command encrypts the specified file using a newly generated DEK. The DEK is encrypted using the KEK and the metadata is stored on the local KV store. 
