@@ -44,13 +44,23 @@ func ShareCmd() *cobra.Command {
 			}
 
 			fileMetaData := dbService.FetchByCid(thirdparty.DigestString(kek) + ":" + uuid)
-			decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
-			if err != nil {
-				fmt.Println(err)
+			var decryptedDek []byte
+			if cfg.Stat.EncryptionAlgorithmType == "rsa" {
+				rsaKey, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
+				if err != nil {
+					fmt.Println(err)
+				}
+				decryptedDek = rsaKey
+			} else {
+				rsaKey, err := thirdparty.DecryptWithEcies(thirdparty.NewPrivateKeyFromHex(privateKey), fileMetaData.Dek)
+				if err != nil {
+					fmt.Println("err" + err.Error())
+				}
+				decryptedDek = rsaKey
 			}
 
 			// Writing decryption dek
-			err = ioutil.WriteFile("assets/dek.txt", decryptedDek, 0777)
+			err := ioutil.WriteFile("assets/dek.txt", decryptedDek, 0777)
 			if err != nil {
 				log.Fatalf("write file err: %v", err.Error())
 			}
