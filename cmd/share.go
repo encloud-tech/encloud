@@ -45,18 +45,21 @@ func ShareCmd() *cobra.Command {
 
 			fileMetaData := dbService.FetchByCid(thirdparty.DigestString(kek) + ":" + uuid)
 			var decryptedDek []byte
-			if cfg.Stat.EncryptionAlgorithmType == "rsa" {
+			if cfg.Stat.KekType == "rsa" {
 				rsaKey, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 				if err != nil {
 					fmt.Println(err)
 				}
 				decryptedDek = rsaKey
-			} else {
+			} else if cfg.Stat.KekType == "ecies" {
 				rsaKey, err := thirdparty.DecryptWithEcies(thirdparty.NewPrivateKeyFromHex(privateKey), fileMetaData.Dek)
 				if err != nil {
 					fmt.Println("err" + err.Error())
 				}
 				decryptedDek = rsaKey
+			} else {
+				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
+				return
 			}
 
 			// Writing decryption dek

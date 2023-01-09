@@ -20,14 +20,17 @@ func GenerateKeyPairCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			cfg, _ := config.LoadConf("./config.yaml")
 			var keys types.Keys
-			if cfg.Stat.EncryptionAlgorithmType == "rsa" {
+			if cfg.Stat.KekType == "rsa" {
 				thirdparty.InitCrypto()
 				keys = types.Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()}
 				os.Remove(".keys/.idRsaPub")
 				os.Remove(".keys/.idRsa")
-			} else {
+			} else if cfg.Stat.KekType == "ecies" {
 				k := thirdparty.EciesGenerateKeyPair()
 				keys = types.Keys{PublicKey: k.PublicKey.Hex(false), PrivateKey: k.Hex()}
+			} else {
+				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
+				return
 			}
 			response := types.GenerateKeyPairResponse{
 				Status:     "success",

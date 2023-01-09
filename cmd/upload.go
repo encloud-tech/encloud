@@ -82,16 +82,19 @@ func UploadContentCmd() *cobra.Command {
 
 			if cids != nil {
 				var encryptedDek []byte
-				if cfg.Stat.EncryptionAlgorithmType == "rsa" {
+				if cfg.Stat.KekType == "rsa" {
 					encryptedDek, err = thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
 					if err != nil {
 						fmt.Println("err" + err.Error())
 					}
-				} else {
+				} else if cfg.Stat.KekType == "ecies" {
 					encryptedDek, err = thirdparty.EncryptWithEcies(thirdparty.NewPublicKeyFromHex(kek), dek)
 					if err != nil {
 						fmt.Println("err" + err.Error())
 					}
+				} else {
+					fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
+					return
 				}
 				hash := thirdparty.DigestString(kek)
 				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType}
