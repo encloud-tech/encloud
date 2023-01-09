@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encloud/config"
 	thirdparty "encloud/third_party"
 	"encloud/types"
 	"encoding/json"
@@ -17,15 +18,23 @@ func GenerateKeyPairCmd() *cobra.Command {
 		Short: "Generate your key pair",
 		Long:  `Generate your public key and private key which helps to encrypt and decrypt your data`,
 		Run: func(cmd *cobra.Command, args []string) {
-			thirdparty.InitCrypto()
+			cfg, _ := config.LoadConf("./config.yaml")
+			var keys types.Keys
+			if cfg.Stat.EncryptionAlgorithmType == "rsa" {
+				thirdparty.InitCrypto()
+				keys = types.Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()}
+				os.Remove(".keys/.idRsaPub")
+				os.Remove(".keys/.idRsa")
+			} else {
+				k := thirdparty.EciesGenerateKeyPair()
+				keys = types.Keys{PublicKey: k.PublicKey.Hex(false), PrivateKey: k.Hex()}
+			}
 			response := types.GenerateKeyPairResponse{
 				Status:     "success",
 				StatusCode: http.StatusCreated,
 				Message:    "Keys generated successfully.",
-				Data:       types.Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()},
+				Data:       keys,
 			}
-			os.Remove(".keys/.idRsaPub")
-			os.Remove(".keys/.idRsa")
 			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
 				fmt.Println(err)

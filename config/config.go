@@ -35,6 +35,7 @@ email:
   password: 861b495c076713
   from: noreply@bond180.com
 stat:
+  encryptionAlgorithmType: ecies
   storageType: badgerdb
   badgerdb:
     path: badger.db
@@ -74,9 +75,10 @@ type EmailStat struct {
 
 // SectionStat is sub section of config.
 type SectionStat struct {
-	BadgerDB    SectionBadgerDB  `yaml:"badgerdb"`
-	Couchbase   SectionCouchbase `yaml:"couchbase"`
-	StorageType string           `yaml:"storageType"`
+	BadgerDB                SectionBadgerDB  `yaml:"badgerdb"`
+	Couchbase               SectionCouchbase `yaml:"couchbase"`
+	StorageType             string           `yaml:"storageType"`
+	EncryptionAlgorithmType string           `yaml:"encryptionAlgorithmType"`
 }
 
 // SectionBadgerDB is sub section of config.
@@ -142,6 +144,7 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 	conf.Email.Port = viper.GetInt64("email.port")
 
 	// Stat Engine
+	conf.Stat.EncryptionAlgorithmType = viper.GetString("stat.encryptionAlgorithmType")
 	conf.Stat.StorageType = viper.GetString("stat.storageType")
 	conf.Stat.BadgerDB.Path = viper.GetString("stat.badgerdb.path")
 	conf.Stat.Couchbase.Host = viper.GetString("stat.couchbase.host")

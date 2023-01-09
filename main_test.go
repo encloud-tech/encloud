@@ -2,13 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encloud/cmd"
+	"encloud/types"
 	"encoding/json"
 	"log"
 	"testing"
-
-	"encloud/cmd"
-	thirdparty "encloud/third_party"
-	"encloud/types"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -90,8 +88,4 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	json.Unmarshal(retrieveSharedContentBuf.Bytes(), &retrieveSharedContentResponseObject)
 	assert.NotNil(t, retrieveSharedContentResponseObject.Data)
 	log.Println(retrieveSharedContentResponseObject.Data)
-}
-
-func TestGenerateKeyPairECIES(t *testing.T) {
-	thirdparty.GenerateEciesKeyPair()
 }

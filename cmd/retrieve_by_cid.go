@@ -43,19 +43,29 @@ func RetrieveByCidCmd() *cobra.Command {
 			}
 
 			fileMetaData := dbService.FetchByCid(thirdparty.DigestString(kek) + ":" + uuid)
-			decryptedDek, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
-			if err != nil {
-				fmt.Println(err)
+			var decryptedDek []byte
+			if cfg.Stat.EncryptionAlgorithmType == "rsa" {
+				rsaKey, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
+				if err != nil {
+					fmt.Println(err)
+				}
+				decryptedDek = rsaKey
+			} else {
+				rsaKey, err := thirdparty.DecryptWithEcies(thirdparty.NewPrivateKeyFromHex(privateKey), fileMetaData.Dek)
+				if err != nil {
+					fmt.Println("err" + err.Error())
+				}
+				decryptedDek = rsaKey
 			}
 
 			filepath := estuaryService.DownloadContent(fileMetaData.Cid[0])
 			if fileMetaData.DekType == "aes" {
-				err = thirdparty.DecryptWithAES(decryptedDek, filepath, "assets/decrypted.csv")
+				err := thirdparty.DecryptWithAES(decryptedDek, filepath, "assets/decrypted.csv")
 				if err != nil {
 					fmt.Println(err)
 				}
 			} else {
-				err = thirdparty.DecryptWithChacha20poly1305(decryptedDek, filepath, "assets/decrypted.csv")
+				err := thirdparty.DecryptWithChacha20poly1305(decryptedDek, filepath, "assets/decrypted.csv")
 				if err != nil {
 					fmt.Println(err)
 				}

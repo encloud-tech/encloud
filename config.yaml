@@ -1,7 +1,7 @@
 estuary:
-  base_api_url: 'https://api.estuary.tech'
-  download_api_url: 'https://dweb.link/ipfs'
-  shuttle_api_url: 'https://shuttle-4.estuary.tech'
+  base_api_url: "https://api.estuary.tech"
+  download_api_url: "https://dweb.link/ipfs"
+  shuttle_api_url: "https://shuttle-4.estuary.tech"
   token: EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY
 email:
   server: smtp.mailtrap.io
@@ -10,7 +10,8 @@ email:
   password: 861b495c076713
   from: noreply@bond180.com
 stat:
-  storageType: couchbase
+  encryptionAlgorithmType: ecies
+  storageType: badgerdb
   badgerdb:
     path: badger.db
   couchbase:
