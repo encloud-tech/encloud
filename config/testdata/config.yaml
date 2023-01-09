@@ -10,7 +10,7 @@ email:
   password: 861b495c076713
   from: noreply@bond180.com
 stat:
-  encryptionAlgorithmType: ecies
+  kekType: ecies
   storageType: badgerdb
   badgerdb:
     path: badger.db
