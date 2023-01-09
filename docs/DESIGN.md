@@ -6,7 +6,7 @@ a need for privacy tooling that can help onboard sensitive data sets in encrypte
 
 The Encloud Encryption and Storage CLI was designed to meet the encryption requirements for the Filecoin ecosystem:
 
-* Key Wrapping with RSA Key Encryption Keys (KEKs) and either AES-256 GCM or ChaCha20 Data Encryption Keys (DEKs) 
+* Key Wrapping with ECIES secp256k1/RSA Key Encryption Keys (KEKs) and either AES-256 GCM or ChaCha20 Data Encryption Keys (DEKs) 
 * DEK for each file generated
 * Management of file and encryption metadata in a KV store (local or decentralized)
 * Upload encrypted files to Filecoin

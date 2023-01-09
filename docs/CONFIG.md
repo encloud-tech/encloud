@@ -24,6 +24,25 @@ estuary:
   token: "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ```
 
+## Key Encryption Key
+
+Encloud CLI Encryption and Storage CLI offers supports for both RSA and ECIES type asymmetric encryption schemes for the 
+Key Encryption Key as part of the envelope encryption mechanism. 
+
+This can be easily configured in the [config.yaml](../config.yaml) as follows under the `estuary` section:
+
+```yaml
+stat:
+  kekType: ecies
+```
+
+Use `rsa` or `ecies`. Even though Encloud utilizes RSA-2048-OAEP, which is also used by major Web2 CSPs, there are known
+vulnerabilities in its security and longevity. The KEK being the key encrypting all metadata, it is important that the KEK
+follows best practices regarding longevity and security. ECIES encryption is considered more secure and offer better longevity.
+
+ECIES is additionally supported by decentralized key custody solutions and users can leverage decentralized custody if they
+choose ECIES scheme.
+
 ## Storage
 
 ### BadgerDB
