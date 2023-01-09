@@ -97,7 +97,7 @@ func UploadContentCmd() *cobra.Command {
 					return
 				}
 				hash := thirdparty.DigestString(kek)
-				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType}
+				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType, KekType: cfg.Stat.KekType}
 				dbService.Store(hash+":"+uuid, fileData)
 			}
 

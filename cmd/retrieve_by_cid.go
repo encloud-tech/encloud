@@ -44,13 +44,13 @@ func RetrieveByCidCmd() *cobra.Command {
 
 			fileMetaData := dbService.FetchByCid(thirdparty.DigestString(kek) + ":" + uuid)
 			var decryptedDek []byte
-			if cfg.Stat.KekType == "rsa" {
+			if fileMetaData.KekType == "rsa" {
 				rsaKey, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 				if err != nil {
 					fmt.Println(err)
 				}
 				decryptedDek = rsaKey
-			} else if cfg.Stat.KekType == "ecies" {
+			} else if fileMetaData.KekType == "ecies" {
 				rsaKey, err := thirdparty.DecryptWithEcies(thirdparty.NewPrivateKeyFromHex(privateKey), fileMetaData.Dek)
 				if err != nil {
 					fmt.Println("err" + err.Error())

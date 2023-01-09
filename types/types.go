@@ -33,6 +33,7 @@ type FileMetadata struct {
 	Cid       []string `json:"cid"`
 	Dek       []byte   `json:"dek"`
 	DekType   string   `json:"dekType"`
+	KekType   string   `json:"kekType"`
 }
 
 type GenerateKeyPairResponse struct {
