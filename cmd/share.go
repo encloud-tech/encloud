@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -48,24 +48,27 @@ func ShareCmd() *cobra.Command {
 			if fileMetaData.KekType == "rsa" {
 				rsaKey, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 				decryptedDek = rsaKey
 			} else if fileMetaData.KekType == "ecies" {
 				rsaKey, err := thirdparty.DecryptWithEcies(thirdparty.NewPrivateKeyFromHex(privateKey), fileMetaData.Dek)
 				if err != nil {
-					fmt.Println("err" + err.Error())
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 				decryptedDek = rsaKey
 			} else {
 				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
-				return
+				os.Exit(-1)
 			}
 
 			// Writing decryption dek
 			err := ioutil.WriteFile("assets/dek.txt", decryptedDek, 0777)
 			if err != nil {
-				log.Fatalf("write file err: %v", err.Error())
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 
 			subject := "Share content"
@@ -80,8 +83,8 @@ func ShareCmd() *cobra.Command {
 			}
 			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
-				fmt.Println(err)
-				return
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 		},
