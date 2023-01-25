@@ -56,7 +56,7 @@ func (e *Estuary) UploadContent(filePath string) (types.UploadResponse, error) {
 	var responseObject types.UploadResponse
 	response, err := e.doMultipartApiRequest(
 		"POST",
-		e.config.Estuary.ShuttleApiUrl+"/content/add",
+		e.config.Estuary.BaseApiUrl+"/content/add",
 		filePath,
 	)
 	if err != nil {
