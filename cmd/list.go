@@ -39,8 +39,8 @@ func ListContentsCmd() *cobra.Command {
 			}
 			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
-				fmt.Println(err)
-				return
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 		},

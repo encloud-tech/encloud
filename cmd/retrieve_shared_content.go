@@ -29,12 +29,14 @@ func RetrieveSharedContentCmd() *cobra.Command {
 			if dekType == "aes" {
 				err := thirdparty.DecryptWithAES(dek, filepath, "assets/decrypted.csv")
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 			} else {
 				err := thirdparty.DecryptWithChacha20poly1305(dek, filepath, "assets/decrypted.csv")
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 			}
 			os.Remove("assets/downloaded.bin")

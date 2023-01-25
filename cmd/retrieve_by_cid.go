@@ -47,30 +47,34 @@ func RetrieveByCidCmd() *cobra.Command {
 			if fileMetaData.KekType == "rsa" {
 				rsaKey, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 				decryptedDek = rsaKey
 			} else if fileMetaData.KekType == "ecies" {
 				rsaKey, err := thirdparty.DecryptWithEcies(thirdparty.NewPrivateKeyFromHex(privateKey), fileMetaData.Dek)
 				if err != nil {
-					fmt.Println("err" + err.Error())
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 				decryptedDek = rsaKey
 			} else {
 				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
-				return
+				os.Exit(-1)
 			}
 
 			filepath := estuaryService.DownloadContent(fileMetaData.Cid[0])
 			if fileMetaData.DekType == "aes" {
 				err := thirdparty.DecryptWithAES(decryptedDek, filepath, "assets/decrypted.csv")
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 			} else {
 				err := thirdparty.DecryptWithChacha20poly1305(decryptedDek, filepath, "assets/decrypted.csv")
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 			}
 
@@ -83,8 +87,8 @@ func RetrieveByCidCmd() *cobra.Command {
 			}
 			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
-				fmt.Println(err)
-				return
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 		},

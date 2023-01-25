@@ -30,7 +30,7 @@ func GenerateKeyPairCmd() *cobra.Command {
 				keys = types.Keys{PublicKey: k.PublicKey.Hex(false), PrivateKey: k.Hex()}
 			} else {
 				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
-				return
+				os.Exit(-1)
 			}
 			response := types.GenerateKeyPairResponse{
 				Status:     "success",
@@ -40,8 +40,8 @@ func GenerateKeyPairCmd() *cobra.Command {
 			}
 			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
-				fmt.Println(err)
-				return
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 		},

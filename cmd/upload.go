@@ -50,25 +50,29 @@ func UploadContentCmd() *cobra.Command {
 			//generate a random 32 byte key for AES-256
 			dek := make([]byte, 32)
 			if _, err := rand.Read(dek); err != nil {
-				fmt.Println(err)
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 
 			if _, err := os.Stat("assets"); os.IsNotExist(err) {
 				err := os.Mkdir("assets", 0777)
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 			}
 
 			if dekType == "aes" {
 				err = thirdparty.EncryptWithAES(dek, path, "assets/encrypted.bin")
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 			} else {
 				err = thirdparty.EncryptWithChacha20poly1305(dek, path, "assets/encrypted.bin")
 				if err != nil {
-					fmt.Println(err)
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
 				}
 			}
 
@@ -76,7 +80,8 @@ func UploadContentCmd() *cobra.Command {
 			var uuid = thirdparty.GenerateUuid()
 			content, err := estuaryService.UploadContent("assets/encrypted.bin")
 			if err != nil {
-				fmt.Println(err)
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			cids = append(cids, content.CID)
 
@@ -85,16 +90,18 @@ func UploadContentCmd() *cobra.Command {
 				if cfg.Stat.KekType == "rsa" {
 					encryptedDek, err = thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
 					if err != nil {
-						fmt.Println("err" + err.Error())
+						fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+						os.Exit(-1)
 					}
 				} else if cfg.Stat.KekType == "ecies" {
 					encryptedDek, err = thirdparty.EncryptWithEcies(thirdparty.NewPublicKeyFromHex(kek), dek)
 					if err != nil {
-						fmt.Println("err" + err.Error())
+						fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+						os.Exit(-1)
 					}
 				} else {
 					fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
-					return
+					os.Exit(-1)
 				}
 				hash := thirdparty.DigestString(kek)
 				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType, KekType: cfg.Stat.KekType}
@@ -110,8 +117,8 @@ func UploadContentCmd() *cobra.Command {
 			}
 			encoded, err := json.MarshalIndent(response, "", "    ")
 			if err != nil {
-				fmt.Println(err)
-				return
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 		},
