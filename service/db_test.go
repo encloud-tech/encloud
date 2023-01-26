@@ -21,7 +21,7 @@ func TestDBService(t *testing.T) {
 	uuid := "efcb05f1-8cf7-4d4a-8c0e-2a95090d29eb"
 	var hash = "3a4aa5ad1efff0897afc9e122725fad7"
 	fileData := types.FileMetadata{
-		Timestamp: 1670859165,
+		Timestamp: "2006-01-02 15:04:05",
 		Name:      "Provider2InputData.csv",
 		Size:      1070,
 		FileType:  ".csv",
