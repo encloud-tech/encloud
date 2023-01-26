@@ -35,9 +35,7 @@ func (suite *ConfigTestSuite) SetupTest() {
 
 func (suite *ConfigTestSuite) TestValidateConfDefault() {
 	// estuary
-	assert.Equal(suite.T(), "https://dweb.link/ipfs", suite.ConfDefault.Estuary.DownloadApiUrl)
 	assert.Equal(suite.T(), "https://api.estuary.tech", suite.ConfDefault.Estuary.BaseApiUrl)
-	assert.Equal(suite.T(), "https://shuttle-4.estuary.tech", suite.ConfDefault.Estuary.ShuttleApiUrl)
 	assert.Equal(suite.T(), "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY", suite.ConfDefault.Estuary.Token)
 
 	assert.Equal(suite.T(), "badger.db", suite.ConfDefault.Stat.BadgerDB.Path)
@@ -45,9 +43,7 @@ func (suite *ConfigTestSuite) TestValidateConfDefault() {
 
 func (suite *ConfigTestSuite) TestValidateConf() {
 	// estuary
-	assert.Equal(suite.T(), "https://dweb.link/ipfs", suite.Conf.Estuary.DownloadApiUrl)
 	assert.Equal(suite.T(), "https://api.estuary.tech", suite.Conf.Estuary.BaseApiUrl)
-	assert.Equal(suite.T(), "https://shuttle-4.estuary.tech", suite.Conf.Estuary.ShuttleApiUrl)
 	assert.Equal(suite.T(), "ESTb2e5e305-1af1-4c72-89ab-c85404439fcdARY", suite.Conf.Estuary.Token)
 
 	assert.Equal(suite.T(), "badger.db", suite.Conf.Stat.BadgerDB.Path)

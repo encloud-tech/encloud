@@ -25,8 +25,6 @@ var ChunkSize = 1024 * 32 // chunkSize in bytes. here, 32 KiB.
 var defaultConf = []byte(`
 estuary:
   base_api_url: 'https://api.estuary.tech'
-  download_api_url: 'https://dweb.link/ipfs'
-  shuttle_api_url: 'https://shuttle-4.estuary.tech'
   token: EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY
 email:
   server: smtp.mailtrap.io
@@ -58,10 +56,8 @@ type ConfYaml struct {
 
 // SectionEstuary is sub section of config.
 type SectionEstuary struct {
-	ShuttleApiUrl  string `yaml:"shuttle_api_url"`
-	DownloadApiUrl string `yaml:"download_api_url"`
-	BaseApiUrl     string `yaml:"base_api_url"`
-	Token          string `yaml:"token"`
+	BaseApiUrl string `yaml:"base_api_url"`
+	Token      string `yaml:"token"`
 }
 
 // EmailStat is sub section of config.
@@ -132,8 +128,6 @@ func LoadConf(confPath ...string) (*ConfYaml, error) {
 
 	// estuary
 	conf.Estuary.BaseApiUrl = viper.GetString("estuary.base_api_url")
-	conf.Estuary.DownloadApiUrl = viper.GetString("estuary.download_api_url")
-	conf.Estuary.ShuttleApiUrl = viper.GetString("estuary.shuttle_api_url")
 	conf.Estuary.Token = viper.GetString("estuary.token")
 
 	// email

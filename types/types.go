@@ -26,7 +26,7 @@ type FileData []FileMetadata
 type FileMetadata struct {
 	Uuid      string   `json:"uuid"`
 	Md5Hash   string   `json:"md5Hash"`
-	Timestamp int64    `json:"timestamp"`
+	Timestamp string   `json:"timestamp"`
 	Name      string   `json:"name"`
 	Size      int      `json:"size"`
 	FileType  string   `json:"fileType"`

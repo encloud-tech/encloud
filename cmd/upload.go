@@ -36,7 +36,10 @@ func UploadContentCmd() *cobra.Command {
 			} else {
 				kek = publicKey
 			}
-			timestamp := time.Now().Unix()
+			const (
+				DDMMYYYYhhmmss = "2006-01-02 15:04:05"
+			)
+			timestamp := time.Now().UTC().Format(DDMMYYYYhhmmss)
 			file, err := os.Open(path)
 			if err != nil {
 				fmt.Println("File open error : ", err)
