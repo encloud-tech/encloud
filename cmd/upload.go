@@ -39,7 +39,8 @@ func UploadContentCmd() *cobra.Command {
 			const (
 				DDMMYYYYhhmmss = "2006-01-02 15:04:05"
 			)
-			timestamp := time.Now().UTC().Format(DDMMYYYYhhmmss)
+			uploadedAt := time.Now().UTC().Format(DDMMYYYYhhmmss)
+			timestamp := time.Now().Unix()
 			file, err := os.Open(path)
 			if err != nil {
 				fmt.Println("File open error : ", err)
@@ -107,7 +108,7 @@ func UploadContentCmd() *cobra.Command {
 					os.Exit(-1)
 				}
 				hash := thirdparty.DigestString(kek)
-				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType, KekType: cfg.Stat.KekType}
+				fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType, KekType: cfg.Stat.KekType, UploadedAt: uploadedAt}
 				dbService.Store(hash+":"+uuid, fileData)
 			}
 
