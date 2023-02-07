@@ -1,0 +1,128 @@
+@import url("./assets/fonts/stylesheet.css");
+
+/* Global Styles */
+:root {
+    --primary-color: #e50914;
+    --dark-color: #141414;
+    --light-color: #f4f4f4;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Lexend Deca";
+    -webkit-font-smoothing: antialiased;
+    background-color: #f2e9e9 !important;
+}
+
+ul {
+    list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: #fff;
+}
+
+a {
+    color: #fff;
+    text-decoration: none !important;
+}
+
+p {
+    margin: 0.5rem 0;
+}
+
+img {
+    width: 100%;
+}
+
+.card {
+    background-clip: padding-box;
+    box-shadow: 0 2px 6px 0 rgb(67 89 113 / 12%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    border: 0 solid #d9dee3;
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    padding: 1.5rem 1.5rem;
+    margin-bottom: 0;
+    background-color: transparent;
+    border-color: #d9dee3;
+    border-bottom: 0 solid #d9dee3;
+}
+
+.card-header:first-child {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.text-nowrap {
+    white-space: nowrap !important;
+}
+
+.btn.btn-primary {
+    color: #ffffff;
+    background-color: #f76e5c;
+    border: none;
+    padding: 7.5px 15px;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 400;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn.btn-primary:focus,
+.btn.btn-primary:hover,
+.btn.btn-primary:active,
+.btn.btn-primary:not(:disabled):not(.disabled):active:focus,
+.btn.btn-primary:not(:disabled):not(.disabled):active {
+    border: none;
+    box-shadow: unset;
+    outline: none;
+    background-color: #cc3366;
+}
+
+input,
+.form-control {
+    border-color: #cc336610 !important;
+}
+
+input:focus,
+.form-control:focus {
+    border-color: #cc336610 !important;
+    outline: 0;
+    box-shadow: none;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.page-item .page-link {
+    color: #d94964;
+}
+.page-item.active .page-link {
+    background-color: #d94964 !important;
+    border-color: #d94964;
+}
+
+.page-item.active.disabled .page-link {
+    color: #ffffff;
+}
+
+.table .text-primary {
+    color: #d94964 !important;
+}
