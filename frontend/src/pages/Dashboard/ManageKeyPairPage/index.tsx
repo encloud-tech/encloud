@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Badge,
   Button,
-  Card,
   Col,
   Form,
   Image,
@@ -11,7 +10,6 @@ import {
 } from "react-bootstrap";
 import {
   KeyBox,
-  KeyBoxedContent,
   KeyPairs,
   KeyPairsSection,
   StepBoxWrapper,
@@ -44,47 +42,9 @@ const ManageKeyPairPage = () => {
           <span>Manage Key Pair</span>
         </h2>
       </PageHeader>
-
-      <Card>
-        <Card.Body>
-          <KeyBoxedContent>
-            <Row>
-              <Col md={12} lg={6}>
-                <KeyPairsSection className="separator">
-                  <h3>Plain text keys</h3>
-                  <KeyPairs>
-                    <KeyBox>
-                      <span>RSA</span>
-                      <input type="radio" name="radio" />
-                      <span className="checkmark"></span>
-                    </KeyBox>
-                    <KeyBox>
-                      <span>ECIES</span>
-                      <input type="radio" name="radio" />
-                      <span className="checkmark"></span>
-                    </KeyBox>
-                  </KeyPairs>
-                </KeyPairsSection>
-              </Col>
-              <Col md={12} lg={6}>
-                <KeyPairsSection>
-                  <h3>Non custodial keys</h3>
-                  <KeyPairs>
-                    <KeyBox>
-                      <span>TKEY</span>
-                      <input type="radio" name="radio" />
-                      <span className="checkmark"></span>
-                    </KeyBox>
-                  </KeyPairs>
-                </KeyPairsSection>
-              </Col>
-            </Row>
-          </KeyBoxedContent>
-        </Card.Body>
-      </Card>
       <StepBoxWrapper className="active">
         <StepHeader>
-          <span className="stepTitle">Current Key pair</span>
+          <h3 className="stepTitle">Current key pair</h3>
         </StepHeader>
         <StepBody>
           <Row>
@@ -129,6 +89,46 @@ const ManageKeyPairPage = () => {
                   </Button>
                 </InputGroup>
               </InputGroupWrapper>
+            </Col>
+          </Row>
+        </StepBody>
+      </StepBoxWrapper>
+      <StepBoxWrapper className="active">
+        <StepHeader>
+          <h3 className="stepTitle">Generate key pair</h3>
+        </StepHeader>
+        <StepBody>
+          <Row>
+            <Col md={12} lg={6}>
+              <KeyPairsSection className="separator">
+                <h4>Plain text keys</h4>
+                <KeyPairs>
+                  <KeyBox>
+                    <span>RSA</span>
+                    <input type="radio" name="radio" />
+                    <span className="checkmark"></span>
+                  </KeyBox>
+                  <KeyBox>
+                    <span>ECIES</span>
+                    <input type="radio" name="radio" />
+                    <span className="checkmark"></span>
+                  </KeyBox>
+                </KeyPairs>
+              </KeyPairsSection>
+            </Col>
+            <Col md={12} lg={6}>
+              <KeyPairsSection>
+                <h4>
+                  Non custodial keys <Badge bg="success">Premium</Badge>{" "}
+                </h4>
+                <KeyPairs>
+                  <KeyBox>
+                    <span>TKEY</span>
+                    <input type="radio" name="radio" />
+                    <span className="checkmark"></span>
+                  </KeyBox>
+                </KeyPairs>
+              </KeyPairsSection>
             </Col>
           </Row>
         </StepBody>
