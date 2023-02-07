@@ -95,14 +95,22 @@ img {
     background-color: #cc3366;
 }
 
+.dek-type-select {
+    border: 1px solid #d94964 !important;
+}
+
+.dek-type-select, svg {
+    fill: #d94964 !important;
+}
+
 input,
 .form-control {
-    border-color: #cc336610 !important;
+    border-color: #d94964 !important;
 }
 
 input:focus,
 .form-control:focus {
-    border-color: #cc336610 !important;
+    border-color: #d94964 !important;
     outline: 0;
     box-shadow: none;
 }

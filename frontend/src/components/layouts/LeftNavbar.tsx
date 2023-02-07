@@ -129,7 +129,7 @@ const LeftNavbar = () => {
             </ul>
           </li>
           <li className="menu-item">
-            <Link to="#" className="menu-link">
+            <Link to="configuration" className="menu-link">
               <div>Configuration</div>
             </Link>
           </li>

@@ -4,11 +4,37 @@ import { PageHeader } from "./../../../components/layouts/styles";
 
 // Images
 import dsManageImg from "../../../assets/images/ds-manage.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ManageComputePage = () => {
-  const [computeSection, setComputeSection] = useState(true);
-  const [, setGetResults] = useState(false);
+  const [preview, setPreview] = useState("");
+  const [values, setValues] = useState({
+    flags: "",
+    dockerImageURI: "",
+    commands: "",
+  });
+
+  const handleChange = (event: any) => {
+    setValues((values) => ({
+      ...values,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  useEffect(() => {
+    if (values && (values.flags || values.dockerImageURI || values.commands)) {
+      setPreview(
+        "bacalhau docker run " +
+          values.flags +
+          " " +
+          values.dockerImageURI +
+          " " +
+          values.commands
+      );
+    } else {
+      setPreview("");
+    }
+  }, [values]);
 
   return (
     <>
@@ -18,122 +44,77 @@ const ManageComputePage = () => {
           <span>Manage Compute</span>
         </h2>
       </PageHeader>
-      <Row xs={1} md={2} className="g-4">
-        <Col md={3}></Col>
-        <Col md={3}>
-          <KeyBoxedContent className={computeSection ? "active" : ""}>
-            <Card>
-              <Card.Body>
-                <KeyPairsSection>
-                  <h3
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      setComputeSection(true);
-                      setGetResults(false);
-                    }}
-                  >
-                    Config Compute
-                  </h3>
-                </KeyPairsSection>
-              </Card.Body>
-            </Card>
-          </KeyBoxedContent>
-        </Col>
-        <Col md={3}>
-          <KeyBoxedContent className={!computeSection ? "active" : ""}>
-            <Card>
-              <Card.Body>
-                <KeyPairsSection>
-                  <h3
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      setGetResults(true);
-                      setComputeSection(false);
-                    }}
-                  >
-                    Get Results
-                  </h3>
-                </KeyPairsSection>
-              </Card.Body>
-            </Card>
-          </KeyBoxedContent>
-        </Col>
-        <Col md={3}></Col>
-      </Row>
-
       <Card className="mt-4">
         <Card.Body>
           <KeyBoxedContent>
             <Row>
               <Col md={12} lg={6}>
                 <KeyPairsSection>
-                  <h3>{computeSection ? "Config Compute" : "Get Results"}</h3>
+                  <h3>Config Compute</h3>
                 </KeyPairsSection>
               </Col>
             </Row>
-            {computeSection ? (
-              <>
-                <Row className="mt-4">
-                  <Col md={8}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Flags</Form.Label>
-                      <Form.Control type="text" placeholder="Flags" />
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}></Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md={8}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Docker Image URI</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Docker Image URI"
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}></Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md={8}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Commands</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Commands and args"
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}></Col>
-                </Row>
-              </>
-            ) : (
-              <>
-                <Row className="mt-4">
-                  <Col md={8}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Job ID</Form.Label>
-                      <Form.Control type="text" placeholder="Job ID" />
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}></Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md={8}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Flags</Form.Label>
-                      <Form.Control type="text" placeholder="Flags" />
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}></Col>
-                </Row>
-              </>
-            )}
+            <Row className="mt-4">
+              <Col md={8}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Flags</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="-v QmeZRGhe4PmjctYVSVHuEiA9oSXnqmYa4kQubSHgWbjv72:/input_images"
+                    name="flags"
+                    value={values.flags}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}></Col>
+            </Row>
+            <Row className="mt-4">
+              <Col md={8}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Docker Image URI</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="dpokidov/imagemagick:7.1.0-47-ubuntu"
+                    name="dockerImageURI"
+                    value={values.dockerImageURI}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}></Col>
+            </Row>
+            <Row className="mt-4">
+              <Col md={8}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Commands</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="magick mogrify -resize 100x100 -quality 100"
+                    name="commands"
+                    value={values.commands}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}></Col>
+            </Row>
+            <Row className="mt-4">
+              <Col md={8}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Preview</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="bacalhau docker run [flags] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]"
+                    value={preview}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}></Col>
+            </Row>
             <Row>
               <Col md={8} className="text-left">
-                <Button>
-                  {computeSection ? "Run Compute" : "Get Compute Results"}
-                </Button>
+                <Button>Run Compute</Button>
               </Col>
               <Col md={4}></Col>
             </Row>

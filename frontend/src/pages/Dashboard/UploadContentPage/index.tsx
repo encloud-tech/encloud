@@ -1,4 +1,4 @@
-import { Button, Card, Col, Form, Image, Row } from "react-bootstrap";
+import { Badge, Button, Card, Col, Form, Image, Row } from "react-bootstrap";
 import Dropzone from "react-dropzone";
 import Select, { StylesConfig } from "react-select";
 
@@ -78,10 +78,22 @@ const UploadContent = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>DEK Type</Form.Label>
                   <Select
+                    className="dek-type-select"
                     styles={colourStyles}
                     options={options}
                     defaultValue={{ value: "AES", label: "AES 256 GCM" }}
                   />
+                </Form.Group>
+              </Col>
+              <Col md={4}></Col>
+            </Row>
+            <Row>
+              <Col md={8}>
+                <Form.Group className="mb-3">
+                  <Form.Label>
+                    Chunk Sizes <Badge bg="success">Preminum</Badge>{" "}
+                  </Form.Label>
+                  <Form.Control type="text" placeholder="Enter Chunk Sizes" />
                 </Form.Group>
               </Col>
               <Col md={4}></Col>

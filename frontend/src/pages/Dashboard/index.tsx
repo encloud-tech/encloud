@@ -1,7 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "../../components/layouts/MainLayout";
+import GetResultsPage from "./Compute/GetResultsPage";
 import ListComputePage from "./Compute/ListComputePage";
 import ManageComputePage from "./Compute/ManageComputePage";
+import ConfigurationPage from "./ConfigurationPage";
 import ManageKeyPairPage from "./ManageKeyPairPage";
 import RetrievePage from "./RetrievePage";
 import UploadContent from "./UploadContentPage";
@@ -15,6 +17,8 @@ const Dashboard = () => {
         <Route path="/retrieve" element={<RetrievePage />} />
         <Route path="/manage-compute" element={<ManageComputePage />} />
         <Route path="/list" element={<ListComputePage />} />
+        <Route path="/get-results/:id" element={<GetResultsPage />} />
+        <Route path="/configuration" element={<ConfigurationPage />} />
       </Routes>
     </MainLayout>
   );

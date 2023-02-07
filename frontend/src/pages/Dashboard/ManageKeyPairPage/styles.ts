@@ -6,7 +6,7 @@ export const KeyBoxedContent = styled.div`
 export const KeyPairsSection = styled.div`
   color: #cc3366;
 
-  h3 {
+  h4 {
     color: #cc3366;
   }
 
@@ -143,10 +143,7 @@ export const StepHeader = styled.div`
     margin-right: 15px;
   }
   .stepTitle {
-    color: #0a0b33;
-
-    font-size: 20px;
-    line-height: 120%;
+    color: #cc3366;
   }
 
   .right-part {
