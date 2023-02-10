@@ -88,4 +88,4 @@ go install .
 out at [contact@encloud.tech](mailto:contact@encloud.tech)
 
 ## License 
-[AGPL3.0](https://github.com/encloud-tech/encloud/blob/main/LICENSE)
+[Apache 2.0](https://github.com/encloud-tech/encloud/blob/main/LICENSE)
