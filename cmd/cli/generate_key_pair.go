@@ -1,0 +1,60 @@
+package main
+
+import (
+	"encloud/config"
+	thirdparty "encloud/third_party"
+	"encloud/types"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+
+	"github.com/spf13/cobra"
+)
+
+func GenerateKeyPairCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "generate-key-pair",
+		Short: "Generate your key pair",
+		Long:  `Generate your public key and private key which helps to encrypt and decrypt your data`,
+		Run: func(cmd *cobra.Command, args []string) {
+			cfg, err := config.LoadConf("./config.yaml")
+			if err != nil {
+				// Load default configuration from config.go file if config.yaml file not found
+				cfg, _ = config.LoadConf()
+			}
+			var keys types.Keys
+			fmt.Println(cfg.Stat.KekType)
+			if cfg.Stat.KekType == "rsa" {
+				thirdparty.InitCrypto()
+				keys = types.Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()}
+				os.Remove(".keys/.idRsaPub")
+				os.Remove(".keys/.idRsa")
+			} else if cfg.Stat.KekType == "ecies" {
+				k := thirdparty.EciesGenerateKeyPair()
+				keys = types.Keys{PublicKey: k.PublicKey.Hex(false), PrivateKey: k.Hex()}
+			} else {
+				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
+				// os.Exit(-1)
+			}
+			response := types.GenerateKeyPairResponse{
+				Status:     "success",
+				StatusCode: http.StatusCreated,
+				Message:    "Keys generated successfully.",
+				Data:       keys,
+			}
+			encoded, err := json.MarshalIndent(response, "", "    ")
+			if err != nil {
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
+		},
+	}
+
+	return cmd
+}
+
+func init() {
+	RootCmd.AddCommand(GenerateKeyPairCmd())
+}
