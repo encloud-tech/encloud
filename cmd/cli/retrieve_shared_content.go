@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encloud/config"
-	"encloud/service"
-	thirdparty "encloud/third_party"
+	"encloud/pkg/api"
 	"fmt"
 	"os"
 
@@ -16,34 +14,14 @@ func RetrieveSharedContentCmd() *cobra.Command {
 		Short: "Retrieve specific uploaded content using your cid",
 		Long:  `Retrieve specific uploaded content using your cid and decrypt it using your private key`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, err := config.LoadConf("./config.yaml")
-			if err != nil {
-				// Load default configuration from config.go file if config.yaml file not found
-				cfg, _ = config.LoadConf()
-			}
-			estuaryService := service.New(cfg)
-
 			decryptedDekPath, _ := cmd.Flags().GetString("dek")
 			cid, _ := cmd.Flags().GetString("cid")
 			dekType, _ := cmd.Flags().GetString("dekType")
-
-			dek := thirdparty.ReadFile(decryptedDekPath)
-
-			filepath := estuaryService.DownloadContent(cid)
-			if dekType == "aes" {
-				err := thirdparty.DecryptWithAES(dek, filepath, "assets/decrypted.csv")
-				if err != nil {
-					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
-					os.Exit(-1)
-				}
-			} else {
-				err := thirdparty.DecryptWithChacha20poly1305(dek, filepath, "assets/decrypted.csv")
-				if err != nil {
-					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
-					os.Exit(-1)
-				}
+			err := api.RetrieveSharedContent(decryptedDekPath, dekType, cid)
+			if err != nil {
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
-			os.Remove("assets/downloaded.bin")
 			fmt.Fprintf(cmd.OutOrStdout(), string("content downloaded successfully."))
 		},
 	}

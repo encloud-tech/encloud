@@ -3,7 +3,7 @@ package service
 import (
 	"bytes"
 	"encloud/config"
-	"encloud/types"
+	"encloud/pkg/types"
 	"encoding/json"
 	"io"
 	"io/ioutil"

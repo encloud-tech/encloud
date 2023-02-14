@@ -3,9 +3,9 @@ package service
 import (
 	"bytes"
 	"encloud/config"
-	"encloud/storage/badger"
-	"encloud/storage/couchbase"
-	"encloud/types"
+	"encloud/pkg/storage/badger"
+	"encloud/pkg/storage/couchbase"
+	"encloud/pkg/types"
 	"encoding/gob"
 	"fmt"
 )

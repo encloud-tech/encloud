@@ -1,10 +1,9 @@
 package main
 
 import (
-	"encloud/config"
-	"encloud/service"
+	"encloud/pkg/api"
+	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
-	"encloud/types"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -19,12 +18,6 @@ func ListContentsCmd() *cobra.Command {
 		Short: "List your uploaded contents",
 		Long:  `List your uploaded contents data which contains file meta informations`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, err := config.LoadConf("./config.yaml")
-			if err != nil {
-				// Load default configuration from config.go file if config.yaml file not found
-				cfg, _ = config.LoadConf()
-			}
-			dbService := service.NewDB(cfg)
 			kek := ""
 			publicKey, _ := cmd.Flags().GetString("publicKey")
 			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
@@ -33,8 +26,9 @@ func ListContentsCmd() *cobra.Command {
 			} else {
 				kek = publicKey
 			}
-			fileMetaData := dbService.Fetch(thirdparty.DigestString(kek))
-			os.Remove("assets/downloaded.bin")
+
+			fileMetaData := api.List(kek)
+
 			response := types.ListContentResponse{
 				Status:     "success",
 				StatusCode: http.StatusFound,

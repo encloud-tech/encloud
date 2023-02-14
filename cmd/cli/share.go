@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encloud/config"
-	"encloud/service"
+	"encloud/pkg/api"
+	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
-	"encloud/types"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -20,13 +18,6 @@ func ShareCmd() *cobra.Command {
 		Short: "Share uploaded content to other user",
 		Long:  `Share uploaded content with your cid and dek to another user`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, err := config.LoadConf("./config.yaml")
-			if err != nil {
-				// Load default configuration from config.go file if config.yaml file not found
-				cfg, _ = config.LoadConf()
-			}
-			dbService := service.NewDB(cfg)
-
 			kek := ""
 			privateKey := ""
 			publicKey, _ := cmd.Flags().GetString("publicKey")
@@ -47,37 +38,11 @@ func ShareCmd() *cobra.Command {
 				privateKey = pk
 			}
 
-			fileMetaData := dbService.FetchByCid(thirdparty.DigestString(kek) + ":" + uuid)
-			var decryptedDek []byte
-			if fileMetaData.KekType == "rsa" {
-				rsaKey, err := thirdparty.DecryptWithRSA(fileMetaData.Dek, thirdparty.GetIdRsaFromStr(privateKey))
-				if err != nil {
-					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
-					os.Exit(-1)
-				}
-				decryptedDek = rsaKey
-			} else if fileMetaData.KekType == "ecies" {
-				rsaKey, err := thirdparty.DecryptWithEcies(thirdparty.NewPrivateKeyFromHex(privateKey), fileMetaData.Dek)
-				if err != nil {
-					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
-					os.Exit(-1)
-				}
-				decryptedDek = rsaKey
-			} else {
-				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
-				os.Exit(-1)
-			}
-
-			// Writing decryption dek
-			err = ioutil.WriteFile("assets/dek.txt", decryptedDek, 0777)
+			fileMetaData, err := api.Share(uuid, kek, privateKey, email)
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
 			}
-
-			subject := "Share content"
-			r := service.NewRequest([]string{email}, subject, cfg)
-			r.Send("./templates/share.html", map[string]string{"cid": fileMetaData.Cid[0], "dekType": fileMetaData.DekType})
 
 			response := types.RetrieveByCIDContentResponse{
 				Status:     "success",
