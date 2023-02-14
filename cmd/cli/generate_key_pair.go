@@ -2,8 +2,8 @@ package main
 
 import (
 	"encloud/config"
-	thirdparty "encloud/third_party"
-	"encloud/types"
+	"encloud/pkg/api"
+	"encloud/pkg/types"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -23,19 +23,10 @@ func GenerateKeyPairCmd() *cobra.Command {
 				// Load default configuration from config.go file if config.yaml file not found
 				cfg, _ = config.LoadConf()
 			}
-			var keys types.Keys
-			fmt.Println(cfg.Stat.KekType)
-			if cfg.Stat.KekType == "rsa" {
-				thirdparty.InitCrypto()
-				keys = types.Keys{PublicKey: thirdparty.GetIdRsaPubStr(), PrivateKey: thirdparty.GetIdRsaStr()}
-				os.Remove(".keys/.idRsaPub")
-				os.Remove(".keys/.idRsa")
-			} else if cfg.Stat.KekType == "ecies" {
-				k := thirdparty.EciesGenerateKeyPair()
-				keys = types.Keys{PublicKey: k.PublicKey.Hex(false), PrivateKey: k.Hex()}
-			} else {
-				fmt.Fprintf(cmd.OutOrStderr(), "Invalid argument")
-				// os.Exit(-1)
+			keys, err := api.GenerateKeyPair(cfg.Stat.KekType)
+			if err != nil {
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			response := types.GenerateKeyPairResponse{
 				Status:     "success",

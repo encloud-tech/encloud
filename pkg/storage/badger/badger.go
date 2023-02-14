@@ -3,7 +3,7 @@ package badger
 import (
 	"bytes"
 	"encloud/config"
-	"encloud/types"
+	"encloud/pkg/types"
 	"encoding/gob"
 	"fmt"
 	"log"

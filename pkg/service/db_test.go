@@ -2,7 +2,7 @@ package service
 
 import (
 	"encloud/config"
-	"encloud/types"
+	"encloud/pkg/types"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

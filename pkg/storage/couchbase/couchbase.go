@@ -2,7 +2,7 @@ package couchbase
 
 import (
 	"encloud/config"
-	"encloud/types"
+	"encloud/pkg/types"
 	"fmt"
 	"log"
 	"time"

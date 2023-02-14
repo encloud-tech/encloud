@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"encloud/types"
+	"encloud/pkg/types"
 	"encoding/json"
 	"log"
 	"testing"
