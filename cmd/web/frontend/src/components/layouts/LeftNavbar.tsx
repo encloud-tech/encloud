@@ -36,7 +36,7 @@ const LeftNavbar = () => {
         <ul className="menu-inner py-1">
           <li
             className={
-              splitLocation[1] === "dashboard" && !splitLocation[2]
+              splitLocation[1] === "" && !splitLocation[2]
                 ? "menu-item active"
                 : "menu-item"
             }

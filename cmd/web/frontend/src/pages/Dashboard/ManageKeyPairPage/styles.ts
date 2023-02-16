@@ -1,3 +1,4 @@
+import { Button } from "react-bootstrap";
 import styled from "styled-components";
 
 export const KeyBoxedContent = styled.div`
@@ -103,9 +104,8 @@ export const StepBoxWrapper = styled.div`
   border: 3px solid #f76e5c;
   border-radius: 24px;
   margin-bottom: 50px;
-  margin-top: 20px;
   background: white;
-  padding: 30px;
+  padding: 20px;
   box-shadow: 0px 0px 10px 0px #e5e5e5;
 
   &.inactive {
@@ -132,24 +132,19 @@ export const StepHeader = styled.div`
   display: flex;
   align-items: center;
 
-  .stepCount {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #ffdac0;
-    border-radius: 80px;
-    margin-right: 15px;
-  }
   .stepTitle {
     color: #cc3366;
+
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 120%;
   }
 
   .right-part {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    margin-left: auto;
 
     span {
       font-size: 16px;
@@ -158,24 +153,45 @@ export const StepHeader = styled.div`
       color: #f76e5c;
     }
   }
-
-  .stepImage {
-    width: 42px;
-    height: auto;
-    margin-right: 15px;
-  }
 `;
 
 export const StepBody = styled.div`
   padding-top: 30px;
   .subHeader {
-    margin-top: 30px;
+    margin-top: 10px;
     margin-bottom: 20px;
     font-size: 20px;
     opacity: 0.6;
     color: #0a0b33;
     line-height: 150%;
     font-weight: 700;
+  }
+
+  input {
+    height: 55px;
+    margin-bottom: 0px;
+    color: rgba(10, 11, 51, 0.6);
+    font-size: 16px;
+    line-height: 30px;
+    background-color: #f3f6fc;
+    border: 1px solid #dee9ff;
+
+    @media only screen and (max-width: 1024px) {
+      font-size: 16px;
+      line-height: 28px;
+    }
+
+    &:focus,
+    &:active {
+      box-shadow: unset;
+      outline: unset;
+      border-color: #dee9ff;
+    }
+
+    &.hide {
+      webkit-filter: blur(2px);
+      filter: blur(2px);
+    }
   }
 `;
 
@@ -253,6 +269,95 @@ export const InputGroupWrapper = styled.div`
       img {
         width: 20px;
         margin-right: 10px;
+    }
+  }
+`;
+
+export const ColoredBtn = styled(Button)`
+  color: #ffffff;
+  border: 3px solid #f76e5c !important;
+  background-color: #f76e5c;
+  padding: 12px 20px;
+  border-radius: 47px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+
+  &:hover {
+    color: #f76e5c;
+    background: transparent;
+  }
+
+  &:focus,
+  &:active {
+    border: none;
+    outline: unset;
+    box-shadow: unset !important;
+  }
+
+  &:active {
+    color: #f76e5c80 !important;
+    background-color: unset !important;
+  }
+
+  &.nextBtn,
+  &.modalBtn {
+    width: 100%;
+    max-width: 125px;
+  }
+
+  &.submitBtn {
+    width: 100%;
+    max-width: 200px;
+    float: right;
+    margin-top: 20px;
+  }
+
+  &.outline {
+    background: transparent;
+    border: 3px solid #f76e5c !important;
+    color: #0a0b33;
+
+    &:hover {
+      color: #f76e5c;
+    }
+  }
+
+  &.step-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    > div {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    &:hover {
+      color: #f76e5c;
+      background: transparent;
+    }
+
+    &.loadingStatus {
+      color: #ffffff;
+
+      > div > span {
+        border-color: #ffffff !important;
+        color: #ffffff;
+
+        &.loadingText {
+          margin-left: 5px;
+        }
+      }
+
+      &:hover {
+        > div > span {
+          border-color: #f76e5c !important;
+          color: #f76e5c;
+        }
       }
     }
   }
