@@ -68,10 +68,7 @@ const columns = [
   }),
   columnHelper.accessor("id", {
     cell: (info) => (
-      <Link
-        to={`/dashboard/get-results/${info.getValue()}`}
-        className="btn btn-primary"
-      >
+      <Link to={`/get-results/${info.getValue()}`} className="btn btn-primary">
         Get Results
       </Link>
     ),
