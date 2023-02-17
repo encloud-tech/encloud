@@ -5,8 +5,9 @@ import ListComputePage from "./Compute/ListComputePage";
 import ManageComputePage from "./Compute/ManageComputePage";
 import ConfigurationPage from "./ConfigurationPage";
 import ManageKeyPairPage from "./ManageKeyPairPage";
-import RetrievePage from "./RetrievePage";
+import ListContentPage from "./ListContentPage";
 import UploadContent from "./UploadContentPage";
+import RetrieveContentPage from "./RetrieveContentPage";
 
 const Dashboard = () => {
   return (
@@ -14,9 +15,10 @@ const Dashboard = () => {
       <Routes>
         <Route path="/" element={<ManageKeyPairPage />} />
         <Route path="/upload" element={<UploadContent />} />
-        <Route path="/retrieve" element={<RetrievePage />} />
+        <Route path="/list" element={<ListContentPage />} />
+        <Route path="/retrieve/:id" element={<RetrieveContentPage />} />
         <Route path="/manage-compute" element={<ManageComputePage />} />
-        <Route path="/list" element={<ListComputePage />} />
+        <Route path="/list-compute" element={<ListComputePage />} />
         <Route path="/get-results/:id" element={<GetResultsPage />} />
         <Route path="/configuration" element={<ConfigurationPage />} />
       </Routes>
