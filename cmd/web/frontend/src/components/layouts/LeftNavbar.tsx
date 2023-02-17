@@ -76,13 +76,11 @@ const LeftNavbar = () => {
               </li>
               <li
                 className={
-                  splitLocation[2] === "retrieve"
-                    ? "menu-item active"
-                    : "menu-item"
+                  splitLocation[2] === "list" ? "menu-item active" : "menu-item"
                 }
                 onClick={(e) => e.stopPropagation()}
               >
-                <Link to="retrieve" className="menu-link">
+                <Link to="list" className="menu-link">
                   <Image src={dsRefreshImg} className="menuIcon" />
                   <div>Retrieve</div>
                 </Link>
@@ -92,7 +90,6 @@ const LeftNavbar = () => {
           <li
             className={openCompute ? "menu-item open" : "menu-item"}
             onClick={() => {
-              console.log(openCompute);
               SetOpenCompute(!openCompute);
               SetOpenContent(false);
             }}
@@ -117,11 +114,13 @@ const LeftNavbar = () => {
               </li>
               <li
                 className={
-                  splitLocation[2] === "list" ? "menu-item active" : "menu-item"
+                  splitLocation[2] === "list-compute"
+                    ? "menu-item active"
+                    : "menu-item"
                 }
                 onClick={(e) => e.stopPropagation()}
               >
-                <Link to="list" className="menu-link">
+                <Link to="list-compute" className="menu-link">
                   <Image src={dsMenuImg} className="menuIcon" />
                   <div>List</div>
                 </Link>
