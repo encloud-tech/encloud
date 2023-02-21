@@ -61,14 +61,17 @@ func (s *Storage) Create(key string, metadata types.FileMetadata) {
 	// Create and store a Document
 	_, err := col.Insert(key,
 		types.FileMetadata{
-			Name:      metadata.Name,
-			Uuid:      metadata.Uuid,
-			Md5Hash:   metadata.Md5Hash,
-			Size:      metadata.Size,
-			Timestamp: metadata.Timestamp,
-			FileType:  metadata.FileType,
-			Cid:       metadata.Cid,
-			Dek:       metadata.Dek,
+			Name:       metadata.Name,
+			Uuid:       metadata.Uuid,
+			Md5Hash:    metadata.Md5Hash,
+			Size:       metadata.Size,
+			Timestamp:  metadata.Timestamp,
+			FileType:   metadata.FileType,
+			Cid:        metadata.Cid,
+			Dek:        metadata.Dek,
+			DekType:    metadata.DekType,
+			KekType:    metadata.KekType,
+			UploadedAt: metadata.UploadedAt,
 		}, nil)
 
 	if err != nil {
