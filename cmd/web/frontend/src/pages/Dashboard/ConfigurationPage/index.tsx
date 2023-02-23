@@ -3,7 +3,9 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { KeyBoxedContent, KeyPairsSection } from "./styles";
 import { PageHeader } from "./../../../components/layouts/styles";
 import Select, { StylesConfig } from "react-select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FetchConfig, StoreConfig } from "../../../../wailsjs/go/main/App";
+import { toast } from "react-toastify";
 
 const storageTypeOptions = [
   { value: "badgerdb", label: "Badger DB" },
@@ -65,9 +67,73 @@ const colourStyles: StylesConfig = {
 
 const ConfigurationPage = () => {
   const { Formik } = formik;
+  const [config, setConfigData] = useState({
+    Estuary: {
+      BaseApiUrl: "",
+      Token: "",
+    },
+    Email: {
+      Server: "",
+      Port: "",
+      Username: "",
+      Password: "",
+      From: "",
+    },
+    Stat: {
+      KekType: kekTypeOptions[0],
+      StorageType: storageTypeOptions[0],
+      BadgerDB: {
+        Path: "",
+      },
+      Couchbase: {
+        Host: "",
+        Username: "",
+        Password: "",
+        Bucket: {
+          Name: "",
+          Scope: "",
+          Collection: "",
+        },
+      },
+    },
+  });
+
+  const fetchData = async () => {
+    const response = await FetchConfig();
+
+    if (response.Data) {
+      response.Data.Stat.KekType =
+        response.Data.Stat.KekType === "rsa"
+          ? kekTypeOptions[0]
+          : kekTypeOptions[1];
+      response.Data.Stat.StorageType =
+        response.Data.Stat.StorageType === "badgerdb"
+          ? storageTypeOptions[0]
+          : storageTypeOptions[1];
+      setConfigData(response.Data);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [setConfigData]);
 
   const save = async (data: any) => {
-    console.log(data);
+    data.Stat.KekType = data.Stat.KekType.value;
+    data.Stat.StorageType = data.Stat.StorageType.value;
+    try {
+      StoreConfig(data).then((response) => {
+        toast.success(response.Message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+
+        fetchData();
+      });
+    } catch (error) {
+      toast.error("Something went wrong!", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
   };
 
   return (
@@ -82,36 +148,8 @@ const ConfigurationPage = () => {
           <KeyBoxedContent>
             <Formik
               onSubmit={save}
-              initialValues={{
-                estuary: {
-                  base_api_url: "",
-                  token: "",
-                },
-                email: {
-                  server: "",
-                  port: "",
-                  username: "",
-                  password: "",
-                  from: "",
-                },
-                stat: {
-                  kekType: kekTypeOptions[0],
-                  storageType: storageTypeOptions[0],
-                  badgerdb: {
-                    path: "",
-                  },
-                  couchbase: {
-                    host: "",
-                    username: "",
-                    password: "",
-                    bucket: {
-                      name: "",
-                      scope: "",
-                      collection: "",
-                    },
-                  },
-                },
-              }}
+              initialValues={config}
+              enableReinitialize={true}
             >
               {({
                 handleSubmit,
@@ -137,9 +175,9 @@ const ConfigurationPage = () => {
                         <Form.Label>API URL</Form.Label>
                         <Form.Control
                           type="text"
-                          name="estuary.base_api_url"
+                          name="Estuary.BaseApiUrl"
                           placeholder="https://api.estuary.tech"
-                          value={values.estuary.base_api_url}
+                          value={values.Estuary.BaseApiUrl}
                           onChange={handleChange}
                         />
                       </Form.Group>
@@ -149,9 +187,9 @@ const ConfigurationPage = () => {
                         <Form.Label>Token</Form.Label>
                         <Form.Control
                           type="text"
-                          name="estuary.token"
+                          name="Estuary.Token"
                           placeholder="EST6315eb22-XXXX-XXXX-XXXX-1acb4a954070ARY"
-                          value={values.estuary.token}
+                          value={values.Estuary.Token}
                           onChange={handleChange}
                         />
                       </Form.Group>
@@ -171,8 +209,8 @@ const ConfigurationPage = () => {
                         <Form.Control
                           type="text"
                           placeholder="smtp.mailtrap.io"
-                          name="email.server"
-                          value={values.email.server}
+                          name="Email.Server"
+                          value={values.Email.Server}
                           onChange={handleChange}
                         />
                       </Form.Group>
@@ -183,8 +221,8 @@ const ConfigurationPage = () => {
                         <Form.Control
                           type="text"
                           placeholder="2525"
-                          name="email.port"
-                          value={values.email.port}
+                          name="Email.Port"
+                          value={values.Email.Port}
                           onChange={handleChange}
                         />
                       </Form.Group>
@@ -197,8 +235,8 @@ const ConfigurationPage = () => {
                         <Form.Control
                           type="text"
                           placeholder="ac984e52bfd98h"
-                          name="email.username"
-                          value={values.email.username}
+                          name="Email.Username"
+                          value={values.Email.Username}
                           onChange={handleChange}
                         />
                       </Form.Group>
@@ -209,8 +247,8 @@ const ConfigurationPage = () => {
                         <Form.Control
                           type="password"
                           placeholder="861b495c076987"
-                          name="email.password"
-                          value={values.email.password}
+                          name="Email.Password"
+                          value={values.Email.Password}
                           onChange={handleChange}
                         />
                       </Form.Group>
@@ -223,8 +261,8 @@ const ConfigurationPage = () => {
                         <Form.Control
                           type="text"
                           placeholder="noreply@encloud.tech"
-                          name="email.from"
-                          value={values.email.from}
+                          name="Email.From"
+                          value={values.Email.From}
                           onChange={handleChange}
                         />
                       </Form.Group>
@@ -246,10 +284,10 @@ const ConfigurationPage = () => {
                           className="dek-type-select"
                           styles={colourStyles}
                           options={kekTypeOptions}
-                          name="stat.kekType"
-                          value={values.stat.kekType}
+                          name="Stat.KekType"
+                          value={values.Stat.KekType}
                           onChange={(newVal) => {
-                            setFieldValue("stat.kekType", newVal);
+                            setFieldValue("Stat.KekType", newVal);
                           }}
                         />
                       </Form.Group>
@@ -261,16 +299,16 @@ const ConfigurationPage = () => {
                           className="dek-type-select"
                           styles={colourStyles}
                           options={storageTypeOptions}
-                          name="stat.storageType"
-                          value={values.stat.storageType}
+                          name="Stat.StorageType"
+                          value={values.Stat.StorageType}
                           onChange={(newVal) => {
-                            setFieldValue("stat.storageType", newVal);
+                            setFieldValue("Stat.StorageType", newVal);
                           }}
                         />
                       </Form.Group>
                     </Col>
                   </Row>
-                  {values.stat.storageType.value === "badgerdb" ? (
+                  {values.Stat.StorageType.value === "badgerdb" ? (
                     <Row className="mt-2">
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -278,8 +316,8 @@ const ConfigurationPage = () => {
                           <Form.Control
                             type="text"
                             placeholder="badger.db"
-                            name="stat.badgerdb.path"
-                            value={values.stat.badgerdb.path}
+                            name="Stat.BadgerDB.Path"
+                            value={values.Stat.BadgerDB.Path}
                             onChange={handleChange}
                           />
                         </Form.Group>
@@ -295,8 +333,8 @@ const ConfigurationPage = () => {
                             <Form.Control
                               type="text"
                               placeholder="localhost"
-                              name="stat.couchbase.host"
-                              value={values.stat.couchbase.host}
+                              name="Stat.Couchbase.Host"
+                              value={values.Stat.Couchbase.Host}
                               onChange={handleChange}
                             />
                           </Form.Group>
@@ -307,8 +345,8 @@ const ConfigurationPage = () => {
                             <Form.Control
                               type="text"
                               placeholder="encloud"
-                              name="stat.couchbase.bucket.name"
-                              value={values.stat.couchbase.bucket.name}
+                              name="Stat.Couchbase.Bucket.Name"
+                              value={values.Stat.Couchbase.Bucket.Name}
                               onChange={handleChange}
                             />
                           </Form.Group>
@@ -321,8 +359,8 @@ const ConfigurationPage = () => {
                             <Form.Control
                               type="text"
                               placeholder="Administrator"
-                              name="stat.couchbase.username"
-                              value={values.stat.couchbase.username}
+                              name="Stat.Couchbase.Username"
+                              value={values.Stat.Couchbase.Username}
                               onChange={handleChange}
                             />
                           </Form.Group>
@@ -333,8 +371,8 @@ const ConfigurationPage = () => {
                             <Form.Control
                               type="password"
                               placeholder="Encloud@2022"
-                              name="stat.couchbase.password"
-                              value={values.stat.couchbase.password}
+                              name="Stat.Couchbase.Password"
+                              value={values.Stat.Couchbase.Password}
                               onChange={handleChange}
                             />
                           </Form.Group>
@@ -347,8 +385,8 @@ const ConfigurationPage = () => {
                             <Form.Control
                               type="text"
                               placeholder="file"
-                              name="stat.couchbase.bucket.scope"
-                              value={values.stat.couchbase.bucket.scope}
+                              name="Stat.Couchbase.Bucket.Scope"
+                              value={values.Stat.Couchbase.Bucket.Scope}
                               onChange={handleChange}
                             />
                           </Form.Group>
@@ -359,8 +397,8 @@ const ConfigurationPage = () => {
                             <Form.Control
                               type="text"
                               placeholder="metadata"
-                              name="stat.couchbase.bucket.collection"
-                              value={values.stat.couchbase.bucket.collection}
+                              name="Stat.Couchbase.Bucket.Collection"
+                              value={values.Stat.Couchbase.Bucket.Collection}
                               onChange={handleChange}
                             />
                           </Form.Group>

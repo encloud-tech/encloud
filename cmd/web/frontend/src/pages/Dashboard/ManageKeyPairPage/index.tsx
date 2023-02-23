@@ -31,6 +31,7 @@ import { GenerateKeyPair } from "../../../../wailsjs/go/main/App";
 import { persistKey, readKey } from "../../../services/localStorage.service";
 import { types } from "../../../../wailsjs/go/models";
 import { copyToClipboard } from "../../../helper";
+import { toast } from "react-toastify";
 
 const ManageKeyPairPage = () => {
   const [kekType, setKeKType] = useState<string>("rsa");
@@ -49,9 +50,15 @@ const ManageKeyPairPage = () => {
   });
 
   const generateKeyPair = async () => {
-    const generatedKeys = await GenerateKeyPair(kekType);
-    setKeys(generatedKeys.Data);
-    setIsKeysGenerated(!isKeysGenerated);
+    const response = await GenerateKeyPair(kekType);
+    if (response && response.Status == "success") {
+      setKeys(response.Data);
+      setIsKeysGenerated(!isKeysGenerated);
+
+      toast.success("Key pair generated successfully.", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
   };
 
   useEffect(() => {
@@ -89,6 +96,9 @@ const ManageKeyPairPage = () => {
                   persistKey(data);
                   setCurrentKeys(data);
                   setShowEditForm(!showEditForm);
+                  toast.success("Key pair updated successfully.", {
+                    position: toast.POSITION.TOP_RIGHT,
+                  });
                 }}
                 initialValues={{
                   PublicKey: currentKeys?.PublicKey || "",

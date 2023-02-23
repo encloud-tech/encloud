@@ -1,52 +1,91 @@
+import { Button } from "react-bootstrap";
 import styled from "styled-components";
-import { ProgressBar } from "react-bootstrap";
 
-export const DragArea = styled.div`
-  border: 2px dashed #d94964;
-  padding: 3em;
-  width: 100%;
-  border-radius: 5px;
-  position: relative;
-  display: flex;
-  align-items: center;
+export const ColoredBtn = styled(Button)`
+  color: #ffffff;
+  border: 3px solid #f76e5c !important;
+  background-color: #f76e5c;
+  padding: 12px 20px;
+  border-radius: 47px;
   text-align: center;
-  transition: 0.2s;
-  margin-bottom: 30px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
 
-  .choose-file-button {
-    flex-shrink: 0;
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 1);
-    border-radius: 3px;
-    padding: 8px 15px;
-    margin-right: 10px;
-    font-size: 12px;
-    text-transform: uppercase;
+  &:hover {
+    color: #f76e5c;
+    background: transparent;
   }
 
-  .file-message {
-    font-weight: 400;
-    line-height: 1.4;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  &:focus,
+  &:active {
+    border: none;
+    outline: unset;
+    box-shadow: unset !important;
   }
 
-  .file-input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
+  &:active {
+    color: #f76e5c80 !important;
+    background-color: unset !important;
+  }
+
+  &.nextBtn,
+  &.submitBtn,
+  &.modalBtn {
     width: 100%;
-    cursor: pointer;
-    opacity: 0;
+    max-width: 250px;
   }
-`;
 
-export const FileUploadBar = styled(ProgressBar)`
-  background-color: #f76e5c50;
-  margin-bottom: 30px;
-  .progress-bar {
-    background-color: #f76e5c;
+  &.loginBtn {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  &.outline {
+    background: transparent;
+    border: 3px solid #f76e5c !important;
+    color: #0a0b33;
+
+    &:hover {
+      color: #f76e5c;
+    }
+  }
+
+  &.step-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    > div {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    &:hover {
+      color: #f76e5c;
+      background: transparent;
+    }
+
+    &.loadingStatus {
+      color: #ffffff;
+
+      > div > span {
+        border-color: #ffffff !important;
+        color: #ffffff;
+
+        &.loadingText {
+          margin-left: 5px;
+        }
+      }
+
+      &:hover {
+        > div > span {
+          border-color: #f76e5c !important;
+          color: #f76e5c;
+        }
+      }
+    }
   }
 `;
