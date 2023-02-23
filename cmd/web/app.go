@@ -5,6 +5,8 @@ import (
 	"encloud/pkg/api"
 	"encloud/pkg/types"
 	"net/http"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -45,6 +47,14 @@ func (a *App) GenerateKeyPair(kekType string) types.GenerateKeyPairResponse {
 	}
 
 	return response
+}
+
+func (a *App) SelectFile() string {
+	file, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{})
+	if err != nil {
+		return err.Error()
+	}
+	return file
 }
 
 // Upload data to esatury
@@ -138,6 +148,52 @@ func (a *App) RetrieveSharedContent(decryptedDekPath string, dekType string, cid
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
 		}
+	}
+
+	return response
+}
+
+// Store config
+func (a *App) StoreConfig(conf types.ConfYaml) types.ConfigResponse {
+	var response types.ConfigResponse
+	err := api.Store(conf)
+	if err != nil {
+		response = types.ConfigResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       types.ConfYaml{},
+		}
+	}
+
+	response = types.ConfigResponse{
+		Status:     "success",
+		StatusCode: http.StatusFound,
+		Message:    "Configuration saved successfully",
+		Data:       types.ConfYaml{},
+	}
+
+	return response
+}
+
+// Fetch config
+func (a *App) FetchConfig() types.ConfigResponse {
+	var response types.ConfigResponse
+	conf, err := api.Fetch()
+	if err != nil {
+		response = types.ConfigResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       types.ConfYaml{},
+		}
+	}
+
+	response = types.ConfigResponse{
+		Status:     "success",
+		StatusCode: http.StatusFound,
+		Message:    "Config data fetched successfully",
+		Data:       conf,
 	}
 
 	return response

@@ -1,5 +1,54 @@
 package types
 
+// ConfYaml
+type ConfYaml struct {
+	Estuary SectionEstuary `yaml:"estuary"`
+	Email   EmailStat      `yaml:"email"`
+	Stat    SectionStat    `yaml:"stat"`
+}
+
+// SectionEstuary is sub section of config.
+type SectionEstuary struct {
+	BaseApiUrl string `yaml:"base_api_url"`
+	Token      string `yaml:"token"`
+}
+
+// EmailStat is sub section of config.
+type EmailStat struct {
+	Server   string `yaml:"server"`
+	Port     int64  `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	From     string `yaml:"from"`
+}
+
+// SectionStat is sub section of config.
+type SectionStat struct {
+	BadgerDB    SectionBadgerDB  `yaml:"badgerdb"`
+	Couchbase   SectionCouchbase `yaml:"couchbase"`
+	StorageType string           `yaml:"storageType"`
+	KekType     string           `yaml:"kekType"`
+}
+
+// SectionBadgerDB is sub section of config.
+type SectionBadgerDB struct {
+	Path string `yaml:"path"`
+}
+
+// SectionCouchbae is sub section of config.
+type SectionCouchbase struct {
+	Host     string        `yaml:"host"`
+	Username string        `yaml:"username"`
+	Password string        `yaml:"password"`
+	Bucket   SectionBucket `yaml:"bucket"`
+}
+
+type SectionBucket struct {
+	Name       string `yaml:"name"`
+	Scope      string `yaml:"scope"`
+	Collection string `yaml:"collection"`
+}
+
 type Contents []Content
 
 type ByCID []struct {
@@ -72,6 +121,13 @@ type RetrieveByCIDContentResponse struct {
 type Keys struct {
 	PublicKey  string `json:"PublicKey"`
 	PrivateKey string `json:"PrivateKey"`
+}
+
+type ConfigResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
+	Data       ConfYaml
 }
 
 type ErrorResponse struct {

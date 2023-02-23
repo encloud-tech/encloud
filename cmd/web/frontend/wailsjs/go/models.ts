@@ -1,6 +1,8 @@
 export namespace types {
 	
 	
+	
+	
 	export class FileMetadata {
 	    uuid: string;
 	    md5Hash: string;

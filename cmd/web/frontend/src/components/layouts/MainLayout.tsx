@@ -1,6 +1,8 @@
 import { DashboardWrapper, LayoutWrapper } from "./styles";
 import LeftNavbar from "./LeftNavbar";
 import TopNavbar from "./TopNavbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MainLayout = (props: any) => {
   return (
@@ -9,6 +11,7 @@ const MainLayout = (props: any) => {
         <LeftNavbar />
         <div className="layout-page">
           <TopNavbar />
+          <ToastContainer />
           <div className="layout-inner-content">
             <DashboardWrapper>{props.children}</DashboardWrapper>
           </div>
