@@ -2,7 +2,6 @@ package service
 
 import (
 	"bytes"
-	"encloud/config"
 	"encloud/pkg/types"
 	"encoding/json"
 	"io"
@@ -15,14 +14,14 @@ import (
 )
 
 // New func implements the storage interface
-func New(config *config.ConfYaml) *Estuary {
+func New(config types.ConfYaml) *Estuary {
 	return &Estuary{
 		config: config,
 	}
 }
 
 type Estuary struct {
-	config *config.ConfYaml
+	config types.ConfYaml
 }
 
 func (e *Estuary) FetchAllContents() types.Contents {
@@ -67,9 +66,7 @@ func (e *Estuary) UploadContent(filePath string) (types.UploadResponse, error) {
 	return responseObject, nil
 }
 
-func (e *Estuary) DownloadContent(cid string) string {
-	filepath := "assets/downloaded.bin"
-
+func (e *Estuary) DownloadContent(filepath string, cid string) string {
 	// Create blank file
 	file, err := os.Create(filepath)
 	if err != nil {

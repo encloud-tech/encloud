@@ -13,10 +13,9 @@ import (
 )
 
 func Upload(filePath string, kekType string, dekType string, kek string) (string, error) {
-	cfg, err := config.LoadConf("./config.yaml")
+	cfg, err := Fetch()
 	if err != nil {
-		// Load default configuration from config.go file if config.yaml file not found
-		cfg, _ = config.LoadConf()
+		return "", err
 	}
 
 	estuaryService := service.New(cfg)
@@ -43,20 +42,20 @@ func Upload(filePath string, kekType string, dekType string, kek string) (string
 		return "", err
 	}
 
-	if _, err := os.Stat("assets"); os.IsNotExist(err) {
-		err := os.Mkdir("assets", 0777)
+	if _, err := os.Stat(config.Assets); os.IsNotExist(err) {
+		err := os.Mkdir(config.Assets, 0777)
 		if err != nil {
 			return "", err
 		}
 	}
 
 	if dekType == "aes" {
-		err = thirdparty.EncryptWithAES(dek, filePath, "assets/encrypted.bin")
+		err = thirdparty.EncryptWithAES(dek, filePath, config.Assets+"/"+thirdparty.GenerateFileName(timestamp, "encrypt", filepath.Ext(fileInfo.Name())))
 		if err != nil {
 			return "", err
 		}
 	} else {
-		err = thirdparty.EncryptWithChacha20poly1305(dek, filePath, "assets/encrypted.bin")
+		err = thirdparty.EncryptWithChacha20poly1305(dek, filePath, config.Assets+"/"+thirdparty.GenerateFileName(timestamp, "encrypt", filepath.Ext(fileInfo.Name())))
 		if err != nil {
 			return "", err
 		}
@@ -64,7 +63,7 @@ func Upload(filePath string, kekType string, dekType string, kek string) (string
 
 	var cids []string
 	var uuid = thirdparty.GenerateUuid()
-	content, err := estuaryService.UploadContent("assets/encrypted.bin")
+	content, err := estuaryService.UploadContent(config.Assets + "/" + thirdparty.GenerateFileName(timestamp, "encrypt", filepath.Ext(fileInfo.Name())))
 	if err != nil {
 		return "", err
 	}
@@ -90,6 +89,6 @@ func Upload(filePath string, kekType string, dekType string, kek string) (string
 		dbService.Store(hash+":"+uuid, fileData)
 	}
 
-	os.Remove("assets/encrypted.bin")
+	os.Remove(config.Assets + "/" + thirdparty.GenerateFileName(timestamp, "encrypt", filepath.Ext(fileInfo.Name())))
 	return uuid, nil
 }

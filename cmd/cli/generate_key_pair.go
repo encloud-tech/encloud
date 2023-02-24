@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encloud/config"
 	"encloud/pkg/api"
 	"encloud/pkg/types"
 	"encoding/json"
@@ -18,10 +17,10 @@ func GenerateKeyPairCmd() *cobra.Command {
 		Short: "Generate your key pair",
 		Long:  `Generate your public key and private key which helps to encrypt and decrypt your data`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cfg, err := config.LoadConf("./config.yaml")
+			cfg, err := api.Fetch()
 			if err != nil {
-				// Load default configuration from config.go file if config.yaml file not found
-				cfg, _ = config.LoadConf()
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
 			}
 			keys, err := api.GenerateKeyPair(cfg.Stat.KekType)
 			if err != nil {

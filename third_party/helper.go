@@ -54,3 +54,7 @@ func ReadKeyFile(filePath string) string {
 func DigestString(s string) string {
 	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 }
+
+func GenerateFileName(timestamp int64, operationType string, extenstion string) string {
+	return fmt.Sprint(timestamp) + "_" + operationType + extenstion
+}

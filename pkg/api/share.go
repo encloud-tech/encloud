@@ -5,14 +5,14 @@ import (
 	"encloud/pkg/service"
 	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
+	"fmt"
 	"io/ioutil"
 )
 
 func Share(uuid string, kek string, privateKey string, email string) (types.FileMetadata, error) {
-	cfg, err := config.LoadConf("./config.yaml")
+	cfg, err := Fetch()
 	if err != nil {
-		// Load default configuration from config.go file if config.yaml file not found
-		cfg, _ = config.LoadConf()
+		return types.FileMetadata{}, err
 	}
 	dbService := service.NewDB(cfg)
 	fileMetaData := dbService.FetchByCid(thirdparty.DigestString(kek) + ":" + uuid)
@@ -34,14 +34,14 @@ func Share(uuid string, kek string, privateKey string, email string) (types.File
 	}
 
 	// Writing decryption dek
-	err = ioutil.WriteFile("assets/dek.txt", decryptedDek, 0777)
+	err = ioutil.WriteFile(config.Assets+"/"+fmt.Sprint(fileMetaData.Timestamp)+"_dek.txt", decryptedDek, 0777)
 	if err != nil {
 		return types.FileMetadata{}, err
 	}
 
 	subject := "Share content"
 	r := service.NewRequest([]string{email}, subject, cfg)
-	r.Send("./templates/share.html", map[string]string{"cid": fileMetaData.Cid[0], "dekType": fileMetaData.DekType})
+	r.Send("../../templates/share.html", map[string]string{"cid": fileMetaData.Cid[0], "dekType": fileMetaData.DekType}, fileMetaData.Timestamp)
 
 	return fileMetaData, nil
 }

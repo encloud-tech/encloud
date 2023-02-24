@@ -2,7 +2,6 @@ package service
 
 import (
 	"bytes"
-	"encloud/config"
 	"encloud/pkg/storage/badger"
 	"encloud/pkg/storage/couchbase"
 	"encloud/pkg/types"
@@ -11,19 +10,17 @@ import (
 )
 
 // New func implements the storage interface
-func NewDB(config *config.ConfYaml) *DB {
+func NewDB(config types.ConfYaml) *DB {
 	return &DB{
 		config: config,
 	}
 }
 
 type DB struct {
-	config *config.ConfYaml
+	config types.ConfYaml
 }
 
-func initBadgerDB() *badger.Storage {
-	cfg, _ := config.LoadConf()
-
+func initBadgerDB(cfg *types.ConfYaml) *badger.Storage {
 	badger := badger.New(cfg)
 	err := badger.Init()
 	if err != nil {
@@ -33,9 +30,7 @@ func initBadgerDB() *badger.Storage {
 	return badger
 }
 
-func initCouchBaseDB() *couchbase.Storage {
-	cfg, _ := config.LoadConf()
-
+func initCouchBaseDB(cfg *types.ConfYaml) *couchbase.Storage {
 	couchbase := couchbase.New(cfg)
 	err := couchbase.Init()
 	if err != nil {
@@ -47,10 +42,10 @@ func initCouchBaseDB() *couchbase.Storage {
 
 func (d *DB) Store(key string, fileMetaData types.FileMetadata) {
 	if d.config.Stat.StorageType == "couchbase" {
-		couchbase := initCouchBaseDB()
+		couchbase := initCouchBaseDB(&d.config)
 		couchbase.Create(key, fileMetaData)
 	} else {
-		badger := initBadgerDB()
+		badger := initBadgerDB(&d.config)
 		var b bytes.Buffer
 		e := gob.NewEncoder(&b)
 		if err := e.Encode(fileMetaData); err != nil {
@@ -65,10 +60,10 @@ func (d *DB) Store(key string, fileMetaData types.FileMetadata) {
 func (d *DB) Fetch(key string) types.FileData {
 	var val types.FileData
 	if d.config.Stat.StorageType == "couchbase" {
-		couchbase := initCouchBaseDB()
+		couchbase := initCouchBaseDB(&d.config)
 		val = couchbase.Read(key)
 	} else {
-		badger := initBadgerDB()
+		badger := initBadgerDB(&d.config)
 		val = badger.Read(key)
 		badger.Close()
 	}
@@ -78,10 +73,10 @@ func (d *DB) Fetch(key string) types.FileData {
 func (d *DB) FetchByCid(key string) types.FileMetadata {
 	var val types.FileMetadata
 	if d.config.Stat.StorageType == "couchbase" {
-		couchbase := initCouchBaseDB()
+		couchbase := initCouchBaseDB(&d.config)
 		val = couchbase.ReadByCid(key)
 	} else {
-		badger := initBadgerDB()
+		badger := initBadgerDB(&d.config)
 		val = badger.ReadByCid(key)
 		badger.Close()
 	}

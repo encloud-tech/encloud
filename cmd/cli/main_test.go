@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"encloud/config"
 	"encloud/pkg/types"
 	"encoding/json"
+	"fmt"
 	"log"
 	"testing"
 
@@ -56,7 +58,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	retrieveContentByCidCmd := RetrieveByCidCmd()
 	retrieveContentByCidCmd.SetOut(retrieveContentByCidBuf)
 	retrieveContentByCidCmd.SetErr(retrieveContentByCidBuf)
-	retrieveContentByCidCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid})
+	retrieveContentByCidCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-s", "C:/Users/vivek/Downloads"})
 	retrieveContentByCidCmd.Execute()
 	var retrieveContentByCidResponseObject types.RetrieveByCIDContentResponse
 	json.Unmarshal(retrieveContentByCidBuf.Bytes(), &retrieveContentByCidResponseObject)
@@ -81,7 +83,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	retrieveSharedContentCmd := RetrieveSharedContentCmd()
 	retrieveSharedContentCmd.SetOut(retrieveSharedContentBuf)
 	retrieveSharedContentCmd.SetErr(retrieveSharedContentBuf)
-	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", "assets/dek.txt"})
+	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", config.Assets + "/" + fmt.Sprint(shareResponseObject.Data.Timestamp) + "_dek.txt", "-s", "C:/Users/vivek", "-f", "shared.csv"})
 	retrieveSharedContentCmd.Execute()
 	var retrieveSharedContentResponseObject types.RetrieveByCIDContentResponse
 	json.Unmarshal(retrieveSharedContentBuf.Bytes(), &retrieveSharedContentResponseObject)
