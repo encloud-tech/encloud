@@ -25,6 +25,7 @@ func RetrieveByCidCmd() *cobra.Command {
 			uuid, _ := cmd.Flags().GetString("uuid")
 			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
 			readPrivateKeyFromPath, _ := cmd.Flags().GetBool("readPrivateKeyFromPath")
+			retrievalFileStoragePath, _ := cmd.Flags().GetString("retrievalFileStoragePath")
 			if readPublicKeyFromPath {
 				kek = thirdparty.ReadKeyFile(publicKey)
 			} else {
@@ -37,7 +38,7 @@ func RetrieveByCidCmd() *cobra.Command {
 				privateKey = pk
 			}
 
-			fileMetaData, err := api.RetrieveByUUID(uuid, kek, privateKey)
+			fileMetaData, err := api.RetrieveByUUID(uuid, kek, privateKey, retrievalFileStoragePath)
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
@@ -60,6 +61,7 @@ func RetrieveByCidCmd() *cobra.Command {
 	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
 	cmd.Flags().StringP("privateKey", "k", "", "Enter your private key")
 	cmd.Flags().StringP("uuid", "u", "", "Enter your uuid")
+	cmd.Flags().StringP("retrievalFileStoragePath", "s", "", "Enter path to save retrieval file")
 	cmd.Flags().BoolP("readPublicKeyFromPath", "r", false, "Do you want public key read from path you have entered?")
 	cmd.Flags().BoolP("readPrivateKeyFromPath", "o", false, "Do you want private key read from path you have entered?")
 	cmd.MarkFlagRequired("publicKey")

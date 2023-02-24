@@ -2,10 +2,8 @@ package api
 
 import (
 	"encloud/pkg/types"
-	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 
 	"github.com/adrg/xdg"
 	"gopkg.in/yaml.v2"
@@ -31,26 +29,19 @@ func Store(conf types.ConfYaml) error {
 func Fetch() (types.ConfYaml, error) {
 	configFilePath, err := xdg.SearchConfigFile("encloud/config.yaml")
 	if err != nil {
-		log.Println("Error :", err.Error())
-		os.Exit(-1)
 		return types.ConfYaml{}, err
 	}
 	log.Println("Serach config file at:", configFilePath)
 
 	data, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
-		log.Println("Error :", err.Error())
-		os.Exit(-1)
 		return types.ConfYaml{}, err
 	}
 
 	var conf types.ConfYaml
 	if err := yaml.Unmarshal(data, &conf); err != nil {
-		log.Println("Error :", err.Error())
-		os.Exit(-1)
 		return types.ConfYaml{}, err
 	}
 
-	fmt.Println(conf)
 	return conf, nil
 }

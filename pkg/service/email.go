@@ -2,9 +2,10 @@ package service
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encloud/config"
+	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
@@ -18,14 +19,14 @@ type Request struct {
 	to      []string
 	subject string
 	body    string
-	config  *config.ConfYaml
+	config  types.ConfYaml
 }
 
 const (
 	MIME = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 )
 
-func NewRequest(to []string, subject string, config *config.ConfYaml) *Request {
+func NewRequest(to []string, subject string, config types.ConfYaml) *Request {
 	return &Request{
 		to:      to,
 		subject: subject,
@@ -46,8 +47,7 @@ func (r *Request) parseTemplate(fileName string, data interface{}) error {
 	return nil
 }
 
-func (r *Request) BuildMail() []byte {
-
+func (r *Request) BuildMail(timestamp int64) []byte {
 	var buf bytes.Buffer
 
 	buf.WriteString(fmt.Sprintf("From: %s\r\n", r.from))
@@ -69,7 +69,7 @@ func (r *Request) BuildMail() []byte {
 	buf.WriteString("Content-Disposition: attachment; filename=dek.txt\r\n")
 	buf.WriteString("Content-ID: <dek.txt>\r\n\r\n")
 
-	data := thirdparty.ReadFile("assets/dek.txt")
+	data := thirdparty.ReadFile(config.Assets + "/" + fmt.Sprint(timestamp) + "_dek.txt")
 
 	b := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
 	base64.StdEncoding.Encode(b, data)
@@ -81,9 +81,9 @@ func (r *Request) BuildMail() []byte {
 	return buf.Bytes()
 }
 
-func (r *Request) sendMail() bool {
+func (r *Request) sendMail(timestamp int64) bool {
 	log.Println("config", r.config)
-	data := r.BuildMail()
+	data := r.BuildMail(timestamp)
 	SMTP := fmt.Sprintf("%s:%d", r.config.Email.Server, r.config.Email.Port)
 	if err := smtp.SendMail(SMTP, smtp.PlainAuth("", r.config.Email.Username, r.config.Email.Password, r.config.Email.Server), r.config.Email.From, r.to, data); err != nil {
 		log.Println(err)
@@ -92,13 +92,13 @@ func (r *Request) sendMail() bool {
 	return true
 }
 
-func (r *Request) Send(templateName string, items interface{}) {
+func (r *Request) Send(templateName string, items interface{}, timestamp int64) {
 	err := r.parseTemplate(templateName, items)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if ok := r.sendMail(); ok {
-		os.Remove("assets/dek.txt")
+	if ok := r.sendMail(timestamp); ok {
+		os.Remove(config.Assets + "/" + fmt.Sprint(timestamp) + "_dek.txt")
 		log.Printf("Email has been sent to %s\n", r.to)
 	} else {
 		log.Printf("Failed to send the email to %s\n", r.to)

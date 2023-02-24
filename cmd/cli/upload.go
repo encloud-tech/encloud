@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encloud/config"
 	"encloud/pkg/api"
 	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
@@ -14,16 +13,17 @@ import (
 )
 
 func UploadContentCmd() *cobra.Command {
-	cfg, err := config.LoadConf("./config.yaml")
-	if err != nil {
-		// Load default configuration from config.go file if config.yaml file not found
-		cfg, _ = config.LoadConf()
-	}
 	cmd := &cobra.Command{
 		Use:   "upload",
 		Short: "Upload your content to filecoin storage",
 		Long:  `Upload your content to filecoin storage which is encrypted using your public key`,
 		Run: func(cmd *cobra.Command, args []string) {
+			cfg, err := api.Fetch()
+			if err != nil {
+				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				os.Exit(-1)
+			}
+
 			kek := ""
 			publicKey, _ := cmd.Flags().GetString("publicKey")
 			path, _ := cmd.Flags().GetString("filePath")

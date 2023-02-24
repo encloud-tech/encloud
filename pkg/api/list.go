@@ -1,17 +1,16 @@
 package api
 
 import (
-	"encloud/config"
 	"encloud/pkg/service"
 	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
+	"log"
 )
 
 func List(kek string) types.FileData {
-	cfg, err := config.LoadConf("./config.yaml")
+	cfg, err := Fetch()
 	if err != nil {
-		// Load default configuration from config.go file if config.yaml file not found
-		cfg, _ = config.LoadConf()
+		log.Println("Error load config data", err.Error())
 	}
 	dbService := service.NewDB(cfg)
 

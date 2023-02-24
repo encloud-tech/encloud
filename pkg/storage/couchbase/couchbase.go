@@ -1,7 +1,6 @@
 package couchbase
 
 import (
-	"encloud/config"
 	"encloud/pkg/types"
 	"fmt"
 	"log"
@@ -11,7 +10,7 @@ import (
 )
 
 // New func implements the storage interface
-func New(config *config.ConfYaml) *Storage {
+func New(config *types.ConfYaml) *Storage {
 	return &Storage{
 		config: config,
 	}
@@ -19,7 +18,7 @@ func New(config *config.ConfYaml) *Storage {
 
 // Storage is interface structure
 type Storage struct {
-	config  *config.ConfYaml
+	config  *types.ConfYaml
 	cluster *gocb.Cluster
 	bucket  *gocb.Bucket
 }

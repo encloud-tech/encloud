@@ -6,13 +6,13 @@ import (
 	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
 	"os"
+	"path/filepath"
 )
 
-func RetrieveByUUID(uuid string, kek string, privateKey string) (types.FileMetadata, error) {
-	cfg, err := config.LoadConf("./config.yaml")
+func RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) (types.FileMetadata, error) {
+	cfg, err := Fetch()
 	if err != nil {
-		// Load default configuration from config.go file if config.yaml file not found
-		cfg, _ = config.LoadConf()
+		return types.FileMetadata{}, err
 	}
 	estuaryService := service.New(cfg)
 	dbService := service.NewDB(cfg)
@@ -35,19 +35,19 @@ func RetrieveByUUID(uuid string, kek string, privateKey string) (types.FileMetad
 		return types.FileMetadata{}, err
 	}
 
-	filepath := estuaryService.DownloadContent(fileMetaData.Cid[0])
+	filePath := estuaryService.DownloadContent(config.Assets+"/"+thirdparty.GenerateFileName(fileMetaData.Timestamp, "retrieve", filepath.Ext(fileMetaData.Name)), fileMetaData.Cid[0])
 	if fileMetaData.DekType == "aes" {
-		err := thirdparty.DecryptWithAES(decryptedDek, filepath, "assets/decrypted.csv")
+		err := thirdparty.DecryptWithAES(decryptedDek, filePath, retrievalFileStoragePath+"/"+fileMetaData.Name)
 		if err != nil {
 			return types.FileMetadata{}, err
 		}
 	} else {
-		err := thirdparty.DecryptWithChacha20poly1305(decryptedDek, filepath, "assets/decrypted.csv")
+		err := thirdparty.DecryptWithChacha20poly1305(decryptedDek, filePath, retrievalFileStoragePath+"/"+fileMetaData.Name)
 		if err != nil {
 			return types.FileMetadata{}, err
 		}
 	}
 
-	os.Remove("assets/downloaded.bin")
+	os.Remove(config.Assets + "/" + thirdparty.GenerateFileName(fileMetaData.Timestamp, "retrieve", filepath.Ext(fileMetaData.Name)))
 	return fileMetaData, nil
 }

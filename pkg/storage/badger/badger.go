@@ -2,19 +2,18 @@ package badger
 
 import (
 	"bytes"
-	"encloud/config"
 	"encloud/pkg/types"
 	"encoding/gob"
 	"fmt"
 	"log"
-	"os"
 	"sync"
 
+	"github.com/adrg/xdg"
 	"github.com/dgraph-io/badger/v3"
 )
 
 // New func implements the storage interface
-func New(config *config.ConfYaml) *Storage {
+func New(config *types.ConfYaml) *Storage {
 	return &Storage{
 		config: config,
 	}
@@ -22,7 +21,7 @@ func New(config *config.ConfYaml) *Storage {
 
 // Storage is interface structure
 type Storage struct {
-	config *config.ConfYaml
+	config *types.ConfYaml
 	opts   badger.Options
 	name   string
 	db     *badger.DB
@@ -34,9 +33,9 @@ type Storage struct {
 func (s *Storage) Init() error {
 	var err error
 	s.name = "badger"
-	dbPath := s.config.Stat.BadgerDB.Path
+	dbPath := xdg.ConfigHome + "/encloud/" + s.config.Stat.BadgerDB.Path
 	if dbPath == "" {
-		dbPath = os.TempDir() + "badger"
+		dbPath = xdg.ConfigHome + "/encloud/badger"
 	}
 	s.opts = badger.DefaultOptions(dbPath)
 	s.opts.Logger = nil

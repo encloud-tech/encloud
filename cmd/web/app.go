@@ -95,9 +95,9 @@ func (a *App) List(kek string) types.ListContentResponse {
 }
 
 // Retrieve data by uuid
-func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string) types.RetrieveByCIDContentResponse {
+func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) types.RetrieveByCIDContentResponse {
 	var response types.RetrieveByCIDContentResponse
-	fileMetaData, err := api.RetrieveByUUID(uuid, kek, privateKey)
+	fileMetaData, err := api.RetrieveByUUID(uuid, kek, privateKey, retrievalFileStoragePath)
 	if err != nil {
 		response = types.RetrieveByCIDContentResponse{
 			Status:     "fail",
@@ -139,9 +139,9 @@ func (a *App) Share(uuid string, kek string, privateKey string, email string) ty
 }
 
 // Retrieve shared content
-func (a *App) RetrieveSharedContent(decryptedDekPath string, dekType string, cid string) types.ErrorResponse {
+func (a *App) RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, fileName string, retrievalFileStoragePath string) types.ErrorResponse {
 	var response types.ErrorResponse
-	err := api.RetrieveSharedContent(decryptedDekPath, dekType, cid)
+	err := api.RetrieveSharedContent(decryptedDekPath, dekType, cid, fileName, retrievalFileStoragePath)
 	if err != nil {
 		response = types.ErrorResponse{
 			Status:     "fail",
