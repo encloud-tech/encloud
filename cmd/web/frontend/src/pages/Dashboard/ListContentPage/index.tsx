@@ -17,6 +17,7 @@ import { List, Share } from "../../../../wailsjs/go/main/App";
 import { readKey } from "../../../services/localStorage.service";
 import { types } from "../../../../wailsjs/go/models";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const columnHelper = createColumnHelper<types.FileMetadata>();
 
@@ -24,6 +25,7 @@ const ListContentPage = () => {
   const [data, setData] = useState<types.FileMetadata[]>([]);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<types.FileMetadata>();
+  const [shareLoading, setShareLoading] = useState(false);
 
   const { Formik } = formik;
 
@@ -86,16 +88,37 @@ const ListContentPage = () => {
   }, []);
 
   const share = async (data: any) => {
+    setShareLoading(!shareLoading);
     if (selected) {
-      const response = await Share(
-        selected?.uuid,
-        readKey().PublicKey,
-        readKey().PrivateKey,
-        data.email
-      );
-
-      if (response.Data) {
+      try {
+        Share(
+          selected?.uuid,
+          readKey().PublicKey,
+          readKey().PrivateKey,
+          data.email
+        )
+          .then((result) => {
+            if (result && result.Status == "success") {
+              setShareLoading(!shareLoading);
+              setOpen(false);
+              toast.success("Document shared successfully.", {
+                position: toast.POSITION.TOP_RIGHT,
+              });
+            }
+          })
+          .catch((err: any) => {
+            setOpen(false);
+            setShareLoading(!shareLoading);
+            toast.error("Something went wrong!.Please retry", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          });
+      } catch (err) {
         setOpen(false);
+        setShareLoading(!shareLoading);
+        toast.error("Something went wrong!.Please retry", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
       }
     }
   };

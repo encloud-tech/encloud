@@ -14,12 +14,12 @@ export function List(arg1) {
   return window['go']['main']['App']['List'](arg1);
 }
 
-export function RetrieveByUUID(arg1, arg2, arg3) {
-  return window['go']['main']['App']['RetrieveByUUID'](arg1, arg2, arg3);
+export function RetrieveByUUID(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['App']['RetrieveByUUID'](arg1, arg2, arg3, arg4);
 }
 
-export function RetrieveSharedContent(arg1, arg2, arg3) {
-  return window['go']['main']['App']['RetrieveSharedContent'](arg1, arg2, arg3);
+export function RetrieveSharedContent(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['main']['App']['RetrieveSharedContent'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function SelectFile() {

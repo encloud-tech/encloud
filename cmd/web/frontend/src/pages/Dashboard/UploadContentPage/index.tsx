@@ -6,10 +6,11 @@ import { PageHeader } from "./../../../components/layouts/styles";
 import dsupload1Img from "../../../assets/images/ds-upload-1.png";
 import { CSSProperties, useState } from "react";
 import { SelectFile, Upload } from "../../../../wailsjs/go/main/App";
-import { readKey } from "../../../services/localStorage.service";
+import { readKekType, readKey } from "../../../services/localStorage.service";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ColoredBtn } from "./styles";
+import { toast } from "react-toastify";
 
 const override: CSSProperties = {
   display: "block",
@@ -93,23 +94,29 @@ const UploadContent = () => {
   };
 
   const doUpload = () => {
-    setUploadLoading(true);
+    setUploadLoading(!uploadLoading);
     if (filePath) {
       try {
-        Upload(filePath, "rsa", dekType.value, readKey().PublicKey)
+        Upload(filePath, readKekType(), dekType.value, readKey().PublicKey)
           .then((result: any) => {
-            if (result && result.Data) {
-              navigate("/list");
-              setUploadLoading(false);
+            if (result && result.Status == "succcess") {
+              setUploadLoading(!uploadLoading);
+              toast.success("Document uploaded successfully.", {
+                position: toast.POSITION.TOP_RIGHT,
+              });
             }
           })
           .catch((err: any) => {
-            console.error(err);
-            setUploadLoading(false);
+            setUploadLoading(!uploadLoading);
+            toast.error("Something went wrong!.Please retry", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
           });
       } catch (err) {
-        console.error(err);
-        setUploadLoading(false);
+        setUploadLoading(!uploadLoading);
+        toast.error("Something went wrong!.Please retry", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
       }
     }
   };
@@ -125,6 +132,13 @@ const UploadContent = () => {
 
       <Card className="mb-3">
         <Card.Body className="p-3">
+          <Row className="mb-3">
+            <Col>
+              <span className="fw-bold">
+                {uploadLoading ? "Upload is in progress..." : ""}
+              </span>
+            </Col>
+          </Row>
           <Form className="box">
             <Row>
               <Col md={8}>
@@ -157,7 +171,10 @@ const UploadContent = () => {
             </Row>
             <Row>
               <Col md={8}>
-                <Form.Control type="file" onClick={getFilePath} />
+                <Form.Group className="mb-3">
+                  <Form.Label>Document</Form.Label>
+                  <Form.Control type="file" onClick={getFilePath} />
+                </Form.Group>
               </Col>
               <Col md={4}></Col>
             </Row>
@@ -167,6 +184,7 @@ const UploadContent = () => {
                   className={`step-button ml-2 ${
                     uploadLoading ? "loadingStatus" : ""
                   }`}
+                  disabled={uploadLoading}
                   onClick={doUpload}
                 >
                   {uploadLoading ? (
