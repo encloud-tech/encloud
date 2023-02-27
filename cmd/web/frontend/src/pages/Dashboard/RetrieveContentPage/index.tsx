@@ -1,10 +1,17 @@
+import * as Yup from "yup";
+import * as formik from "formik";
 import { Link, useLocation } from "react-router-dom";
-import { Button, Card, Col, Form, Image, Row } from "react-bootstrap";
-import { SectionBox } from "./styles";
+import { Button, Card, Col, Image, Row, Modal, Form } from "react-bootstrap";
+import { ColoredBtn, SectionBox } from "./styles";
 import { PageHeader } from "../../../components/layouts/styles";
 
 // Images
 import dsRefreshImg from "../../../assets/images/ds-refresh.png";
+import { CSSProperties, useState } from "react";
+import { RetrieveByUUID } from "../../../../wailsjs/go/main/App";
+import { readKey } from "../../../services/localStorage.service";
+import { toast } from "react-toastify";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const dekTypesNames = [
   {
@@ -17,9 +24,53 @@ const dekTypesNames = [
   },
 ];
 
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "white",
+};
+
 const RetrieveContentPage = () => {
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const location = useLocation();
   const { metadata } = location.state;
+
+  const { Formik } = formik;
+
+  const schema = Yup.object().shape({
+    filePath: Yup.string().required("Please enter download file path"),
+  });
+
+  const download = (downloadFilePath: string) => {
+    try {
+      RetrieveByUUID(
+        metadata.uuid,
+        readKey().PublicKey,
+        readKey().PrivateKey,
+        downloadFilePath
+      )
+        .then((result: any) => {
+          if (result && result.Status == "success") {
+            setDownloadLoading(false);
+            toast.success("Document downloaded successfully.", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          }
+        })
+        .catch((err: any) => {
+          setDownloadLoading(false);
+          toast.error("Something went wrong!.Please retry", {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        });
+    } catch (err) {
+      setDownloadLoading(false);
+      toast.error("Something went wrong!.Please retry", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  };
 
   return (
     <>
@@ -34,10 +85,35 @@ const RetrieveContentPage = () => {
           <Card.Header>
             <h4>
               Content Details{" "}
-              <Button style={{ float: "right" }}>Download Content</Button>
+              <ColoredBtn
+                className={`step-button ml-2 ${
+                  downloadLoading ? "loadingStatus" : ""
+                }`}
+                style={{ float: "right" }}
+                disabled={downloadLoading}
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                {downloadLoading ? (
+                  <div>
+                    <ClipLoader
+                      color="#ffffff"
+                      loading={downloadLoading}
+                      cssOverride={override}
+                      size={30}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                    <span className="loadingText">Downloading</span>
+                  </div>
+                ) : (
+                  "Download"
+                )}
+              </ColoredBtn>
               <Link
                 to="/list"
-                className="btn btn-primary"
+                className="btn btn-primary step-button"
                 style={{ marginRight: 5, float: "right" }}
               >
                 Back
@@ -130,6 +206,59 @@ const RetrieveContentPage = () => {
           </Card.Body>
         </Card>
       </SectionBox>
+      <Modal show={open} onHide={() => setOpen(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Download Content</Modal.Title>
+        </Modal.Header>
+        <Formik
+          validationSchema={schema}
+          onSubmit={(data: any) => {
+            download(data.filePath);
+            setOpen(false);
+          }}
+          initialValues={{
+            filePath: "",
+          }}
+        >
+          {({
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+            touched,
+            isValid,
+            errors,
+          }) => (
+            <Form noValidate onSubmit={handleSubmit}>
+              <Modal.Body>
+                <Form.Control
+                  type="text"
+                  placeholder="Download File Path"
+                  aria-label="Download File Path"
+                  name="filePath"
+                  value={values.filePath}
+                  onChange={handleChange}
+                  isInvalid={!!errors.filePath}
+                />
+                <span
+                  className="invalid-feedback"
+                  style={{ color: "red", textAlign: "left" }}
+                >
+                  {errors.filePath}
+                </span>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setOpen(false)}>
+                  Close
+                </Button>
+                <Button type="submit" variant="primary">
+                  Download
+                </Button>
+              </Modal.Footer>
+            </Form>
+          )}
+        </Formik>
+      </Modal>
     </>
   );
 };

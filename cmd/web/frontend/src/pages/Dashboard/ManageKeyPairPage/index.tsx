@@ -28,7 +28,12 @@ import eyeIcon from "../../../assets/images/eye-line.svg";
 import copyIcon from "../../../assets/images/file-copy-line.svg";
 import eyeCloseIcon from "../../../assets/images/eye-close-line.svg";
 import { GenerateKeyPair } from "../../../../wailsjs/go/main/App";
-import { persistKey, readKey } from "../../../services/localStorage.service";
+import {
+  persistKekType,
+  persistKey,
+  readKekType,
+  readKey,
+} from "../../../services/localStorage.service";
 import { types } from "../../../../wailsjs/go/models";
 import { copyToClipboard } from "../../../helper";
 import { toast } from "react-toastify";
@@ -62,6 +67,13 @@ const ManageKeyPairPage = () => {
   };
 
   useEffect(() => {
+    const type = readKekType();
+    if (type === "") {
+      persistKekType(kekType);
+    }
+  }, [kekType]);
+
+  useEffect(() => {
     setCurrentKeys(readKey());
   }, [setCurrentKeys]);
 
@@ -73,147 +85,147 @@ const ManageKeyPairPage = () => {
           <span>Manage Key Pair</span>
         </h2>
       </PageHeader>
-      {currentKeys && (
-        <StepBoxWrapper className="active">
-          <StepHeader>
-            <span className="stepTitle">Current key pair</span>
-            {!showEditForm && (
-              <div className="right-part">
-                <ColoredBtn
-                  className={`step-button ml-2`}
-                  onClick={() => setShowEditForm(!showEditForm)}
-                >
-                  Edit
-                </ColoredBtn>
-              </div>
-            )}
-          </StepHeader>
-          <StepBody>
-            {showEditForm ? (
-              <Formik
-                validationSchema={schema}
-                onSubmit={(data: any) => {
-                  persistKey(data);
-                  setCurrentKeys(data);
-                  setShowEditForm(!showEditForm);
-                  toast.success("Key pair updated successfully.", {
-                    position: toast.POSITION.TOP_RIGHT,
-                  });
-                }}
-                initialValues={{
-                  PublicKey: currentKeys?.PublicKey || "",
-                  PrivateKey: currentKeys?.PrivateKey || "",
-                }}
+      <StepBoxWrapper className="active">
+        <StepHeader>
+          <span className="stepTitle">Current key pair</span>
+          {!showEditForm && (
+            <div className="right-part">
+              <ColoredBtn
+                className={`step-button ml-2`}
+                onClick={() => setShowEditForm(!showEditForm)}
               >
-                {({
-                  handleSubmit,
-                  handleChange,
-                  handleBlur,
-                  values,
-                  touched,
-                  isValid,
-                  errors,
-                }) => (
-                  <Form noValidate onSubmit={handleSubmit}>
-                    <Row>
-                      <Col md={12} className="mb-3">
-                        <Form.Label>Public Key</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Public Key"
-                          aria-label="Public Key"
-                          name="PublicKey"
-                          value={values.PublicKey}
-                          onChange={handleChange}
-                          isInvalid={!!errors.PublicKey}
-                        />
-                        <span
-                          className="invalid-feedback"
-                          style={{ color: "red", textAlign: "left" }}
-                        >
-                          {errors.PublicKey}
-                        </span>
-                      </Col>
-                      <Col md={12}>
-                        <Form.Label>Private Key</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Private Key"
-                          aria-label="Private Key"
-                          name="PrivateKey"
-                          value={values.PrivateKey}
-                          onChange={handleChange}
-                          isInvalid={!!errors.PrivateKey}
-                        />
-                        <span
-                          className="invalid-feedback"
-                          style={{ color: "red", textAlign: "left" }}
-                        >
-                          {errors.PrivateKey}
-                        </span>
-                      </Col>
-                      <Col md={12}>
-                        <ColoredBtn type="submit" className="submitBtn">
-                          Save Changes
-                        </ColoredBtn>
-                      </Col>
-                    </Row>
-                  </Form>
-                )}
-              </Formik>
-            ) : (
-              <>
-                <Row>
-                  <Col md={12}>
-                    <Form.Label>Public Key</Form.Label>
-                    <InputGroupWrapper>
-                      <InputGroup className="mb-3">
-                        <Form.Control
-                          placeholder="Public Key"
-                          defaultValue={currentKeys?.PublicKey}
-                          disabled={true}
-                        />
-                        <Button
-                          variant="outline-primary"
-                          onClick={() =>
-                            copyToClipboard(currentKeys?.PublicKey)
-                          }
-                        >
-                          <Image src={copyIcon} />
-                          Copy
-                        </Button>
-                      </InputGroup>
-                    </InputGroupWrapper>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={12}>
-                    <Form.Label>Private Key</Form.Label>
-                    <InputGroupWrapper>
-                      <InputGroup className="mb-3">
-                        <Form.Control
-                          placeholder="Private Key"
-                          defaultValue={currentKeys?.PrivateKey}
-                          disabled={true}
-                        />
-                        <Button
-                          variant="outline-primary"
-                          onClick={() =>
-                            copyToClipboard(currentKeys?.PrivateKey)
-                          }
-                        >
-                          <Image src={copyIcon} />
-                          Copy
-                        </Button>
-                      </InputGroup>
-                    </InputGroupWrapper>
-                  </Col>
-                </Row>
-              </>
-            )}
-          </StepBody>
-        </StepBoxWrapper>
-      )}
+                Edit
+              </ColoredBtn>
+            </div>
+          )}
+        </StepHeader>
+        <StepBody>
+          {showEditForm ? (
+            <Formik
+              validationSchema={schema}
+              onSubmit={(data: any) => {
+                persistKey(data);
+                setCurrentKeys(data);
+                setShowEditForm(!showEditForm);
+                toast.success("Key pair updated successfully.", {
+                  position: toast.POSITION.TOP_RIGHT,
+                });
+              }}
+              initialValues={{
+                PublicKey: currentKeys?.PublicKey || "",
+                PrivateKey: currentKeys?.PrivateKey || "",
+              }}
+            >
+              {({
+                handleSubmit,
+                handleChange,
+                handleBlur,
+                values,
+                touched,
+                isValid,
+                errors,
+              }) => (
+                <Form noValidate onSubmit={handleSubmit}>
+                  <Row>
+                    <Col md={12} className="mb-3">
+                      <Form.Label>Public Key</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Public Key"
+                        aria-label="Public Key"
+                        name="PublicKey"
+                        value={values.PublicKey}
+                        onChange={handleChange}
+                        isInvalid={!!errors.PublicKey}
+                      />
+                      <span
+                        className="invalid-feedback"
+                        style={{ color: "red", textAlign: "left" }}
+                      >
+                        {errors.PublicKey}
+                      </span>
+                    </Col>
+                    <Col md={12}>
+                      <Form.Label>Private Key</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Private Key"
+                        aria-label="Private Key"
+                        name="PrivateKey"
+                        value={values.PrivateKey}
+                        onChange={handleChange}
+                        isInvalid={!!errors.PrivateKey}
+                      />
+                      <span
+                        className="invalid-feedback"
+                        style={{ color: "red", textAlign: "left" }}
+                      >
+                        {errors.PrivateKey}
+                      </span>
+                    </Col>
+                    <Col md={12}>
+                      <ColoredBtn type="submit" className="submitBtn">
+                        Save Changes
+                      </ColoredBtn>
+                    </Col>
+                  </Row>
+                </Form>
+              )}
+            </Formik>
+          ) : (
+            <>
+              <Row>
+                <Col md={12}>
+                  <Form.Label>Public Key</Form.Label>
+                  <InputGroupWrapper>
+                    <InputGroup className="mb-3">
+                      <Form.Control
+                        placeholder="Enter your public key"
+                        defaultValue={currentKeys?.PublicKey}
+                        value={currentKeys?.PublicKey}
+                        disabled={true}
+                      />
+                      <Button
+                        variant="outline-primary"
+                        onClick={() =>
+                          copyToClipboard(currentKeys?.PublicKey || "")
+                        }
+                      >
+                        <Image src={copyIcon} />
+                        Copy
+                      </Button>
+                    </InputGroup>
+                  </InputGroupWrapper>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <Form.Label>Private Key</Form.Label>
+                  <InputGroupWrapper>
+                    <InputGroup className="mb-3">
+                      <Form.Control
+                        placeholder="Enter your private key"
+                        defaultValue={currentKeys?.PrivateKey}
+                        value={currentKeys?.PrivateKey}
+                        disabled={true}
+                      />
+                      <Button
+                        variant="outline-primary"
+                        onClick={() =>
+                          copyToClipboard(currentKeys?.PrivateKey || "")
+                        }
+                      >
+                        <Image src={copyIcon} />
+                        Copy
+                      </Button>
+                    </InputGroup>
+                  </InputGroupWrapper>
+                </Col>
+              </Row>
+            </>
+          )}
+        </StepBody>
+      </StepBoxWrapper>
       <StepBoxWrapper className="active">
         <StepHeader>
           <span className="stepTitle">Generate key pair</span>
@@ -240,6 +252,7 @@ const ManageKeyPairPage = () => {
                       checked={kekType === "rsa"}
                       onChange={() => {
                         setKeKType("rsa");
+                        persistKekType("rsa");
                         setIsKeysGenerated(false);
                       }}
                     />
@@ -253,6 +266,7 @@ const ManageKeyPairPage = () => {
                       checked={kekType === "ecies"}
                       onChange={() => {
                         setKeKType("ecies");
+                        persistKekType("ecies");
                         setIsKeysGenerated(false);
                       }}
                     />
@@ -286,9 +300,13 @@ const ManageKeyPairPage = () => {
               <ColoredBtn
                 className={`step-button ml-2`}
                 onClick={() => {
-                  persistKey(new types.Keys(keys));
-                  setCurrentKeys(keys);
+                  const res = persistKey(new types.Keys(keys));
+                  setCurrentKeys(res);
                   setIsKeysGenerated(false);
+
+                  toast.success("Key pair set successfully.", {
+                    position: toast.POSITION.TOP_RIGHT,
+                  });
                 }}
               >
                 Set as Current key pair

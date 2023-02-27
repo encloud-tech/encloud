@@ -85,6 +85,19 @@ const LeftNavbar = () => {
                   <div>Retrieve</div>
                 </Link>
               </li>
+              <li
+                className={
+                  splitLocation[2] === "retrieve-shared-content"
+                    ? "menu-item active"
+                    : "menu-item"
+                }
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Link to="retrieve-shared-content" className="menu-link">
+                  <Image src={dsRefreshImg} className="menuIcon" />
+                  <div>Shared Content</div>
+                </Link>
+              </li>
             </ul>
           </li>
           <li

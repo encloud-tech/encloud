@@ -8,6 +8,7 @@ import ManageKeyPairPage from "./ManageKeyPairPage";
 import ListContentPage from "./ListContentPage";
 import UploadContent from "./UploadContentPage";
 import RetrieveContentPage from "./RetrieveContentPage";
+import RetrieveSharedContentPage from "./RetrieveSharedContentPage";
 
 const Dashboard = () => {
   return (
@@ -17,6 +18,10 @@ const Dashboard = () => {
         <Route path="/upload" element={<UploadContent />} />
         <Route path="/list" element={<ListContentPage />} />
         <Route path="/retrieve/:id" element={<RetrieveContentPage />} />
+        <Route
+          path="/retrieve-shared-content"
+          element={<RetrieveSharedContentPage />}
+        />
         <Route path="/manage-compute" element={<ManageComputePage />} />
         <Route path="/list-compute" element={<ListComputePage />} />
         <Route path="/get-results/:id" element={<GetResultsPage />} />
