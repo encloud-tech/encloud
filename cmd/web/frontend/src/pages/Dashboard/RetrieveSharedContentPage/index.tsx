@@ -8,8 +8,18 @@ import { PageHeader } from "../../../components/layouts/styles";
 import dsManageImg from "../../../assets/images/ds-manage.png";
 import { RetrieveSharedContent } from "../../../../wailsjs/go/main/App";
 import { toast } from "react-toastify";
+import { CSSProperties, useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
+import { ColoredBtn } from "./styles";
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "white",
+};
 
 const RetrieveSharedContentPage = () => {
+  const [loading, setLoading] = useState(false);
   const { Formik } = formik;
 
   const schema = Yup.object().shape({
@@ -21,6 +31,7 @@ const RetrieveSharedContentPage = () => {
   });
 
   const getSharedContent = (data: any) => {
+    setLoading(true);
     try {
       RetrieveSharedContent(
         data.decryptedDekPath,
@@ -31,17 +42,20 @@ const RetrieveSharedContentPage = () => {
       )
         .then((result: any) => {
           if (result && result.Status == "success") {
+            setLoading(false);
             toast.success("Document downloaded successfully.", {
               position: toast.POSITION.TOP_RIGHT,
             });
           }
         })
         .catch((err: any) => {
+          setLoading(false);
           toast.error("Something went wrong!.Please retry", {
             position: toast.POSITION.TOP_RIGHT,
           });
         });
     } catch (err) {
+      setLoading(false);
       toast.error("Something went wrong!.Please retry", {
         position: toast.POSITION.TOP_RIGHT,
       });
@@ -199,7 +213,29 @@ const RetrieveSharedContentPage = () => {
                   </Row>
                   <Row>
                     <Col md={8} className="text-left">
-                      <Button type="submit">Get Shared Content</Button>
+                      <ColoredBtn
+                        className={`step-button ml-2 ${
+                          loading ? "loadingStatus" : ""
+                        }`}
+                        disabled={loading}
+                        onClick={handleSubmit}
+                      >
+                        {loading ? (
+                          <div>
+                            <ClipLoader
+                              color="#ffffff"
+                              loading={loading}
+                              cssOverride={override}
+                              size={30}
+                              aria-label="Loading Spinner"
+                              data-testid="loader"
+                            />
+                            <span className="loadingText">Downloading</span>
+                          </div>
+                        ) : (
+                          "Get Shared Content"
+                        )}
+                      </ColoredBtn>
                     </Col>
                     <Col md={4}></Col>
                   </Row>

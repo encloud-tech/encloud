@@ -100,46 +100,6 @@ const LeftNavbar = () => {
               </li>
             </ul>
           </li>
-          <li
-            className={openCompute ? "menu-item open" : "menu-item"}
-            onClick={() => {
-              SetOpenCompute(!openCompute);
-              SetOpenContent(false);
-            }}
-          >
-            <Link to="#" className="menu-link menu-toggle">
-              <div>Compute</div>
-            </Link>
-
-            <ul className="menu-sub">
-              <li
-                className={
-                  splitLocation[2] === "manage-compute"
-                    ? "menu-item active"
-                    : "menu-item"
-                }
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Link to="manage-compute" className="menu-link">
-                  <Image src={dsManageImg} className="menuIcon" />
-                  <div>Manage Compute</div>
-                </Link>
-              </li>
-              <li
-                className={
-                  splitLocation[2] === "list-compute"
-                    ? "menu-item active"
-                    : "menu-item"
-                }
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Link to="list-compute" className="menu-link">
-                  <Image src={dsMenuImg} className="menuIcon" />
-                  <div>List</div>
-                </Link>
-              </li>
-            </ul>
-          </li>
           <li className="menu-item">
             <Link to="configuration" className="menu-link">
               <div>Configuration</div>

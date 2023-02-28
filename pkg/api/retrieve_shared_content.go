@@ -4,7 +4,9 @@ import (
 	"encloud/config"
 	"encloud/pkg/service"
 	thirdparty "encloud/third_party"
+	"fmt"
 	"os"
+	"time"
 )
 
 func RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, fileName string, retrievalFileStoragePath string) error {
@@ -16,7 +18,9 @@ func RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, 
 
 	dek := thirdparty.ReadFile(decryptedDekPath)
 
-	filepath := estuaryService.DownloadContent(config.Assets+"/shared/"+fileName, cid)
+	timestamp := time.Now().Unix()
+
+	filepath := estuaryService.DownloadContent(config.Assets+"/"+fileName+"_"+fmt.Sprint(timestamp), cid)
 	if dekType == "aes" {
 		err := thirdparty.DecryptWithAES(dek, filepath, retrievalFileStoragePath+"/"+fileName)
 		if err != nil {
@@ -29,6 +33,6 @@ func RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, 
 		}
 	}
 
-	os.Remove(config.Assets + "/shared/" + fileName)
+	os.Remove(config.Assets + "/" + fileName + "_" + fmt.Sprint(timestamp))
 	return nil
 }

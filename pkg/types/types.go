@@ -130,7 +130,7 @@ type ConfigResponse struct {
 	Data       ConfYaml
 }
 
-type ErrorResponse struct {
+type SharedResponse struct {
 	Status     string
 	StatusCode int
 	Message    string
