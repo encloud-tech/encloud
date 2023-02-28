@@ -43,6 +43,7 @@ const RetrieveContentPage = () => {
   });
 
   const download = (data: any) => {
+    setDownloadLoading(true);
     try {
       RetrieveByUUID(
         metadata.uuid,
