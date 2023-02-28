@@ -100,6 +100,7 @@ const UploadContent = () => {
         Upload(filePath, readKekType(), dekType.value, readKey().PublicKey)
           .then((result: any) => {
             if (result && result.Status == "success") {
+              setFilePath("");
               setUploadLoading(!uploadLoading);
               toast.success("Document uploaded successfully.", {
                 position: toast.POSITION.TOP_RIGHT,
@@ -107,12 +108,14 @@ const UploadContent = () => {
             }
           })
           .catch((err: any) => {
+            setFilePath("");
             setUploadLoading(!uploadLoading);
             toast.error("Something went wrong!.Please retry", {
               position: toast.POSITION.TOP_RIGHT,
             });
           });
       } catch (err) {
+        setFilePath("");
         setUploadLoading(!uploadLoading);
         toast.error("Something went wrong!.Please retry", {
           position: toast.POSITION.TOP_RIGHT,
@@ -183,6 +186,7 @@ const UploadContent = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>Document</Form.Label>
                   <Form.Control type="file" onClick={getFilePath} />
+                  {filePath || ""}
                 </Form.Group>
               </Col>
               <Col md={4}></Col>
