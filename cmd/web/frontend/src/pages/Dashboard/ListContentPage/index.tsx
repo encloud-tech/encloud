@@ -88,7 +88,7 @@ const ListContentPage = () => {
   }, []);
 
   const share = async (data: any) => {
-    setShareLoading(!shareLoading);
+    setShareLoading(true);
     if (selected) {
       try {
         Share(
@@ -99,7 +99,7 @@ const ListContentPage = () => {
         )
           .then((result) => {
             if (result && result.Status == "success") {
-              setShareLoading(!shareLoading);
+              setShareLoading(false);
               setOpen(false);
               toast.success("Document shared successfully.", {
                 position: toast.POSITION.TOP_RIGHT,
@@ -108,14 +108,14 @@ const ListContentPage = () => {
           })
           .catch((err: any) => {
             setOpen(false);
-            setShareLoading(!shareLoading);
+            setShareLoading(false);
             toast.error("Something went wrong!.Please retry", {
               position: toast.POSITION.TOP_RIGHT,
             });
           });
       } catch (err) {
         setOpen(false);
-        setShareLoading(!shareLoading);
+        setShareLoading(false);
         toast.error("Something went wrong!.Please retry", {
           position: toast.POSITION.TOP_RIGHT,
         });

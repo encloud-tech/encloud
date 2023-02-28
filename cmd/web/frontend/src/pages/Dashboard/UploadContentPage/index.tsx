@@ -94,14 +94,14 @@ const UploadContent = () => {
   };
 
   const doUpload = () => {
-    setUploadLoading(!uploadLoading);
+    setUploadLoading(true);
     if (filePath) {
       try {
         Upload(filePath, readKekType(), dekType.value, readKey().PublicKey)
           .then((result: any) => {
             if (result && result.Status == "success") {
               setFilePath("");
-              setUploadLoading(!uploadLoading);
+              setUploadLoading(false);
               toast.success("Document uploaded successfully.", {
                 position: toast.POSITION.TOP_RIGHT,
               });
@@ -109,14 +109,14 @@ const UploadContent = () => {
           })
           .catch((err: any) => {
             setFilePath("");
-            setUploadLoading(!uploadLoading);
+            setUploadLoading(false);
             toast.error("Something went wrong!.Please retry", {
               position: toast.POSITION.TOP_RIGHT,
             });
           });
       } catch (err) {
         setFilePath("");
-        setUploadLoading(!uploadLoading);
+        setUploadLoading(false);
         toast.error("Something went wrong!.Please retry", {
           position: toast.POSITION.TOP_RIGHT,
         });
