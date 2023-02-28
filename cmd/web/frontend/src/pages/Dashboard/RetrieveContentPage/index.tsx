@@ -32,7 +32,7 @@ const override: CSSProperties = {
 
 const RetrieveContentPage = () => {
   const [downloadLoading, setDownloadLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [showDownloadForm, setShowDownloadForm] = useState(false);
   const location = useLocation();
   const { metadata } = location.state;
 
@@ -42,17 +42,18 @@ const RetrieveContentPage = () => {
     filePath: Yup.string().required("Please enter download file path"),
   });
 
-  const download = (downloadFilePath: string) => {
+  const download = (data: any) => {
     try {
       RetrieveByUUID(
         metadata.uuid,
         readKey().PublicKey,
         readKey().PrivateKey,
-        downloadFilePath
+        data.filePath
       )
         .then((result: any) => {
           if (result && result.Status == "success") {
             setDownloadLoading(false);
+            setShowDownloadForm(!showDownloadForm);
             toast.success("Document downloaded successfully.", {
               position: toast.POSITION.TOP_RIGHT,
             });
@@ -60,12 +61,14 @@ const RetrieveContentPage = () => {
         })
         .catch((err: any) => {
           setDownloadLoading(false);
+          setShowDownloadForm(!showDownloadForm);
           toast.error("Something went wrong!.Please retry", {
             position: toast.POSITION.TOP_RIGHT,
           });
         });
     } catch (err) {
       setDownloadLoading(false);
+      setShowDownloadForm(!showDownloadForm);
       toast.error("Something went wrong!.Please retry", {
         position: toast.POSITION.TOP_RIGHT,
       });
@@ -85,32 +88,14 @@ const RetrieveContentPage = () => {
           <Card.Header>
             <h4>
               Content Details{" "}
-              <ColoredBtn
-                className={`step-button ml-2 ${
-                  downloadLoading ? "loadingStatus" : ""
-                }`}
-                style={{ float: "right" }}
-                disabled={downloadLoading}
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                {downloadLoading ? (
-                  <div>
-                    <ClipLoader
-                      color="#ffffff"
-                      loading={downloadLoading}
-                      cssOverride={override}
-                      size={30}
-                      aria-label="Loading Spinner"
-                      data-testid="loader"
-                    />
-                    <span className="loadingText">Downloading</span>
-                  </div>
-                ) : (
-                  "Download"
-                )}
-              </ColoredBtn>
+              {!showDownloadForm && (
+                <Button
+                  style={{ float: "right" }}
+                  onClick={() => setShowDownloadForm(!showDownloadForm)}
+                >
+                  Download
+                </Button>
+              )}
               <Link
                 to="/list"
                 className="btn btn-primary step-button"
@@ -121,144 +106,184 @@ const RetrieveContentPage = () => {
             </h4>
           </Card.Header>
           <Card.Body>
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">UUID</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">{metadata.uuid}</Card.Text>
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">File Name</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">{metadata.name}</Card.Text>
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">File Size</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">{metadata.size}</Card.Text>
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">File Type</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">
-                  {metadata.fileType}
-                </Card.Text>
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">CID</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">{metadata.cid}</Card.Text>
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">Uploaded At</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">
-                  {metadata.uploadedAt}
-                </Card.Text>
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">Dek Type</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">
-                  {
-                    dekTypesNames.find((o) => o.value === metadata.dekType)
-                      ?.name
-                  }
-                </Card.Text>
-              </Col>
-            </Row>
-            <hr />
-            <Row>
-              <Col sm="3">
-                <Card.Text className="fw-bold">Kek Type</Card.Text>
-              </Col>
-              <Col sm="9">
-                <Card.Text className="text-muted">
-                  {metadata.kekType.toUpperCase()}
-                </Card.Text>
-              </Col>
-            </Row>
+            {showDownloadForm ? (
+              <Formik
+                validationSchema={schema}
+                onSubmit={download}
+                initialValues={{
+                  filePath: "",
+                }}
+              >
+                {({
+                  handleSubmit,
+                  handleChange,
+                  handleBlur,
+                  values,
+                  touched,
+                  isValid,
+                  errors,
+                }) => (
+                  <Form noValidate onSubmit={handleSubmit}>
+                    <Row className="mb-3">
+                      <Col>
+                        <span className="fw-bold">
+                          {downloadLoading ? "Download is in progress..." : ""}
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={8}>
+                        <Form.Control
+                          type="text"
+                          placeholder="Download File Path"
+                          aria-label="Download File Path"
+                          name="filePath"
+                          value={values.filePath}
+                          onChange={handleChange}
+                          isInvalid={!!errors.filePath}
+                        />
+                        <span
+                          className="invalid-feedback"
+                          style={{ color: "red", textAlign: "left" }}
+                        >
+                          {errors.filePath}
+                        </span>
+                      </Col>
+                      <Col md={4}></Col>
+                    </Row>
+                    <Row className="mt-3">
+                      <Col md={8}>
+                        <ColoredBtn
+                          className="step-button"
+                          onClick={() => setShowDownloadForm(!showDownloadForm)}
+                          style={{ marginRight: 2 }}
+                        >
+                          Close
+                        </ColoredBtn>
+                        <ColoredBtn
+                          className={`step-button ml-2 ${
+                            downloadLoading ? "loadingStatus" : ""
+                          }`}
+                          disabled={downloadLoading}
+                          onClick={handleSubmit}
+                        >
+                          {downloadLoading ? (
+                            <div>
+                              <ClipLoader
+                                color="#ffffff"
+                                loading={downloadLoading}
+                                cssOverride={override}
+                                size={30}
+                                aria-label="Loading Spinner"
+                                data-testid="loader"
+                              />
+                              <span className="loadingText">Downloading</span>
+                            </div>
+                          ) : (
+                            "Download"
+                          )}
+                        </ColoredBtn>
+                      </Col>
+                      <Col md={4}></Col>
+                    </Row>
+                  </Form>
+                )}
+              </Formik>
+            ) : (
+              <>
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">UUID</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">
+                      {metadata.uuid}
+                    </Card.Text>
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">File Name</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">
+                      {metadata.name}
+                    </Card.Text>
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">File Size</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">
+                      {metadata.size}
+                    </Card.Text>
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">File Type</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">
+                      {metadata.fileType}
+                    </Card.Text>
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">CID</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">{metadata.cid}</Card.Text>
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">Uploaded At</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">
+                      {metadata.uploadedAt}
+                    </Card.Text>
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">Dek Type</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">
+                      {
+                        dekTypesNames.find((o) => o.value === metadata.dekType)
+                          ?.name
+                      }
+                    </Card.Text>
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col sm="3">
+                    <Card.Text className="fw-bold">Kek Type</Card.Text>
+                  </Col>
+                  <Col sm="9">
+                    <Card.Text className="text-muted">
+                      {metadata.kekType.toUpperCase()}
+                    </Card.Text>
+                  </Col>
+                </Row>
+              </>
+            )}
           </Card.Body>
         </Card>
       </SectionBox>
-      <Modal show={open} onHide={() => setOpen(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Download Content</Modal.Title>
-        </Modal.Header>
-        <Formik
-          validationSchema={schema}
-          onSubmit={(data: any) => {
-            download(data.filePath);
-            setOpen(false);
-          }}
-          initialValues={{
-            filePath: "",
-          }}
-        >
-          {({
-            handleSubmit,
-            handleChange,
-            handleBlur,
-            values,
-            touched,
-            isValid,
-            errors,
-          }) => (
-            <Form noValidate onSubmit={handleSubmit}>
-              <Modal.Body>
-                <Form.Control
-                  type="text"
-                  placeholder="Download File Path"
-                  aria-label="Download File Path"
-                  name="filePath"
-                  value={values.filePath}
-                  onChange={handleChange}
-                  isInvalid={!!errors.filePath}
-                />
-                <span
-                  className="invalid-feedback"
-                  style={{ color: "red", textAlign: "left" }}
-                >
-                  {errors.filePath}
-                </span>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setOpen(false)}>
-                  Close
-                </Button>
-                <Button type="submit" variant="primary">
-                  Download
-                </Button>
-              </Modal.Footer>
-            </Form>
-          )}
-        </Formik>
-      </Modal>
     </>
   );
 };
