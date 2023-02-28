@@ -19,8 +19,8 @@ const override: CSSProperties = {
 };
 
 const dekTypeOptions = [
-  { value: "AES", label: "AES 256 GCM" },
-  { value: "Chacha20", label: "ChaCha20-Poly1305" },
+  { value: "aes", label: "AES 256 GCM" },
+  { value: "chacha20", label: "ChaCha20-Poly1305" },
 ];
 
 const colourStyles: StylesConfig = {
@@ -99,7 +99,7 @@ const UploadContent = () => {
       try {
         Upload(filePath, readKekType(), dekType.value, readKey().PublicKey)
           .then((result: any) => {
-            if (result && result.Status == "succcess") {
+            if (result && result.Status == "success") {
               setUploadLoading(!uploadLoading);
               toast.success("Document uploaded successfully.", {
                 position: toast.POSITION.TOP_RIGHT,
@@ -163,8 +163,17 @@ const UploadContent = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>
                     Chunk Sizes <Badge bg="success">Premium</Badge>{" "}
+                    <span>
+                      (Please purchase premium membership to use this feature.)
+                    </span>
                   </Form.Label>
-                  <Form.Control type="text" placeholder="Enter Chunk Sizes" />
+                  <Form.Control
+                    disabled={true}
+                    readOnly={true}
+                    type="text"
+                    value="200"
+                    placeholder="Enter Chunk Sizes"
+                  />
                 </Form.Group>
               </Col>
               <Col md={4}></Col>

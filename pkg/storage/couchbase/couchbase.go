@@ -68,8 +68,8 @@ func (s *Storage) Create(key string, metadata types.FileMetadata) {
 			FileType:   metadata.FileType,
 			Cid:        metadata.Cid,
 			Dek:        metadata.Dek,
-			DekType:    metadata.DekType,
 			KekType:    metadata.KekType,
+			DekType:    metadata.DekType,
 			UploadedAt: metadata.UploadedAt,
 		}, nil)
 

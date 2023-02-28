@@ -21,6 +21,7 @@ import {
   ColoredBtn,
 } from "./styles";
 import { PageHeader } from "./../../../components/layouts/styles";
+import Select, { StylesConfig } from "react-select";
 
 // Images
 import dsPadlockImg from "../../../assets/images/ds-padlock.png";
@@ -39,17 +40,20 @@ import { copyToClipboard } from "../../../helper";
 import { toast } from "react-toastify";
 
 const ManageKeyPairPage = () => {
-  const [kekType, setKeKType] = useState<string>("rsa");
   const [keys, setKeys] = useState<types.Keys>();
   const [currentKeys, setCurrentKeys] = useState<types.Keys>();
+  const [kekType, setkekType] = useState<string>("");
+  const [currentKekType, setCurrentKekType] = useState<string>("");
   const [showPublicKey, setShowPublicKey] = useState(false);
   const [showPrivateKey, setShowPrivateKey] = useState(false);
   const [isKeysGenerated, setIsKeysGenerated] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [tKeyMessage, setTKeyMessage] = useState<boolean>(false);
 
   const { Formik } = formik;
 
   const schema = Yup.object().shape({
+    KekType: Yup.string().required("Please select kek type"),
     PublicKey: Yup.string().required("Please enter public key"),
     PrivateKey: Yup.string().required("Please enter private key"),
   });
@@ -59,6 +63,7 @@ const ManageKeyPairPage = () => {
     if (response && response.Status == "success") {
       setKeys(response.Data);
       setIsKeysGenerated(!isKeysGenerated);
+      persistKekType(kekType);
 
       toast.success("Key pair generated successfully.", {
         position: toast.POSITION.TOP_RIGHT,
@@ -67,15 +72,9 @@ const ManageKeyPairPage = () => {
   };
 
   useEffect(() => {
-    const type = readKekType();
-    if (type === "") {
-      persistKekType(kekType);
-    }
-  }, [kekType]);
-
-  useEffect(() => {
     setCurrentKeys(readKey());
-  }, [setCurrentKeys]);
+    setCurrentKekType(readKekType());
+  }, [setCurrentKeys, setCurrentKekType]);
 
   return (
     <>
@@ -104,14 +103,23 @@ const ManageKeyPairPage = () => {
             <Formik
               validationSchema={schema}
               onSubmit={(data: any) => {
-                persistKey(data);
-                setCurrentKeys(data);
+                persistKey({
+                  PrivateKey: data.PrivateKey,
+                  PublicKey: data.PublicKey,
+                });
+                persistKekType(data.KekType);
+                setCurrentKeys({
+                  PrivateKey: data.PrivateKey,
+                  PublicKey: data.PublicKey,
+                });
+                setCurrentKekType(data.KekType);
                 setShowEditForm(!showEditForm);
                 toast.success("Key pair updated successfully.", {
                   position: toast.POSITION.TOP_RIGHT,
                 });
               }}
               initialValues={{
+                KekType: currentKekType,
                 PublicKey: currentKeys?.PublicKey || "",
                 PrivateKey: currentKeys?.PrivateKey || "",
               }}
@@ -124,8 +132,32 @@ const ManageKeyPairPage = () => {
                 touched,
                 isValid,
                 errors,
+                setFieldValue,
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
+                  <Row>
+                    <Col md={12} className="mb-3">
+                      <Form.Group className="mb-3">
+                        <Form.Label>Kek Type</Form.Label>
+                        <Form.Select
+                          name="KekType"
+                          value={values.KekType}
+                          onChange={handleChange}
+                          isInvalid={!!errors.KekType}
+                        >
+                          <option>Please select kek type</option>
+                          <option value="rsa">RSA</option>
+                          <option value="ecies">ECIES</option>
+                        </Form.Select>
+                        <span
+                          className="invalid-feedback"
+                          style={{ color: "red", textAlign: "left" }}
+                        >
+                          {errors.KekType}
+                        </span>
+                      </Form.Group>
+                    </Col>
+                  </Row>
                   <Row>
                     <Col md={12} className="mb-3">
                       <Form.Label>Public Key</Form.Label>
@@ -164,6 +196,16 @@ const ManageKeyPairPage = () => {
                       </span>
                     </Col>
                     <Col md={12}>
+                      <ColoredBtn
+                        type="button"
+                        className="submitBtn"
+                        onClick={() => {
+                          setShowEditForm(!showEditForm);
+                        }}
+                        style={{ marginLeft: 5 }}
+                      >
+                        Cancel
+                      </ColoredBtn>
                       <ColoredBtn type="submit" className="submitBtn">
                         Save Changes
                       </ColoredBtn>
@@ -174,6 +216,28 @@ const ManageKeyPairPage = () => {
             </Formik>
           ) : (
             <>
+              <Row>
+                <Col md={12}>
+                  <Form.Label>KEK Type</Form.Label>
+                  <InputGroupWrapper>
+                    <InputGroup className="mb-3">
+                      <Form.Control
+                        placeholder="Enter your kek type"
+                        defaultValue={currentKekType.toUpperCase()}
+                        value={currentKekType.toUpperCase()}
+                        disabled={true}
+                      />
+                      <Button
+                        variant="outline-primary"
+                        onClick={() => copyToClipboard(currentKekType || "")}
+                      >
+                        <Image src={copyIcon} />
+                        Copy
+                      </Button>
+                    </InputGroup>
+                  </InputGroupWrapper>
+                </Col>
+              </Row>
               <Row>
                 <Col md={12}>
                   <Form.Label>Public Key</Form.Label>
@@ -229,14 +293,16 @@ const ManageKeyPairPage = () => {
       <StepBoxWrapper className="active">
         <StepHeader>
           <span className="stepTitle">Generate key pair</span>
-          <div className="right-part">
-            <ColoredBtn
-              className={`step-button ml-2`}
-              onClick={generateKeyPair}
-            >
-              Generate
-            </ColoredBtn>
-          </div>
+          {kekType !== "tkey" && (
+            <div className="right-part">
+              <ColoredBtn
+                className={`step-button ml-2`}
+                onClick={generateKeyPair}
+              >
+                Generate
+              </ColoredBtn>
+            </div>
+          )}
         </StepHeader>
         <StepBody>
           <Row>
@@ -251,9 +317,9 @@ const ManageKeyPairPage = () => {
                       name="kekType"
                       checked={kekType === "rsa"}
                       onChange={() => {
-                        setKeKType("rsa");
-                        persistKekType("rsa");
+                        setkekType("rsa");
                         setIsKeysGenerated(false);
+                        setTKeyMessage(false);
                       }}
                     />
                     <span className="checkmark"></span>
@@ -265,9 +331,9 @@ const ManageKeyPairPage = () => {
                       name="kekType"
                       checked={kekType === "ecies"}
                       onChange={() => {
-                        setKeKType("ecies");
-                        persistKekType("ecies");
+                        setkekType("ecies");
                         setIsKeysGenerated(false);
+                        setTKeyMessage(false);
                       }}
                     />
                     <span className="checkmark"></span>
@@ -283,10 +349,23 @@ const ManageKeyPairPage = () => {
                 <KeyPairs>
                   <KeyBox>
                     <span>TKEY</span>
-                    <input type="radio" name="radio" />
+                    <input
+                      type="radio"
+                      name="kekType"
+                      checked={kekType === "tkey"}
+                      onChange={() => {
+                        setkekType("tkey");
+                        setTKeyMessage(true);
+                      }}
+                    />
                     <span className="checkmark"></span>
                   </KeyBox>
                 </KeyPairs>
+                {tKeyMessage && (
+                  <span>
+                    Please purchase premium membership to use this feature.
+                  </span>
+                )}
               </KeyPairsSection>
             </Col>
           </Row>
@@ -302,7 +381,10 @@ const ManageKeyPairPage = () => {
                 onClick={() => {
                   const res = persistKey(new types.Keys(keys));
                   setCurrentKeys(res);
+                  setCurrentKekType(kekType);
                   setIsKeysGenerated(false);
+                  setkekType("");
+                  setKeys(undefined);
 
                   toast.success("Key pair set successfully.", {
                     position: toast.POSITION.TOP_RIGHT,
