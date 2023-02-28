@@ -39,6 +39,15 @@ func (s *Storage) Init() error {
 	}
 	s.opts = badger.DefaultOptions(dbPath)
 	s.opts.Logger = nil
+	s.opts.BypassLockGuard = true
+	// lockfile := filepath.Join(s.opts.Dir, "LOCK")
+
+	// // Ignore error, it's okay to fail, badger will report the LOCK file
+	// _ = os.Remove(lockfile)
+	// s.db, err := badger.Open(s.opts)
+
+	// // Take exclusive lock, to prevent deletion of LOCK file by other process
+	// os.OpenFile(lockfile, os.O_EXCL, 0)
 	s.db, err = badger.Open(s.opts)
 
 	return err
