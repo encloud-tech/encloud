@@ -85,7 +85,7 @@ func Upload(filePath string, kekType string, dekType string, kek string) (string
 			return "", err
 		}
 		hash := thirdparty.DigestString(kek)
-		fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType, KekType: cfg.Stat.KekType, UploadedAt: uploadedAt}
+		fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType, KekType: kekType, UploadedAt: uploadedAt}
 		dbService.Store(hash+":"+uuid, fileData)
 	}
 

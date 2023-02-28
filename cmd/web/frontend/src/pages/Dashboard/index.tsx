@@ -1,8 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "../../components/layouts/MainLayout";
-import GetResultsPage from "./Compute/GetResultsPage";
-import ListComputePage from "./Compute/ListComputePage";
-import ManageComputePage from "./Compute/ManageComputePage";
 import ConfigurationPage from "./ConfigurationPage";
 import ManageKeyPairPage from "./ManageKeyPairPage";
 import ListContentPage from "./ListContentPage";
@@ -22,9 +19,6 @@ const Dashboard = () => {
           path="/retrieve-shared-content"
           element={<RetrieveSharedContentPage />}
         />
-        <Route path="/manage-compute" element={<ManageComputePage />} />
-        <Route path="/list-compute" element={<ListComputePage />} />
-        <Route path="/get-results/:id" element={<GetResultsPage />} />
         <Route path="/configuration" element={<ConfigurationPage />} />
       </Routes>
     </MainLayout>

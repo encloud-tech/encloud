@@ -83,6 +83,9 @@ const UploadContent = () => {
     try {
       SelectFile()
         .then((result: any) => {
+          var dt = new DataTransfer();
+          dt.items.add(new File([], result));
+          evt.target.files = dt.files;
           setFilePath(result);
         })
         .catch((err: any) => {
@@ -174,7 +177,6 @@ const UploadContent = () => {
                     disabled={true}
                     readOnly={true}
                     type="text"
-                    value="200"
                     placeholder="Enter Chunk Sizes"
                   />
                 </Form.Group>
@@ -186,7 +188,6 @@ const UploadContent = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>Document</Form.Label>
                   <Form.Control type="file" onClick={getFilePath} />
-                  {filePath || ""}
                 </Form.Group>
               </Col>
               <Col md={4}></Col>

@@ -7,11 +7,6 @@ const TopNavbar = () => {
     <NavbarWrapper>
       <Container fluid>
         <Navbar.Toggle />
-        <Navbar.Collapse className="justify-content-end">
-          <Link to="/" className="btn btn-primary">
-            Log out
-          </Link>
-        </Navbar.Collapse>
       </Container>
     </NavbarWrapper>
   );

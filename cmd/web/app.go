@@ -139,15 +139,21 @@ func (a *App) Share(uuid string, kek string, privateKey string, email string) ty
 }
 
 // Retrieve shared content
-func (a *App) RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, fileName string, retrievalFileStoragePath string) types.ErrorResponse {
-	var response types.ErrorResponse
+func (a *App) RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, fileName string, retrievalFileStoragePath string) types.SharedResponse {
+	var response types.SharedResponse
 	err := api.RetrieveSharedContent(decryptedDekPath, dekType, cid, fileName, retrievalFileStoragePath)
 	if err != nil {
-		response = types.ErrorResponse{
+		response = types.SharedResponse{
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
 		}
+	}
+
+	response = types.SharedResponse{
+		Status:     "success",
+		StatusCode: http.StatusCreated,
+		Message:    "Content fetched successfully.",
 	}
 
 	return response

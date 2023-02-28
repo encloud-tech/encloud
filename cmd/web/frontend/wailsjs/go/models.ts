@@ -2,7 +2,6 @@ export namespace types {
 	
 	
 	
-	
 	export class FileMetadata {
 	    uuid: string;
 	    md5Hash: string;
@@ -50,6 +49,7 @@ export namespace types {
 	        this.PrivateKey = source["PrivateKey"];
 	    }
 	}
+	
 	
 	
 
