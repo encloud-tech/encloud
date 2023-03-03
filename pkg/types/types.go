@@ -135,3 +135,13 @@ type SharedResponse struct {
 	StatusCode int
 	Message    string
 }
+
+type Error struct {
+	Code    int64  `json:"code"`
+	Reason  string `json:"reason"`
+	Details string `json:"details"`
+}
+
+type EstuaryError struct {
+	Error Error `json:"error"`
+}

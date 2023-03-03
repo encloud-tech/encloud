@@ -1,20 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Share Content</title>
     <style type="text/css">
-      body{
+      body {
         margin: 0 auto;
         padding: 0;
         min-width: 100%;
         font-family: sans-serif;
       }
-      table{
+      table {
         margin: 50px 0 50px 0;
       }
-      .content{
+      .content {
         height: 100px;
         font-size: 18px;
         line-height: 30px;
@@ -22,19 +22,21 @@
     </style>
   </head>
   <body>
-    <table bgcolor="#FFFFFF" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <table
+      bgcolor="#FFFFFF"
+      width="100%"
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+    >
       <tr class="content">
-        <td style="padding:10px;">
-          <p>
-            Cid: <b>{{ .cid }}</b>
-          </p>
+        <td style="padding: 10px">
+          <p>Cid: <b>{{ .cid }}</b></p>
         </td>
       </tr>
       <tr class="content">
-        <td style="padding:10px;">
-          <p>
-            DEK Type: <b>{{ .encryptionBy }}</b>
-          </p>
+        <td style="padding: 10px">
+          <p>DEK Type: <b>{{ .dekType }}</b></p>
         </td>
       </tr>
     </table>

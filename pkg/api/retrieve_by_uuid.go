@@ -35,7 +35,10 @@ func RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileSto
 		return types.FileMetadata{}, err
 	}
 
-	filePath := estuaryService.DownloadContent(config.Assets+"/"+thirdparty.GenerateFileName(fileMetaData.Timestamp, "retrieve", filepath.Ext(fileMetaData.Name)), fileMetaData.Cid[0])
+	filePath, err := estuaryService.DownloadContent(config.Assets+"/"+thirdparty.GenerateFileName(fileMetaData.Timestamp, "retrieve", filepath.Ext(fileMetaData.Name)), fileMetaData.Cid[0])
+	if err != nil {
+		return types.FileMetadata{}, err
+	}
 	if fileMetaData.DekType == "aes" {
 		err := thirdparty.DecryptWithAES(decryptedDek, filePath, retrievalFileStoragePath+"/"+fileMetaData.Name)
 		if err != nil {

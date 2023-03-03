@@ -26,8 +26,10 @@ const RetrieveSharedContentPage = () => {
     cid: Yup.string().required("Please enter cid"),
     dekType: Yup.string().required("Please enter dek type"),
     decryptedDekPath: Yup.string().required("Please enter dek path"),
-    fileName: Yup.string().required("Please enter file name"),
-    retrievalFileStoragePath: Yup.string().required("Please enter file path"),
+    fileName: Yup.string().required("Please enter download file name"),
+    retrievalFileStoragePath: Yup.string().required(
+      "Please enter download file path"
+    ),
   });
 
   const getSharedContent = (data: any) => {
@@ -127,14 +129,16 @@ const RetrieveSharedContentPage = () => {
                     <Col md={8}>
                       <Form.Group className="mb-3">
                         <Form.Label>DEK Type</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="DEK Type"
+                        <Form.Select
                           name="dekType"
                           value={values.dekType}
                           onChange={handleChange}
                           isInvalid={!!errors.dekType}
-                        />
+                        >
+                          <option>Please select dek type</option>
+                          <option value="aes">AES 256 GCM</option>
+                          <option value="chacha20">ChaCha20-Poly1305</option>
+                        </Form.Select>
                         <span
                           className="invalid-feedback"
                           style={{ color: "red", textAlign: "left" }}
@@ -170,10 +174,10 @@ const RetrieveSharedContentPage = () => {
                   <Row className="mt-4">
                     <Col md={8}>
                       <Form.Group className="mb-3">
-                        <Form.Label>File Name</Form.Label>
+                        <Form.Label>Download File Name</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="File Name"
+                          placeholder="sample.csv"
                           name="fileName"
                           value={values.fileName}
                           onChange={handleChange}
@@ -192,10 +196,10 @@ const RetrieveSharedContentPage = () => {
                   <Row className="mt-4">
                     <Col md={8}>
                       <Form.Group className="mb-3">
-                        <Form.Label>File Storage Path</Form.Label>
+                        <Form.Label>Download File Path</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="File Storage Path"
+                          placeholder="C:\Users\{YOUR_USERNAME}\Downloads"
                           name="retrievalFileStoragePath"
                           value={values.retrievalFileStoragePath}
                           onChange={handleChange}

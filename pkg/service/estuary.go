@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encloud/pkg/types"
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"log"
@@ -66,11 +67,11 @@ func (e *Estuary) UploadContent(filePath string) (types.UploadResponse, error) {
 	return responseObject, nil
 }
 
-func (e *Estuary) DownloadContent(filepath string, cid string) string {
+func (e *Estuary) DownloadContent(filepath string, cid string) (string, error) {
 	// Create blank file
 	file, err := os.Create(filepath)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	client := &http.Client{}
@@ -78,18 +79,30 @@ func (e *Estuary) DownloadContent(filepath string, cid string) string {
 	log.Print("Start download data request")
 	resp, err := client.Get(e.config.Estuary.BaseApiUrl + "/gw/ipfs/" + cid)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
+
 	defer resp.Body.Close()
 	log.Print("Download data received")
 
-	if _, err := io.Copy(file, resp.Body); err != nil {
-		log.Fatalf("file write err: %v", err.Error())
+	responseData, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
 	}
 
-	defer file.Close()
+	var responseObject types.EstuaryError
+	json.Unmarshal(responseData, &responseObject)
+	if responseObject.Error.Code == 500 {
+		return "", errors.New(responseObject.Error.Details)
+	} else {
+		if _, err := io.Copy(file, resp.Body); err != nil {
+			return "", err
+		}
 
-	return filepath
+		defer file.Close()
+
+		return filepath, nil
+	}
 }
 
 func (e *Estuary) doMultipartApiRequest(method string, url string, filePath string) ([]byte, error) {

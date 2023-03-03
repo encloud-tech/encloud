@@ -38,7 +38,7 @@ func ShareCmd() *cobra.Command {
 				privateKey = pk
 			}
 
-			fileMetaData, err := api.Share(uuid, kek, privateKey, email)
+			fileMetaData, err := api.Share(uuid, kek, privateKey, email, "./templates/share.html")
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
