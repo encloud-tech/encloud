@@ -7,7 +7,6 @@ import (
 	"encloud/config"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -16,6 +15,7 @@ import (
 )
 
 func EncryptWithAES(dek []byte, filePath string, encryptedFilePath string) error {
+	// Reading file
 	file, err := os.Open(filePath)
 	if err != nil {
 		fmt.Println(err)
@@ -24,66 +24,7 @@ func EncryptWithAES(dek []byte, filePath string, encryptedFilePath string) error
 	defer file.Close()
 
 	buffer := make([]byte, config.ChunkSize)
-
-	for {
-		bytesread, err := file.Read(buffer)
-
-		if err != nil {
-			if err != io.EOF {
-				fmt.Println(err)
-			}
-
-			break
-		}
-
-		// Creating block of algorithm
-		block, err := aes.NewCipher(dek)
-		if err != nil {
-			log.Fatalf("cipher err: %v", err.Error())
-			return err
-		}
-
-		// Creating GCM mode
-		gcm, err := cipher.NewGCM(block)
-		if err != nil {
-			log.Fatalf("cipher GCM err: %v", err.Error())
-			return err
-		}
-
-		// Generating random nonce
-		nonce := make([]byte, gcm.NonceSize())
-		if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-			log.Fatalf("nonce  err: %v", err.Error())
-			return err
-		}
-
-		// Decrypt file
-		cipherText := gcm.Seal(nonce, nonce, buffer[:bytesread], nil)
-
-		f, err := os.OpenFile(encryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-		if err != nil {
-			panic(err)
-		}
-
-		defer f.Close()
-
-		if _, err = f.Write(cipherText); err != nil {
-			panic(err)
-		}
-
-		fmt.Println("bytes read: ", bytesread)
-	}
-
-	return nil
-}
-
-func DecryptWithAES(dek []byte, encryptedFilePath string, decryptedFilePath string) error {
-	// Reading encrypted file
-	cipherText, err := ioutil.ReadFile(encryptedFilePath)
-	if err != nil {
-		log.Fatalf("read file err: %v", err.Error())
-		return err
-	}
+	ad_counter := 0 // associated data is a counter
 
 	// Creating block of algorithm
 	block, err := aes.NewCipher(dek)
@@ -99,20 +40,102 @@ func DecryptWithAES(dek []byte, encryptedFilePath string, decryptedFilePath stri
 		return err
 	}
 
-	// Deattached nonce and decrypt
-	nonce := cipherText[:gcm.NonceSize()]
-	cipherText = cipherText[gcm.NonceSize():]
-	plainText, err := gcm.Open(nil, nonce, cipherText, nil)
+	for {
+		bytesread, err := file.Read(buffer)
+
+		if err != nil {
+			if err != io.EOF {
+				fmt.Println(err)
+			}
+
+			break
+		}
+
+		// Generating random nonce
+		nonce := make([]byte, gcm.NonceSize(), gcm.NonceSize()+bytesread+gcm.Overhead())
+		if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+			log.Fatalf("nonce  err: %v", err.Error())
+			return err
+		}
+
+		// Decrypt file
+		cipherText := gcm.Seal(nonce, nonce, buffer[:bytesread], []byte(string(ad_counter)))
+
+		f, err := os.OpenFile(encryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			panic(err)
+		}
+
+		defer f.Close()
+
+		if _, err = f.Write(cipherText); err != nil {
+			panic(err)
+		}
+
+		ad_counter += 1
+		fmt.Println("bytes read: ", bytesread)
+	}
+
+	return nil
+}
+
+func DecryptWithAES(dek []byte, encryptedFilePath string, decryptedFilePath string) error {
+	// Reading encrypted file
+	file, err := os.Open(encryptedFilePath)
 	if err != nil {
-		log.Fatalf("decrypt file err: %v", err.Error())
+		return err
+	}
+	defer file.Close()
+
+	// Creating block of algorithm
+	block, err := aes.NewCipher(dek)
+	if err != nil {
+		log.Fatalf("cipher err: %v", err.Error())
 		return err
 	}
 
-	// Writing decryption content
-	err = ioutil.WriteFile(decryptedFilePath, plainText, 0777)
+	// Creating GCM mode
+	gcm, err := cipher.NewGCM(block)
 	if err != nil {
-		log.Fatalf("write file err: %v", err.Error())
+		log.Fatalf("cipher GCM err: %v", err.Error())
 		return err
+	}
+
+	buffer := make([]byte, gcm.NonceSize()+config.ChunkSize+gcm.Overhead())
+	ad_counter := 0 // associated data is a counter
+
+	for {
+		bytesread, err := file.Read(buffer)
+
+		if err != nil {
+			if err != io.EOF {
+				fmt.Println(err)
+			}
+
+			break
+		}
+
+		encryptedMsg := buffer[:bytesread]
+		// Decrypt file
+		nonce, ciphertext := encryptedMsg[:gcm.NonceSize()], encryptedMsg[gcm.NonceSize():]
+		plainText, err := gcm.Open(nil, nonce, ciphertext, []byte(string(ad_counter)))
+		if err != nil {
+			return err
+		}
+
+		f, err := os.OpenFile(decryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			return err
+		}
+
+		defer f.Close()
+
+		if _, err = f.Write(plainText); err != nil {
+			return err
+		}
+
+		fmt.Println("decrypt bytes read: ", bytesread)
+		ad_counter += 1
 	}
 
 	return nil
