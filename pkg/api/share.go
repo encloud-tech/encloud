@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 )
 
-func Share(uuid string, kek string, privateKey string, email string) (types.FileMetadata, error) {
+func Share(uuid string, kek string, privateKey string, email string, templatePath string) (types.FileMetadata, error) {
 	cfg, err := Fetch()
 	if err != nil {
 		return types.FileMetadata{}, err
@@ -41,7 +41,7 @@ func Share(uuid string, kek string, privateKey string, email string) (types.File
 
 	subject := "Share content"
 	r := service.NewRequest([]string{email}, subject, cfg)
-	r.Send("../../templates/share.html", map[string]string{"cid": fileMetaData.Cid[0], "dekType": fileMetaData.DekType}, fileMetaData.Timestamp)
+	r.Send(templatePath, map[string]string{"cid": fileMetaData.Cid[0], "dekType": fileMetaData.DekType}, fileMetaData.Timestamp)
 
 	return fileMetaData, nil
 }

@@ -20,7 +20,10 @@ func RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, 
 
 	timestamp := time.Now().Unix()
 
-	filepath := estuaryService.DownloadContent(config.Assets+"/"+fileName+"_"+fmt.Sprint(timestamp), cid)
+	filepath, err := estuaryService.DownloadContent(config.Assets+"/"+fileName+"_"+fmt.Sprint(timestamp), cid)
+	if err != nil {
+		return err
+	}
 	if dekType == "aes" {
 		err := thirdparty.DecryptWithAES(dek, filepath, retrievalFileStoragePath+"/"+fileName)
 		if err != nil {

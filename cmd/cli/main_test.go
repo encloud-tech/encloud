@@ -83,7 +83,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 	retrieveSharedContentCmd := RetrieveSharedContentCmd()
 	retrieveSharedContentCmd.SetOut(retrieveSharedContentBuf)
 	retrieveSharedContentCmd.SetErr(retrieveSharedContentBuf)
-	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", config.Assets + "/" + fmt.Sprint(shareResponseObject.Data.Timestamp) + "_dek.txt", "-s", "C:/Users/vivek", "-f", "shared.csv"})
+	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", config.Assets + "/" + fmt.Sprint(shareResponseObject.Data.Timestamp) + "_dek.txt", "-s", "C:/Users/vivek/Downloads", "-f", "shared.csv"})
 	retrieveSharedContentCmd.Execute()
 	var retrieveSharedContentResponseObject types.RetrieveByCIDContentResponse
 	json.Unmarshal(retrieveSharedContentBuf.Bytes(), &retrieveSharedContentResponseObject)
