@@ -67,12 +67,14 @@ func (e *Estuary) UploadContent(filePath string) (types.UploadResponse, error) {
 	return responseObject, nil
 }
 
-func (e *Estuary) DownloadContent(filepath string, cid string) (string, error) {
+func (e *Estuary) DownloadContent(filePath string, cid string) (string, error) {
 	// Create blank file
-	file, err := os.Create(filepath)
+	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		return "", err
 	}
+
+	defer f.Close()
 
 	client := &http.Client{}
 
@@ -95,13 +97,11 @@ func (e *Estuary) DownloadContent(filepath string, cid string) (string, error) {
 	if responseObject.Error.Code == 500 {
 		return "", errors.New(responseObject.Error.Details)
 	} else {
-		if _, err := io.Copy(file, resp.Body); err != nil {
+		if _, err = f.Write(responseData); err != nil {
 			return "", err
 		}
 
-		defer file.Close()
-
-		return filepath, nil
+		return filePath, nil
 	}
 }
 
