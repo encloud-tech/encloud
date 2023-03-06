@@ -198,7 +198,7 @@ const UploadContent = () => {
                   className={`step-button ml-2 ${
                     uploadLoading ? "loadingStatus" : ""
                   }`}
-                  disabled={uploadLoading}
+                  disabled={uploadLoading || !filePath}
                   onClick={doUpload}
                 >
                   {uploadLoading ? (

@@ -12,6 +12,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"golang.org/x/net/html"
 )
 
 // New func implements the storage interface
@@ -94,7 +96,8 @@ func (e *Estuary) DownloadContent(filePath string, cid string) (string, error) {
 
 	var responseObject types.EstuaryError
 	json.Unmarshal(responseData, &responseObject)
-	if responseObject.Error.Code == 500 {
+
+	if resp.StatusCode != 200 || getTitle(resp.Body) == "openresty" || getTitle(resp.Body) == "504 Gateway Time-out" {
 		return "", errors.New(responseObject.Error.Details)
 	} else {
 		if _, err = f.Write(responseData); err != nil {
@@ -102,6 +105,31 @@ func (e *Estuary) DownloadContent(filePath string, cid string) (string, error) {
 		}
 
 		return filePath, nil
+	}
+}
+
+func getTitle(body io.Reader) string {
+	tkn := html.NewTokenizer(body)
+	var isTitle bool
+	var title string
+	for {
+		tt := tkn.Next()
+
+		switch {
+		case tt == html.ErrorToken:
+			return ""
+		case tt == html.StartTagToken:
+			t := tkn.Token()
+			isTitle = t.Data == "title"
+		case tt == html.TextToken:
+			t := tkn.Token()
+			if isTitle {
+				isTitle = false
+				title = t.Data
+			}
+
+			return title
+		}
 	}
 }
 
