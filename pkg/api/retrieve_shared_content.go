@@ -20,17 +20,24 @@ func RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, 
 
 	timestamp := time.Now().Unix()
 
-	filepath, err := estuaryService.DownloadContent(config.Assets+"/"+fileName+"_"+fmt.Sprint(timestamp), cid)
-	if err != nil {
-		return err
+	baseApiErr := estuaryService.DownloadContent(config.Assets+"/"+fileName+"_"+fmt.Sprint(timestamp), cid, cfg.Estuary.BaseApiUrl)
+	if baseApiErr != nil {
+		gatewayApiErr := estuaryService.DownloadContent(config.Assets+"/"+fileName+"_"+fmt.Sprint(timestamp), cid, cfg.Estuary.GatewayApiUrl)
+		if gatewayApiErr != nil {
+			cdnApiErr := estuaryService.DownloadContent(config.Assets+"/"+fileName+"_"+fmt.Sprint(timestamp), cid, cfg.Estuary.CdnApiUrl)
+			return cdnApiErr
+		}
 	}
+
+	filePath := config.Assets + "/" + fileName + "_" + fmt.Sprint(timestamp)
+
 	if dekType == "aes" {
-		err := thirdparty.DecryptWithAES(dek, filepath, retrievalFileStoragePath+"/"+fileName)
+		err := thirdparty.DecryptWithAES(dek, filePath, retrievalFileStoragePath+"/"+fileName)
 		if err != nil {
 			return err
 		}
 	} else {
-		err := thirdparty.DecryptWithChacha20poly1305(dek, filepath, retrievalFileStoragePath+"/"+fileName)
+		err := thirdparty.DecryptWithChacha20poly1305(dek, filePath, retrievalFileStoragePath+"/"+fileName)
 		if err != nil {
 			return err
 		}

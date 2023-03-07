@@ -58,7 +58,7 @@ func (e *Estuary) UploadContent(filePath string) (types.UploadResponse, error) {
 	var responseObject types.UploadResponse
 	response, err := e.doMultipartApiRequest(
 		"POST",
-		e.config.Estuary.BaseApiUrl+"/content/add",
+		e.config.Estuary.UploadApiUrl+"/content/add",
 		filePath,
 	)
 	if err != nil {
@@ -69,11 +69,11 @@ func (e *Estuary) UploadContent(filePath string) (types.UploadResponse, error) {
 	return responseObject, nil
 }
 
-func (e *Estuary) DownloadContent(filePath string, cid string) (string, error) {
+func (e *Estuary) DownloadContent(filePath string, cid string, baseUrl string) error {
 	// Create blank file
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	defer f.Close()
@@ -81,9 +81,9 @@ func (e *Estuary) DownloadContent(filePath string, cid string) (string, error) {
 	client := &http.Client{}
 
 	log.Print("Start download data request")
-	resp, err := client.Get(e.config.Estuary.BaseApiUrl + "/gw/ipfs/" + cid)
+	resp, err := client.Get(baseUrl + "/gw/ipfs/" + cid)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	defer resp.Body.Close()
@@ -91,20 +91,20 @@ func (e *Estuary) DownloadContent(filePath string, cid string) (string, error) {
 
 	responseData, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	var responseObject types.EstuaryError
 	json.Unmarshal(responseData, &responseObject)
 
 	if resp.StatusCode != 200 || getTitle(resp.Body) == "openresty" || getTitle(resp.Body) == "504 Gateway Time-out" {
-		return "", errors.New(responseObject.Error.Details)
+		return errors.New(responseObject.Error.Details)
 	} else {
 		if _, err = f.Write(responseData); err != nil {
-			return "", err
+			return err
 		}
 
-		return filePath, nil
+		return nil
 	}
 }
 

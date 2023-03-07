@@ -9,8 +9,11 @@ type ConfYaml struct {
 
 // SectionEstuary is sub section of config.
 type SectionEstuary struct {
-	BaseApiUrl string `yaml:"base_api_url"`
-	Token      string `yaml:"token"`
+	BaseApiUrl    string `yaml:"base_api_url"`
+	UploadApiUrl  string `yaml:"upload_api_url"`
+	GatewayApiUrl string `yaml:"gateway_api_url"`
+	CdnApiUrl     string `yaml:"cdn_api_url"`
+	Token         string `yaml:"token"`
 }
 
 // EmailStat is sub section of config.
