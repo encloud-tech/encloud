@@ -99,9 +99,9 @@ img {
     border: 1px solid #d94964 !important;
 }
 
-.dek-type-select, svg {
+/* .dek-type-select, svg {
     fill: #d94964 !important;
-}
+} */
 
 input,
 .form-control {

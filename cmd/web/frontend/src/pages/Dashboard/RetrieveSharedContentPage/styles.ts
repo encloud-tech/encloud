@@ -104,6 +104,11 @@ export const ColoredBtn = styled(Button)`
       background: transparent;
     }
 
+    &:disabled {
+      color: #ffffff;
+      background-color: #f76e5c;
+    }
+
     &.loadingStatus {
       color: #ffffff;
 
