@@ -166,9 +166,6 @@ const UploadContent = () => {
                 <Form.Group className="mb-3">
                   <Form.Label>
                     Chunk Sizes <Badge bg="success">Premium</Badge>{" "}
-                    <span>
-                      (Please purchase premium membership to use this feature.)
-                    </span>
                   </Form.Label>
                   <Form.Control
                     disabled={true}
