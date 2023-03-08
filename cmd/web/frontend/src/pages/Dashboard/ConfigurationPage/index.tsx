@@ -1,11 +1,19 @@
 import * as formik from "formik";
-import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { KeyBoxedContent, KeyPairsSection } from "./styles";
+import { Button, Card, Col, Form, Row, Image } from "react-bootstrap";
+import { ColoredBtn, KeyBoxedContent, KeyPairsSection } from "./styles";
 import { PageHeader } from "./../../../components/layouts/styles";
 import Select, { StylesConfig } from "react-select";
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { FetchConfig, StoreConfig } from "../../../../wailsjs/go/main/App";
 import { toast } from "react-toastify";
+import settingsIcon from "../../../assets/images/settings.png";
+import ClipLoader from "react-spinners/ClipLoader";
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "white",
+};
 
 const storageTypeOptions = [
   { value: "badgerdb", label: "Badger DB" },
@@ -67,6 +75,7 @@ const colourStyles: StylesConfig = {
 
 const ConfigurationPage = () => {
   const { Formik } = formik;
+  const [loading, setLoading] = useState(false);
   const [config, setConfigData] = useState({
     Estuary: {
       BaseApiUrl: "",
@@ -119,17 +128,22 @@ const ConfigurationPage = () => {
   }, [setConfigData]);
 
   const save = async (data: any) => {
+    setLoading(true);
     data.Stat.KekType = data.Stat.KekType.value;
     data.Stat.StorageType = data.Stat.StorageType.value;
     try {
       StoreConfig(data).then((response) => {
-        toast.success(response.Message, {
-          position: toast.POSITION.TOP_RIGHT,
-        });
+        if (response && response.Status == "success") {
+          setLoading(false);
+          toast.success(response.Message, {
+            position: toast.POSITION.TOP_RIGHT,
+          });
 
-        fetchData();
+          fetchData();
+        }
       });
     } catch (error) {
+      setLoading(false);
       toast.error("Something went wrong!", {
         position: toast.POSITION.TOP_RIGHT,
       });
@@ -140,6 +154,7 @@ const ConfigurationPage = () => {
     <>
       <PageHeader>
         <h2>
+          <Image className="titleIcon" src={settingsIcon} />
           <span>Configuration</span>
         </h2>
       </PageHeader>
@@ -408,7 +423,29 @@ const ConfigurationPage = () => {
                   )}
                   <Row>
                     <Col md={12} className="text-left">
-                      <Button type="submit">Submit</Button>
+                      <ColoredBtn
+                        className={`step-button ml-2 ${
+                          loading ? "loadingStatus" : ""
+                        }`}
+                        disabled={loading}
+                        onClick={handleSubmit}
+                      >
+                        {loading ? (
+                          <div>
+                            <ClipLoader
+                              color="#ffffff"
+                              loading={loading}
+                              cssOverride={override}
+                              size={30}
+                              aria-label="Loading Spinner"
+                              data-testid="loader"
+                            />
+                            <span className="loadingText">Submitting</span>
+                          </div>
+                        ) : (
+                          "Submit"
+                        )}
+                      </ColoredBtn>
                     </Col>
                   </Row>
                 </Form>

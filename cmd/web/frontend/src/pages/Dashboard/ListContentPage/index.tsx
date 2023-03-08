@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { Table as BTable } from "react-bootstrap";
 
-import dsMenuImg from "../../../assets/images/ds-menu.png";
+import menuIcon from "../../../assets/images/menu.png";
 import { List, Share } from "../../../../wailsjs/go/main/App";
 import { readKey } from "../../../services/localStorage.service";
 import { types } from "../../../../wailsjs/go/models";
@@ -56,13 +56,14 @@ const ListContentPage = () => {
         <>
           <Link
             to={`/retrieve/${info.getValue()}`}
-            className="btn btn-primary"
+            className="btn btn-primary list-button"
             style={{ marginRight: 5 }}
             state={{ metadata: info.row.original }}
           >
             Retrieve
           </Link>
           <Button
+            className="list-button"
             onClick={() => {
               setSelected(info.row.original);
               setOpen(true);
@@ -133,7 +134,7 @@ const ListContentPage = () => {
     <>
       <PageHeader>
         <h2>
-          <Image className="titleIcon" src={dsMenuImg} />
+          <Image className="titleIcon" src={menuIcon} />
           <span>Content List</span>
         </h2>
       </PageHeader>

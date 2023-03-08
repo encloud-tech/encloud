@@ -3,11 +3,10 @@ import Select, { StylesConfig } from "react-select";
 
 import { PageHeader } from "./../../../components/layouts/styles";
 
-import dsupload1Img from "../../../assets/images/ds-upload-1.png";
+import uploadIcon from "../../../assets/images/upload.png";
 import { CSSProperties, useState } from "react";
 import { SelectFile, Upload } from "../../../../wailsjs/go/main/App";
 import { readKekType, readKey } from "../../../services/localStorage.service";
-import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ColoredBtn } from "./styles";
 import { toast } from "react-toastify";
@@ -76,8 +75,6 @@ const UploadContent = () => {
   const [dekType, setDekType] = useState(dekTypeOptions[0]);
   const [filePath, setFilePath] = useState<string>();
 
-  const navigate = useNavigate();
-
   const getFilePath = async (evt: any) => {
     evt.preventDefault();
     try {
@@ -131,7 +128,7 @@ const UploadContent = () => {
     <>
       <PageHeader>
         <h2>
-          <Image className="titleIcon" src={dsupload1Img} />
+          <Image className="titleIcon" src={uploadIcon} />
           <span>Upload</span>
         </h2>
       </PageHeader>

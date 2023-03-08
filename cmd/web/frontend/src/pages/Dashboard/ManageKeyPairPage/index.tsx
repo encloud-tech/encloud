@@ -18,13 +18,12 @@ import {
   StepHeader,
   StepBody,
   InputGroupWrapper,
-  ColoredBtn,
 } from "./styles";
 import { PageHeader } from "./../../../components/layouts/styles";
 import Select, { StylesConfig } from "react-select";
 
 // Images
-import dsPadlockImg from "../../../assets/images/ds-padlock.png";
+import padlockIcon from "../../../assets/images/padlock.png";
 import eyeIcon from "../../../assets/images/eye-line.svg";
 import copyIcon from "../../../assets/images/file-copy-line.svg";
 import eyeCloseIcon from "../../../assets/images/eye-close-line.svg";
@@ -38,6 +37,59 @@ import {
 import { types } from "../../../../wailsjs/go/models";
 import { copyToClipboard } from "../../../helper";
 import { toast } from "react-toastify";
+
+const colourStyles: StylesConfig = {
+  control: (styles, state) => ({
+    ...styles,
+    backgroundColor: "white",
+    borderColor: state.isFocused ? "#cc336610" : "#cc336610",
+    boxShadow: "0 0 0 0px #cc336610",
+    ":hover": {
+      ...styles[":hover"],
+      borderColor: "#cc336610",
+      boxShadow: "0 0 0 0px #cc336610",
+    },
+    ":focus": {
+      ...styles[":focus"],
+      borderColor: "#cc336610",
+      boxShadow: "0 0 0 0px #cc336610",
+    },
+    ":active": {
+      ...styles[":active"],
+      borderColor: "#cc336610",
+      boxShadow: "0 0 0 0px #cc336610",
+    },
+  }),
+  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    return {
+      ...styles,
+      // backgroundColor: "pink",
+      color: "black",
+      backgroundColor: isSelected ? "#d94964" : "#ffffff",
+
+      ":active": {
+        ...styles[":active"],
+        backgroundColor: !isDisabled
+          ? isSelected
+            ? "#d94964"
+            : "red"
+          : undefined,
+      },
+      ":hover": {
+        ...styles[":hover"],
+        backgroundColor: isSelected ? "#d94964" : "#d949643b",
+      },
+    };
+  },
+  input: (styles) => ({ ...styles, borderRadius: ".375rem" }),
+  placeholder: (styles) => ({ ...styles }),
+  singleValue: (styles, { data }) => ({ ...styles }),
+};
+
+const kekTypeOptions = [
+  { value: "rsa", label: "RSA" },
+  { value: "ecies", label: "ECIES" },
+];
 
 const ManageKeyPairPage = () => {
   const [keys, setKeys] = useState<types.Keys>();
@@ -53,7 +105,6 @@ const ManageKeyPairPage = () => {
   const { Formik } = formik;
 
   const schema = Yup.object().shape({
-    KekType: Yup.string().required("Please select kek type"),
     PublicKey: Yup.string().required("Please enter public key"),
     PrivateKey: Yup.string().required("Please enter private key"),
   });
@@ -80,7 +131,7 @@ const ManageKeyPairPage = () => {
     <>
       <PageHeader>
         <h2>
-          <Image className="titleIcon" src={dsPadlockImg} />
+          <Image className="titleIcon" src={padlockIcon} />
           <span>Manage Key Pair</span>
         </h2>
       </PageHeader>
@@ -89,12 +140,9 @@ const ManageKeyPairPage = () => {
           <span className="stepTitle">Current key pair</span>
           {!showEditForm && (
             <div className="right-part">
-              <ColoredBtn
-                className={`step-button ml-2`}
-                onClick={() => setShowEditForm(!showEditForm)}
-              >
+              <Button onClick={() => setShowEditForm(!showEditForm)}>
                 Edit
-              </ColoredBtn>
+              </Button>
             </div>
           )}
         </StepHeader>
@@ -107,19 +155,22 @@ const ManageKeyPairPage = () => {
                   PrivateKey: data.PrivateKey,
                   PublicKey: data.PublicKey,
                 });
-                persistKekType(data.KekType);
+                persistKekType(data.KekType.value);
                 setCurrentKeys({
                   PrivateKey: data.PrivateKey,
                   PublicKey: data.PublicKey,
                 });
-                setCurrentKekType(data.KekType);
+                setCurrentKekType(data.KekType.value);
                 setShowEditForm(!showEditForm);
                 toast.success("Key pair updated successfully.", {
                   position: toast.POSITION.TOP_RIGHT,
                 });
               }}
               initialValues={{
-                KekType: currentKekType,
+                KekType:
+                  currentKekType === "rsa"
+                    ? kekTypeOptions[0]
+                    : kekTypeOptions[1],
                 PublicKey: currentKeys?.PublicKey || "",
                 PrivateKey: currentKeys?.PrivateKey || "",
               }}
@@ -139,22 +190,16 @@ const ManageKeyPairPage = () => {
                     <Col md={12} className="mb-3">
                       <Form.Group className="mb-3">
                         <Form.Label>Kek Type</Form.Label>
-                        <Form.Select
+                        <Select
                           name="KekType"
+                          className="dek-type-select"
+                          styles={colourStyles}
+                          options={kekTypeOptions}
                           value={values.KekType}
-                          onChange={handleChange}
-                          isInvalid={!!errors.KekType}
-                        >
-                          <option>Please select kek type</option>
-                          <option value="rsa">RSA</option>
-                          <option value="ecies">ECIES</option>
-                        </Form.Select>
-                        <span
-                          className="invalid-feedback"
-                          style={{ color: "red", textAlign: "left" }}
-                        >
-                          {errors.KekType}
-                        </span>
+                          onChange={(newVal) => {
+                            setFieldValue("KekType", newVal);
+                          }}
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
@@ -167,6 +212,7 @@ const ManageKeyPairPage = () => {
                         aria-label="Public Key"
                         name="PublicKey"
                         value={values.PublicKey}
+                        className="editInput"
                         onChange={handleChange}
                         isInvalid={!!errors.PublicKey}
                       />
@@ -183,6 +229,7 @@ const ManageKeyPairPage = () => {
                         type="text"
                         placeholder="Private Key"
                         aria-label="Private Key"
+                        className="editInput"
                         name="PrivateKey"
                         value={values.PrivateKey}
                         onChange={handleChange}
@@ -195,20 +242,17 @@ const ManageKeyPairPage = () => {
                         {errors.PrivateKey}
                       </span>
                     </Col>
-                    <Col md={12}>
-                      <ColoredBtn
+                    <Col md={12} className="buttoncolumn">
+                      <Button
                         type="button"
-                        className="submitBtn"
                         onClick={() => {
                           setShowEditForm(!showEditForm);
                         }}
-                        style={{ marginLeft: 5 }}
+                        style={{ marginRight: 15 }}
                       >
                         Cancel
-                      </ColoredBtn>
-                      <ColoredBtn type="submit" className="submitBtn">
-                        Save Changes
-                      </ColoredBtn>
+                      </Button>
+                      <Button type="submit">Save Changes</Button>
                     </Col>
                   </Row>
                 </Form>
@@ -295,12 +339,7 @@ const ManageKeyPairPage = () => {
           <span className="stepTitle">Generate key pair</span>
           {kekType !== "tkey" && (
             <div className="right-part">
-              <ColoredBtn
-                className={`step-button ml-2`}
-                onClick={generateKeyPair}
-              >
-                Generate
-              </ColoredBtn>
+              <Button onClick={generateKeyPair}>Generate</Button>
             </div>
           )}
         </StepHeader>
@@ -376,8 +415,7 @@ const ManageKeyPairPage = () => {
           <StepHeader>
             <span className="stepTitle">Key pair generated!</span>
             <div className="right-part">
-              <ColoredBtn
-                className={`step-button ml-2`}
+              <Button
                 onClick={() => {
                   const res = persistKey(new types.Keys(keys));
                   setCurrentKeys(res);
@@ -392,7 +430,7 @@ const ManageKeyPairPage = () => {
                 }}
               >
                 Set as Current key pair
-              </ColoredBtn>
+              </Button>
             </div>
           </StepHeader>
           <StepBody>

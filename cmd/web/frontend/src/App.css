@@ -76,12 +76,13 @@ img {
     color: #ffffff;
     background-color: #f76e5c;
     border: none;
-    padding: 7.5px 15px;
     font-size: 18px;
     line-height: 1.2;
     font-weight: 400;
-    border-radius: 8px;
     cursor: pointer;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 3px solid #f76e5c !important;
 }
 
 .btn.btn-primary:focus,
@@ -92,16 +93,22 @@ img {
     border: none;
     box-shadow: unset;
     outline: none;
-    background-color: #cc3366;
+    background-color: #ffffff;
+    color: #f76e5c;
 }
 
 .dek-type-select {
     border: 1px solid #d94964 !important;
+    border-radius: .375rem;
 }
 
-/* .dek-type-select, svg {
+.dek-type-select input {
+    height: unset !important;
+}
+
+.dek-type-select svg {
     fill: #d94964 !important;
-} */
+}
 
 input,
 .form-control {
@@ -133,4 +140,16 @@ input:focus,
 
 .table .text-primary {
     color: #d94964 !important;
+}
+
+.table-bordered>:not(caption)>*>* {
+    border-width: 0 0px !important;
+}
+
+th {
+    color: #f76e5c;
+}
+
+th:nth-child(3) {
+    width: 100px;
 }

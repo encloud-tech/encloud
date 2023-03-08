@@ -5,17 +5,71 @@ import { KeyBoxedContent, KeyPairsSection } from "./styles";
 import { PageHeader } from "../../../components/layouts/styles";
 
 // Images
-import dsManageImg from "../../../assets/images/ds-manage.png";
+import shareIcon from "../../../assets/images/share.png";
 import { RetrieveSharedContent } from "../../../../wailsjs/go/main/App";
 import { toast } from "react-toastify";
 import { CSSProperties, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ColoredBtn } from "./styles";
+import Select, { StylesConfig } from "react-select";
 
 const override: CSSProperties = {
   display: "block",
   margin: "0 auto",
   borderColor: "white",
+};
+
+const dekTypeOptions = [
+  { value: "aes", label: "AES 256 GCM" },
+  { value: "chacha20", label: "ChaCha20-Poly1305" },
+];
+
+const colourStyles: StylesConfig = {
+  control: (styles, state) => ({
+    ...styles,
+    backgroundColor: "white",
+    borderColor: state.isFocused ? "#cc336610" : "#cc336610",
+    boxShadow: "0 0 0 0px #cc336610",
+    ":hover": {
+      ...styles[":hover"],
+      borderColor: "#cc336610",
+      boxShadow: "0 0 0 0px #cc336610",
+    },
+    ":focus": {
+      ...styles[":focus"],
+      borderColor: "#cc336610",
+      boxShadow: "0 0 0 0px #cc336610",
+    },
+    ":active": {
+      ...styles[":active"],
+      borderColor: "#cc336610",
+      boxShadow: "0 0 0 0px #cc336610",
+    },
+  }),
+  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    return {
+      ...styles,
+      // backgroundColor: "pink",
+      color: "black",
+      backgroundColor: isSelected ? "#d94964" : "#ffffff",
+
+      ":active": {
+        ...styles[":active"],
+        backgroundColor: !isDisabled
+          ? isSelected
+            ? "#d94964"
+            : "red"
+          : undefined,
+      },
+      ":hover": {
+        ...styles[":hover"],
+        backgroundColor: isSelected ? "#d94964" : "#d949643b",
+      },
+    };
+  },
+  input: (styles) => ({ ...styles }),
+  placeholder: (styles) => ({ ...styles }),
+  singleValue: (styles, { data }) => ({ ...styles }),
 };
 
 const RetrieveSharedContentPage = () => {
@@ -24,7 +78,6 @@ const RetrieveSharedContentPage = () => {
 
   const schema = Yup.object().shape({
     cid: Yup.string().required("Please enter cid"),
-    dekType: Yup.string().required("Please enter dek type"),
     decryptedDekPath: Yup.string().required("Please enter dek path"),
     fileName: Yup.string().required("Please enter download file name"),
     retrievalFileStoragePath: Yup.string().required(
@@ -37,7 +90,7 @@ const RetrieveSharedContentPage = () => {
     try {
       RetrieveSharedContent(
         data.decryptedDekPath,
-        data.dekType,
+        data.dekType.value,
         data.cid,
         data.fileName,
         data.retrievalFileStoragePath
@@ -68,7 +121,7 @@ const RetrieveSharedContentPage = () => {
     <>
       <PageHeader>
         <h2>
-          <Image className="titleIcon" src={dsManageImg} />
+          <Image className="titleIcon" src={shareIcon} />
           <span>Retrieve Shared Content</span>
         </h2>
       </PageHeader>
@@ -80,7 +133,7 @@ const RetrieveSharedContentPage = () => {
               onSubmit={getSharedContent}
               initialValues={{
                 cid: "",
-                dekType: "",
+                dekType: dekTypeOptions[0],
                 decryptedDekPath: "",
                 fileName: "",
                 retrievalFileStoragePath: "",
@@ -94,6 +147,7 @@ const RetrieveSharedContentPage = () => {
                 touched,
                 isValid,
                 errors,
+                setFieldValue,
               }) => (
                 <Form noValidate onSubmit={handleSubmit}>
                   <Row>
@@ -129,22 +183,16 @@ const RetrieveSharedContentPage = () => {
                     <Col md={8}>
                       <Form.Group className="mb-3">
                         <Form.Label>DEK Type</Form.Label>
-                        <Form.Select
+                        <Select
                           name="dekType"
+                          className="dek-type-select"
+                          styles={colourStyles}
+                          options={dekTypeOptions}
                           value={values.dekType}
-                          onChange={handleChange}
-                          isInvalid={!!errors.dekType}
-                        >
-                          <option>Please select dek type</option>
-                          <option value="aes">AES 256 GCM</option>
-                          <option value="chacha20">ChaCha20-Poly1305</option>
-                        </Form.Select>
-                        <span
-                          className="invalid-feedback"
-                          style={{ color: "red", textAlign: "left" }}
-                        >
-                          {errors.dekType}
-                        </span>
+                          onChange={(newVal) => {
+                            setFieldValue("dekType", newVal);
+                          }}
+                        />
                       </Form.Group>
                     </Col>
                     <Col md={4}></Col>

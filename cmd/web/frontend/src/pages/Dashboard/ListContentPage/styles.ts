@@ -11,4 +11,8 @@ export const SectionBox = styled.div`
   table {
     table-layout: fixed;
   }
+
+  .list-button {
+    padding: 8px !important;
+  }
 `;
