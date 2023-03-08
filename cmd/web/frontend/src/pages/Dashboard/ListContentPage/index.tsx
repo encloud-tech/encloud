@@ -218,7 +218,11 @@ const ListContentPage = () => {
                 <Button variant="secondary" onClick={() => setOpen(false)}>
                   Close
                 </Button>
-                <Button type="submit" variant="primary">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  style={{ padding: 7, fontSize: "inherit" }}
+                >
                   Share
                 </Button>
               </Modal.Footer>
