@@ -1,15 +1,17 @@
+import { useState } from "react";
 import { SidebarMenu } from "./styles";
 import { Image } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
 import encloudLogo from "../../assets/images/encloud-logo.png";
-// Images
 
-import dsMenuImg from "../../assets/images/ds-menu.png";
-import dsRefreshImg from "../../assets/images/ds-refresh.png";
-import dsupload1Img from "../../assets/images/ds-upload-1.png";
-import dsManageImg from "../../assets/images/ds-manage.png";
-import { useState } from "react";
+// Images
+import padlockIcon from "../../assets/images/padlock.png";
+import manageIcon from "../../assets/images/manage.png";
+import settingsIcon from "../../assets/images/settings.png";
+import uploadIcon from "../../assets/images/upload.png";
+import downloadIcon from "../../assets/images/download.png";
+import shareIcon from "../../assets/images/share.png";
 
 const LeftNavbar = () => {
   const [openContent, SetOpenContent] = useState(false);
@@ -46,6 +48,7 @@ const LeftNavbar = () => {
             }}
           >
             <Link to="" className="menu-link">
+              <Image src={padlockIcon} className="menuIcon" />
               <div>Manage Key Pair</div>
             </Link>
           </li>
@@ -57,6 +60,7 @@ const LeftNavbar = () => {
             }}
           >
             <Link to="#" className="menu-link menu-toggle">
+              <Image src={manageIcon} className="menuIcon" />
               <div>Manage Content</div>
             </Link>
 
@@ -70,7 +74,7 @@ const LeftNavbar = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <Link to="upload" className="menu-link">
-                  <Image src={dsupload1Img} className="menuIcon" />
+                  <Image src={uploadIcon} className="menuIcon" />
                   <div>Upload</div>
                 </Link>
               </li>
@@ -81,7 +85,7 @@ const LeftNavbar = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <Link to="list" className="menu-link">
-                  <Image src={dsRefreshImg} className="menuIcon" />
+                  <Image src={downloadIcon} className="menuIcon" />
                   <div>Retrieve</div>
                 </Link>
               </li>
@@ -94,7 +98,7 @@ const LeftNavbar = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <Link to="retrieve-shared-content" className="menu-link">
-                  <Image src={dsRefreshImg} className="menuIcon" />
+                  <Image src={shareIcon} className="menuIcon" />
                   <div>Shared Content</div>
                 </Link>
               </li>
@@ -102,6 +106,7 @@ const LeftNavbar = () => {
           </li>
           <li className="menu-item">
             <Link to="configuration" className="menu-link">
+              <Image src={settingsIcon} className="menuIcon" />
               <div>Configuration</div>
             </Link>
           </li>

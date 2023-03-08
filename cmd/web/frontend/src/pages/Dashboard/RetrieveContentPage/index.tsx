@@ -6,7 +6,7 @@ import { ColoredBtn, SectionBox } from "./styles";
 import { PageHeader } from "../../../components/layouts/styles";
 
 // Images
-import dsRefreshImg from "../../../assets/images/ds-refresh.png";
+import dsRefreshImg from "../../../assets/images/refresh.png";
 import { CSSProperties, useState } from "react";
 import { RetrieveByUUID } from "../../../../wailsjs/go/main/App";
 import { readKey } from "../../../services/localStorage.service";
@@ -52,24 +52,27 @@ const RetrieveContentPage = () => {
         data.filePath
       )
         .then((result: any) => {
-          if (result && result.Status == "success") {
+          if (result && result.Status == "success" && result.Data.uuid) {
             setDownloadLoading(false);
             setShowDownloadForm(!showDownloadForm);
             toast.success("Document downloaded successfully.", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          } else {
+            setDownloadLoading(false);
+            toast.error("Something went wrong!.Please retry", {
               position: toast.POSITION.TOP_RIGHT,
             });
           }
         })
         .catch((err: any) => {
           setDownloadLoading(false);
-          setShowDownloadForm(!showDownloadForm);
           toast.error("Something went wrong!.Please retry", {
             position: toast.POSITION.TOP_RIGHT,
           });
         });
     } catch (err) {
       setDownloadLoading(false);
-      setShowDownloadForm(!showDownloadForm);
       toast.error("Something went wrong!.Please retry", {
         position: toast.POSITION.TOP_RIGHT,
       });
