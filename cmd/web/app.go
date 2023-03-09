@@ -119,7 +119,7 @@ func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string, retriev
 // Share data via email
 func (a *App) Share(uuid string, kek string, privateKey string, email string) types.RetrieveByCIDContentResponse {
 	var response types.RetrieveByCIDContentResponse
-	fileMetaData, err := api.Share(uuid, kek, privateKey, email, "../../templates/share.html")
+	fileMetaData, err := api.Share(uuid, kek, privateKey, email)
 	if err != nil {
 		response = types.RetrieveByCIDContentResponse{
 			Status:     "fail",

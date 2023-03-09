@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func ShareCmd(templatePath string) *cobra.Command {
+func ShareCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "share",
 		Short: "Share uploaded content to other user",
@@ -38,7 +38,7 @@ func ShareCmd(templatePath string) *cobra.Command {
 				privateKey = pk
 			}
 
-			fileMetaData, err := api.Share(uuid, kek, privateKey, email, templatePath)
+			fileMetaData, err := api.Share(uuid, kek, privateKey, email)
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
@@ -73,5 +73,5 @@ func ShareCmd(templatePath string) *cobra.Command {
 }
 
 func init() {
-	RootCmd.AddCommand(ShareCmd("./templates/share.html"))
+	RootCmd.AddCommand(ShareCmd())
 }
