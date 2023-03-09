@@ -79,7 +79,7 @@ func TestCLICommands(t *testing.T) {
 
 	// Share content via email.
 	shareBuf := new(bytes.Buffer)
-	shareCmd := ShareCmd("../../templates/share.html")
+	shareCmd := ShareCmd()
 	shareCmd.SetOut(shareBuf)
 	shareCmd.SetErr(shareBuf)
 	shareCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-e", "test@encloud.test"})

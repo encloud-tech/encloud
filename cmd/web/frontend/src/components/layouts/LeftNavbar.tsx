@@ -104,7 +104,13 @@ const LeftNavbar = () => {
               </li>
             </ul>
           </li>
-          <li className="menu-item">
+          <li
+            className={
+              splitLocation[1] === "configuration" && !splitLocation[2]
+                ? "menu-item active"
+                : "menu-item"
+            }
+          >
             <Link to="configuration" className="menu-link">
               <Image src={settingsIcon} className="menuIcon" />
               <div>Configuration</div>
