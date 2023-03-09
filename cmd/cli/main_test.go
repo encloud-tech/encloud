@@ -12,7 +12,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGenerateKeyPairCommand(t *testing.T) {
+func TestCLICommands(t *testing.T) {
+	// Update default configuration
+	configFilePath := "../../testdata/config.yaml"
+	updateConfigBuf := new(bytes.Buffer)
+	configCmd := ConfigCmd()
+	configCmd.SetOut(updateConfigBuf)
+	configCmd.SetErr(updateConfigBuf)
+	configCmd.SetArgs([]string{"-f", configFilePath})
+	configCmd.Execute()
+	var configResponseObject types.ConfigResponse
+	json.Unmarshal(updateConfigBuf.Bytes(), &configResponseObject)
+	assert.NotNil(t, configResponseObject.Data)
+
 	// First we have generate key pair to encrypt and decrypt dek.
 	generateKeyPairBuf := new(bytes.Buffer)
 	generateKeyPairCmd := GenerateKeyPairCmd()
@@ -67,7 +79,7 @@ func TestGenerateKeyPairCommand(t *testing.T) {
 
 	// Share content via email.
 	shareBuf := new(bytes.Buffer)
-	shareCmd := ShareCmd()
+	shareCmd := ShareCmd("../../templates/share.html")
 	shareCmd.SetOut(shareBuf)
 	shareCmd.SetErr(shareBuf)
 	shareCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-e", "test@encloud.test"})
