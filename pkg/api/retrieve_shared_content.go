@@ -16,7 +16,10 @@ func RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, 
 	}
 	estuaryService := service.New(cfg)
 
-	dek := thirdparty.ReadFile(decryptedDekPath)
+	dek, err := thirdparty.ReadFile(decryptedDekPath)
+	if err != nil {
+		return err
+	}
 
 	timestamp := time.Now().Unix()
 

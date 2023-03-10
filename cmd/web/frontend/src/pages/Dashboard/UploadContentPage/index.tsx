@@ -105,6 +105,12 @@ const UploadContent = () => {
               toast.success("Document uploaded successfully.", {
                 position: toast.POSITION.TOP_RIGHT,
               });
+            } else {
+              setFilePath("");
+              setUploadLoading(false);
+              toast.error("Something went wrong!.Please retry", {
+                position: toast.POSITION.TOP_RIGHT,
+              });
             }
           })
           .catch((err: any) => {

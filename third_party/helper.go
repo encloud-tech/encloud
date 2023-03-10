@@ -23,14 +23,14 @@ func GetVirtualMemory() uint64 {
 	return v.Total
 }
 
-func ReadFile(fileName string) []byte {
+func ReadFile(fileName string) ([]byte, error) {
 	f, _ := os.Open(fileName)
 	data, err := ioutil.ReadAll(f)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return data
+	return data, nil
 }
 
 func ReadKeyFile(filePath string) string {

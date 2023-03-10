@@ -37,13 +37,13 @@ func (a *App) GenerateKeyPair(kekType string) types.GenerateKeyPairResponse {
 			Message:    err.Error(),
 			Data:       types.Keys{},
 		}
-	}
-
-	response = types.GenerateKeyPairResponse{
-		Status:     "success",
-		StatusCode: http.StatusCreated,
-		Message:    "Keys generated successfully.",
-		Data:       keys,
+	} else {
+		response = types.GenerateKeyPairResponse{
+			Status:     "success",
+			StatusCode: http.StatusCreated,
+			Message:    "Keys generated successfully.",
+			Data:       keys,
+		}
 	}
 
 	return response
@@ -68,13 +68,13 @@ func (a *App) Upload(filePath string, kekType string, dekType string, kek string
 			Message:    err.Error(),
 			Data:       types.Uuid{},
 		}
-	}
-
-	response = types.UploadContentResponse{
-		Status:     "success",
-		StatusCode: http.StatusCreated,
-		Message:    "Content uploaded successfully.",
-		Data:       types.Uuid{Uuid: uuid},
+	} else {
+		response = types.UploadContentResponse{
+			Status:     "success",
+			StatusCode: http.StatusCreated,
+			Message:    "Content uploaded successfully.",
+			Data:       types.Uuid{Uuid: uuid},
+		}
 	}
 
 	return response
@@ -105,12 +105,13 @@ func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string, retriev
 			Message:    err.Error(),
 			Data:       types.FileMetadata{},
 		}
-	}
-	response = types.RetrieveByCIDContentResponse{
-		Status:     "success",
-		StatusCode: http.StatusCreated,
-		Message:    "Content fetched successfully.",
-		Data:       fileMetaData,
+	} else {
+		response = types.RetrieveByCIDContentResponse{
+			Status:     "success",
+			StatusCode: http.StatusCreated,
+			Message:    "Content fetched successfully.",
+			Data:       fileMetaData,
+		}
 	}
 
 	return response
@@ -127,12 +128,13 @@ func (a *App) Share(uuid string, kek string, privateKey string, email string) ty
 			Message:    err.Error(),
 			Data:       types.FileMetadata{},
 		}
-	}
-	response = types.RetrieveByCIDContentResponse{
-		Status:     "success",
-		StatusCode: http.StatusCreated,
-		Message:    "Content shared successfully.",
-		Data:       fileMetaData,
+	} else {
+		response = types.RetrieveByCIDContentResponse{
+			Status:     "success",
+			StatusCode: http.StatusCreated,
+			Message:    "Content shared successfully.",
+			Data:       fileMetaData,
+		}
 	}
 
 	return response
@@ -148,12 +150,12 @@ func (a *App) RetrieveSharedContent(decryptedDekPath string, dekType string, cid
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
 		}
-	}
-
-	response = types.SharedResponse{
-		Status:     "success",
-		StatusCode: http.StatusCreated,
-		Message:    "Content fetched successfully.",
+	} else {
+		response = types.SharedResponse{
+			Status:     "success",
+			StatusCode: http.StatusCreated,
+			Message:    "Content fetched successfully.",
+		}
 	}
 
 	return response
@@ -170,13 +172,13 @@ func (a *App) StoreConfig(conf types.ConfYaml) types.ConfigResponse {
 			Message:    err.Error(),
 			Data:       types.ConfYaml{},
 		}
-	}
-
-	response = types.ConfigResponse{
-		Status:     "success",
-		StatusCode: http.StatusFound,
-		Message:    "Configuration saved successfully",
-		Data:       types.ConfYaml{},
+	} else {
+		response = types.ConfigResponse{
+			Status:     "success",
+			StatusCode: http.StatusFound,
+			Message:    "Configuration saved successfully",
+			Data:       types.ConfYaml{},
+		}
 	}
 
 	return response
@@ -193,13 +195,13 @@ func (a *App) FetchConfig() types.ConfigResponse {
 			Message:    err.Error(),
 			Data:       types.ConfYaml{},
 		}
-	}
-
-	response = types.ConfigResponse{
-		Status:     "success",
-		StatusCode: http.StatusFound,
-		Message:    "Config data fetched successfully",
-		Data:       conf,
+	} else {
+		response = types.ConfigResponse{
+			Status:     "success",
+			StatusCode: http.StatusFound,
+			Message:    "Config data fetched successfully",
+			Data:       conf,
+		}
 	}
 
 	return response
