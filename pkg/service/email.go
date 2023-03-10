@@ -55,7 +55,10 @@ func (r *Request) BuildMail(cid string, dekType string, timestamp int64) []byte 
 	buf.WriteString("Content-Disposition: attachment; filename=dek.txt\r\n")
 	buf.WriteString("Content-ID: <dek.txt>\r\n\r\n")
 
-	data := thirdparty.ReadFile(config.Assets + "/" + fmt.Sprint(timestamp) + "_dek.txt")
+	data, err := thirdparty.ReadFile(config.Assets + "/" + fmt.Sprint(timestamp) + "_dek.txt")
+	if err != nil {
+		log.Println(err)
+	}
 
 	b := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
 	base64.StdEncoding.Encode(b, data)

@@ -101,6 +101,11 @@ const RetrieveSharedContentPage = () => {
             toast.success("Document downloaded successfully.", {
               position: toast.POSITION.TOP_RIGHT,
             });
+          } else {
+            setLoading(false);
+            toast.error("Something went wrong!.Please retry", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
           }
         })
         .catch((err: any) => {

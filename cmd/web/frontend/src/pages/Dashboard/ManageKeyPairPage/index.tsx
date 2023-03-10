@@ -119,6 +119,10 @@ const ManageKeyPairPage = () => {
       toast.success("Key pair generated successfully.", {
         position: toast.POSITION.TOP_RIGHT,
       });
+    } else {
+      toast.error("Something went wrong!.Please retry", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
     }
   };
 

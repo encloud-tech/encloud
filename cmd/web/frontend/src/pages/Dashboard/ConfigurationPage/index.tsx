@@ -140,6 +140,11 @@ const ConfigurationPage = () => {
           });
 
           fetchData();
+        } else {
+          setLoading(false);
+          toast.error("Something went wrong!", {
+            position: toast.POSITION.TOP_RIGHT,
+          });
         }
       });
     } catch (error) {
