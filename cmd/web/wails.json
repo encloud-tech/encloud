@@ -8,6 +8,13 @@
   "frontend:dev:serverUrl": "auto",
   "author": {
     "name": "Vivek Shah",
-    "email": "vivekkshah7@gmail.com"
+    "email": "contact@encloud.tech"
+  },
+  "info": {
+        "companyName": "encloud",
+        "productName": "encloud",
+        "productVersion": "0.2.3",
+        "copyright": "Copyright (c) Bond180 Limited. All rights reserved.",
+        "comments": "encloud Desktop Application"
   }
 }
