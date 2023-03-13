@@ -24,6 +24,6 @@ The Encloud Encryption and Storage CLI was designed to meet the encryption requi
 * Offering non-custodial key infrastructure and hardware-based key storage to reduce key management burden on user
 * Focus on Storage Provider experience to onboard enterprise data (bespoke deal making with clients)
 * Integration with existing Deal Preparation Frameworks to generate encrypted CAR files
-* UI for clients and storage providers
+* Offering compute over encrypted data via Bacalhau integration
 
 
