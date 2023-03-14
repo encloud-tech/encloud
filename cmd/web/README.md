@@ -9,6 +9,8 @@ The application can be downloaded for the relevant platform architecture via the
 
 Check out the demo for the application and how to use [here](https://youtu.be/VaXNkpykrPg)
 
+<img src="../../.github/Desktop.png" alt="180Protocol Logo" width="50%" height="50%"/>
+
 ## Building the Desktop Application From Source
 
 The Desktop application can be either downloaded for the website or built locally for the host architecture. This is 
