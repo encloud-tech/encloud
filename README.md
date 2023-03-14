@@ -86,12 +86,12 @@ go install .
    
 7) Update configurations for the application using a compatible yaml file
 
-   > encloud update-config -f "<CONFIG_YAML_PATH>"
+   > encloud update-config -f `<CONFIG_YAML_PATH>`
    
 
 ## Future features
 - Run bacalhau compute jobs on encrypted data natively via encloud
-- Offering onboarding and pinning alternatives to Estuary, e.x., Delta
+- Offering on-boarding and pinning alternatives to Estuary, e.x., Delta
 - Deal Preparation module to generate encrypted CAR files for direct SP ingestion (Premium)
 - Distributed key management for KEKs (Premium)
 - Chunking for performant file uploads (Premium)
