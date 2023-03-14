@@ -79,6 +79,9 @@ const ConfigurationPage = () => {
   const [config, setConfigData] = useState({
     Estuary: {
       BaseApiUrl: "",
+      UploadApiUrl: "",
+      GatewayApiUrl: "",
+      CdnApiUrl: "",
       Token: "",
     },
     Email: {
@@ -202,6 +205,46 @@ const ConfigurationPage = () => {
                         />
                       </Form.Group>
                     </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Upload API URL</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="Estuary.UploadApiUrl"
+                          placeholder="https://upload.estuary.tech"
+                          value={values.Estuary.UploadApiUrl}
+                          onChange={handleChange}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Gateway API URL</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="Estuary.GatewayApiUrl"
+                          placeholder="https://gateway.estuary.tech"
+                          value={values.Estuary.GatewayApiUrl}
+                          onChange={handleChange}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
+                        <Form.Label>CDN API URL</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="Estuary.CdnApiUrl"
+                          placeholder="https://cdn.estuary.tech"
+                          value={values.Estuary.CdnApiUrl}
+                          onChange={handleChange}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row>
                     <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Token</Form.Label>
