@@ -6,6 +6,7 @@ import (
 	"encloud/pkg/service"
 	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -67,9 +68,11 @@ func Upload(filePath string, kekType string, dekType string, kek string) (string
 	if err != nil {
 		return "", err
 	}
-	cids = append(cids, content.CID)
+	if content.CID != "" {
+		cids = append(cids, content.CID)
+	}
 
-	if cids != nil {
+	if len(cids) > 0 {
 		var encryptedDek []byte
 		if kekType == "rsa" {
 			encryptedDek, err = thirdparty.EncryptWithRSA(dek, thirdparty.GetIdRsaPubFromStr(kek))
@@ -87,8 +90,9 @@ func Upload(filePath string, kekType string, dekType string, kek string) (string
 		hash := thirdparty.DigestString(kek)
 		fileData := types.FileMetadata{Timestamp: timestamp, Name: fileInfo.Name(), Size: int(fileInfo.Size()), FileType: filepath.Ext(fileInfo.Name()), Dek: encryptedDek, Cid: cids, Uuid: uuid, Md5Hash: hash, DekType: dekType, KekType: kekType, UploadedAt: uploadedAt}
 		dbService.Store(hash+":"+uuid, fileData)
+		os.Remove(config.Assets + "/" + thirdparty.GenerateFileName(timestamp, "encrypt", filepath.Ext(fileInfo.Name())))
+		return uuid, nil
+	} else {
+		return "", errors.New("Something went wrong!")
 	}
-
-	os.Remove(config.Assets + "/" + thirdparty.GenerateFileName(timestamp, "encrypt", filepath.Ext(fileInfo.Name())))
-	return uuid, nil
 }
