@@ -38,19 +38,20 @@ func UploadContentCmd() *cobra.Command {
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
+			} else {
+				response := types.UploadContentResponse{
+					Status:     "success",
+					StatusCode: http.StatusCreated,
+					Message:    "Content uploaded successfully.",
+					Data:       types.Uuid{Uuid: uuid},
+				}
+				encoded, err := json.MarshalIndent(response, "", "    ")
+				if err != nil {
+					fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+					os.Exit(-1)
+				}
+				fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 			}
-			response := types.UploadContentResponse{
-				Status:     "success",
-				StatusCode: http.StatusCreated,
-				Message:    "Content uploaded successfully.",
-				Data:       types.Uuid{Uuid: uuid},
-			}
-			encoded, err := json.MarshalIndent(response, "", "    ")
-			if err != nil {
-				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
-				os.Exit(-1)
-			}
-			fmt.Fprintf(cmd.OutOrStdout(), string(encoded))
 		},
 	}
 
