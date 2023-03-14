@@ -101,6 +101,7 @@ const ManageKeyPairPage = () => {
   const [isKeysGenerated, setIsKeysGenerated] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [tKeyMessage, setTKeyMessage] = useState<boolean>(false);
+  const [kekErrorMessage, setKekErrorMessage] = useState<boolean>(false);
 
   const { Formik } = formik;
 
@@ -110,19 +111,24 @@ const ManageKeyPairPage = () => {
   });
 
   const generateKeyPair = async () => {
-    const response = await GenerateKeyPair(kekType);
-    if (response && response.Status == "success") {
-      setKeys(response.Data);
-      setIsKeysGenerated(!isKeysGenerated);
-      persistKekType(kekType);
+    if (kekType) {
+      setKekErrorMessage(false);
+      const response = await GenerateKeyPair(kekType);
+      if (response && response.Status == "success") {
+        setKeys(response.Data);
+        setIsKeysGenerated(!isKeysGenerated);
+        persistKekType(kekType);
 
-      toast.success("Key pair generated successfully.", {
-        position: toast.POSITION.TOP_RIGHT,
-      });
+        toast.success("Key pair generated successfully.", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else {
+        toast.error("Something went wrong!.Please retry", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
     } else {
-      toast.error("Something went wrong!.Please retry", {
-        position: toast.POSITION.TOP_RIGHT,
-      });
+      setKekErrorMessage(true);
     }
   };
 
@@ -363,6 +369,7 @@ const ManageKeyPairPage = () => {
                         setkekType("rsa");
                         setIsKeysGenerated(false);
                         setTKeyMessage(false);
+                        setKekErrorMessage(false);
                       }}
                     />
                     <span className="checkmark"></span>
@@ -377,11 +384,15 @@ const ManageKeyPairPage = () => {
                         setkekType("ecies");
                         setIsKeysGenerated(false);
                         setTKeyMessage(false);
+                        setKekErrorMessage(false);
                       }}
                     />
                     <span className="checkmark"></span>
                   </KeyBox>
                 </KeyPairs>
+                {kekErrorMessage && (
+                  <span>Please select kek type to generate key</span>
+                )}
               </KeyPairsSection>
             </Col>
             <Col md={12} lg={6}>
@@ -399,6 +410,7 @@ const ManageKeyPairPage = () => {
                       onChange={() => {
                         setkekType("tkey");
                         setTKeyMessage(true);
+                        setKekErrorMessage(false);
                       }}
                     />
                     <span className="checkmark"></span>
