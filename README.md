@@ -8,7 +8,9 @@ clouds like Filecoin, don't offer privacy natively rendering them unuseful for s
 encloud has two offerings
 
 * The encloud CLI enables users to easily on-board sensitive data to the Filecoin network.
-* The [encloud Desktop Application](cmd/web/README.md) is a lightweight GUI built on top of the CLI and can be downloaded via the [encloud website](https://encloud.tech/).
+* The encloud Desktop Application is a lightweight GUI built on top of the CLI and can be downloaded via the [encloud website](https://encloud.tech/).
+  * [Readme](cmd/web/README.md) 
+  * [How to guide](cmd/web/HOWTO.md) 
 
 # Encloud CLI
 
