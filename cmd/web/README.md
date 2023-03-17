@@ -7,7 +7,7 @@ interacting with a UI.
 
 The application can be downloaded for the relevant platform architecture via the [encloud website](https://encloud.tech/)
 
-Check out the demo for the application and how to use
+Check out the demo for the application and [how to use guide](HOWTO.md)
 
 [![encloud Desktop App Demo](http://img.youtube.com/vi/VaXNkpykrPg/0.jpg)](https://www.youtube.com/watch?v=VaXNkpykrPg "encloud Desktop App Demo")
 
