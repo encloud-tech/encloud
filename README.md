@@ -28,6 +28,10 @@ We plan to add more flows to enable clients to control their deal making with sp
 To this end we want to integrate with Singularity and its deal preparation module to  generate encrypted CAR files and make deals
 with specific storage providers.
 
+**Watch the encloud CLI demo in action!**
+
+[![encloud CLI Demo](http://img.youtube.com/vi/R-j_533QZ08/0.jpg)](https://www.youtube.com/watch?v=R-j_533QZ08 "encloud CLI Demo")
+
 Read [**here**](docs/DESIGN.md) for detailed **design and architecture** 
 
 ## Prerequisites
@@ -42,7 +46,8 @@ Read [**here**](docs/DESIGN.md) for detailed **design and architecture**
 go mod tidy
 
 # enable encloud cli command
-go install .
+# make sure $GOPATH environment variable is set
+go build -o $GOPATH/bin/encloud encloud/cmd/cli
 ```
 
 ## Command reference
