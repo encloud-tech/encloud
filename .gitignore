@@ -13,3 +13,9 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+testdata/
+badger.db/
+cmd/web/frontend/node_modules/
+frontend/node_modules/
+.idea/
+.vscode/
