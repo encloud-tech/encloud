@@ -34,10 +34,6 @@ const ListContentPage = () => {
   });
 
   const columns = [
-    columnHelper.accessor("uuid", {
-      cell: (info) => info.getValue(),
-      header: () => <span>UUID</span>,
-    }),
     columnHelper.accessor("name", {
       cell: (info) => info.getValue(),
       header: () => <span>File Name</span>,
