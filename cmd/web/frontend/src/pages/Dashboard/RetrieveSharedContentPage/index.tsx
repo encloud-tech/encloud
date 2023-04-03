@@ -1,12 +1,25 @@
 import * as Yup from "yup";
 import * as formik from "formik";
-import { Button, Card, Col, Form, Image, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Image,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from "react-bootstrap";
 import { KeyBoxedContent, KeyPairsSection } from "./styles";
 import { PageHeader } from "../../../components/layouts/styles";
 
 // Images
 import shareIcon from "../../../assets/images/share.png";
-import { RetrieveSharedContent } from "../../../../wailsjs/go/main/App";
+import {
+  RetrieveSharedContent,
+  SelectDirectory,
+  SelectFile,
+} from "../../../../wailsjs/go/main/App";
 import { toast } from "react-toastify";
 import { CSSProperties, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -72,48 +85,102 @@ const colourStyles: StylesConfig = {
   singleValue: (styles, { data }) => ({ ...styles }),
 };
 
+const renderTooltip = (props: any) => (
+  <Tooltip id="button-tooltip" {...props}>
+    <span>
+      AES 256 GCM - GCM throughput rates for state-of-the-art, high-speed
+      communication channels can be achieved with inexpensive hardware
+      resources. GCM is limited to encrypting 64 GiB of plain text.
+    </span>
+    <br />
+    <span>
+      ChaCha20-Poly1035 - ChaCha20-Poly1305 is an authenticated encryption with
+      additional data (AEAD) algorithm, that combines the ChaCha20 stream cipher
+      with the Poly1305 message authentication code. It has fast software
+      performance, and without hardware acceleration, is usually faster than
+      AES-GCM.
+    </span>
+  </Tooltip>
+);
+
 const RetrieveSharedContentPage = () => {
   const [loading, setLoading] = useState(false);
+  const [selectedDirectory, setSelectedDirectory] = useState<string>();
+  const [dekPath, setDekPath] = useState<string>();
   const { Formik } = formik;
 
   const schema = Yup.object().shape({
     cid: Yup.string().required("Please enter cid"),
-    decryptedDekPath: Yup.string().required("Please enter dek path"),
     fileName: Yup.string().required("Please enter download file name"),
-    retrievalFileStoragePath: Yup.string().required(
-      "Please enter download file path"
-    ),
   });
+
+  const getFilePath = async (evt: any) => {
+    evt.preventDefault();
+    try {
+      SelectFile()
+        .then((result: any) => {
+          var dt = new DataTransfer();
+          dt.items.add(new File([], result));
+          evt.target.files = dt.files;
+          setDekPath(result);
+        })
+        .catch((err: any) => {
+          console.error(err);
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getDirectoryPath = async (evt: any) => {
+    evt.preventDefault();
+    try {
+      SelectDirectory()
+        .then((result: any) => {
+          var dt = new DataTransfer();
+          dt.items.add(new File([], result));
+          evt.target.files = dt.files;
+          setSelectedDirectory(result);
+        })
+        .catch((err: any) => {
+          console.error(err);
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const getSharedContent = (data: any) => {
     setLoading(true);
     try {
-      RetrieveSharedContent(
-        data.decryptedDekPath,
-        data.dekType.value,
-        data.cid,
-        data.fileName,
-        data.retrievalFileStoragePath
-      )
-        .then((result: any) => {
-          if (result && result.Status == "success") {
-            setLoading(false);
-            toast.success("Document downloaded successfully.", {
-              position: toast.POSITION.TOP_RIGHT,
-            });
-          } else {
+      if (selectedDirectory && dekPath) {
+        RetrieveSharedContent(
+          dekPath,
+          data.dekType.value,
+          data.cid,
+          data.fileName,
+          selectedDirectory
+        )
+          .then((result: any) => {
+            if (result && result.Status == "success") {
+              setLoading(false);
+              toast.success("Document downloaded successfully.", {
+                position: toast.POSITION.TOP_RIGHT,
+              });
+            } else {
+              setLoading(false);
+              toast.error("Something went wrong!.Please retry", {
+                position: toast.POSITION.TOP_RIGHT,
+              });
+            }
+          })
+          .catch((err: any) => {
             setLoading(false);
             toast.error("Something went wrong!.Please retry", {
               position: toast.POSITION.TOP_RIGHT,
             });
-          }
-        })
-        .catch((err: any) => {
-          setLoading(false);
-          toast.error("Something went wrong!.Please retry", {
-            position: toast.POSITION.TOP_RIGHT,
           });
-        });
+      }
     } catch (err) {
       setLoading(false);
       toast.error("Something went wrong!.Please retry", {
@@ -127,7 +194,7 @@ const RetrieveSharedContentPage = () => {
       <PageHeader>
         <h2>
           <Image className="titleIcon" src={shareIcon} />
-          <span>Retrieve Shared Content</span>
+          <span>Retrieve Data Received</span>
         </h2>
       </PageHeader>
       <Card className="mt-4">
@@ -139,9 +206,7 @@ const RetrieveSharedContentPage = () => {
               initialValues={{
                 cid: "",
                 dekType: dekTypeOptions[0],
-                decryptedDekPath: "",
                 fileName: "",
-                retrievalFileStoragePath: "",
               }}
             >
               {({
@@ -158,7 +223,7 @@ const RetrieveSharedContentPage = () => {
                   <Row>
                     <Col md={12} lg={6}>
                       <KeyPairsSection>
-                        <h3>Retrieve Shared Content</h3>
+                        <h3>Retrieve Data Received</h3>
                       </KeyPairsSection>
                     </Col>
                   </Row>
@@ -187,7 +252,20 @@ const RetrieveSharedContentPage = () => {
                   <Row className="mt-4">
                     <Col md={8}>
                       <Form.Group className="mb-3">
-                        <Form.Label>DEK Type</Form.Label>
+                        <Form.Label>
+                          DEK Type
+                          <OverlayTrigger
+                            placement="right"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={renderTooltip}
+                          >
+                            <i
+                              style={{ marginLeft: 3 }}
+                              className="fa fa-info-circle"
+                              aria-hidden="true"
+                            ></i>
+                          </OverlayTrigger>
+                        </Form.Label>
                         <Select
                           name="dekType"
                           className="dek-type-select"
@@ -207,19 +285,10 @@ const RetrieveSharedContentPage = () => {
                       <Form.Group className="mb-3">
                         <Form.Label>DEK Path</Form.Label>
                         <Form.Control
-                          type="text"
-                          placeholder="DEK Path"
+                          type="file"
                           name="decryptedDekPath"
-                          value={values.decryptedDekPath}
-                          onChange={handleChange}
-                          isInvalid={!!errors.decryptedDekPath}
+                          onClick={getFilePath}
                         />
-                        <span
-                          className="invalid-feedback"
-                          style={{ color: "red", textAlign: "left" }}
-                        >
-                          {errors.decryptedDekPath}
-                        </span>
                       </Form.Group>
                     </Col>
                     <Col md={4}></Col>
@@ -251,19 +320,10 @@ const RetrieveSharedContentPage = () => {
                       <Form.Group className="mb-3">
                         <Form.Label>Download File Path</Form.Label>
                         <Form.Control
-                          type="text"
-                          placeholder="C:\Users\{YOUR_USERNAME}\Downloads"
+                          type="file"
                           name="retrievalFileStoragePath"
-                          value={values.retrievalFileStoragePath}
-                          onChange={handleChange}
-                          isInvalid={!!errors.retrievalFileStoragePath}
+                          onClick={getDirectoryPath}
                         />
-                        <span
-                          className="invalid-feedback"
-                          style={{ color: "red", textAlign: "left" }}
-                        >
-                          {errors.retrievalFileStoragePath}
-                        </span>
                       </Form.Group>
                     </Col>
                     <Col md={4}></Col>
@@ -274,7 +334,7 @@ const RetrieveSharedContentPage = () => {
                         className={`step-button ml-2 ${
                           loading ? "loadingStatus" : ""
                         }`}
-                        disabled={loading}
+                        disabled={loading || !selectedDirectory || !dekPath}
                         onClick={handleSubmit}
                       >
                         {loading ? (

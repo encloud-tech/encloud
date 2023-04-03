@@ -1,10 +1,23 @@
 import * as formik from "formik";
-import { Button, Card, Col, Form, Row, Image } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Row,
+  Image,
+  Tooltip,
+  OverlayTrigger,
+} from "react-bootstrap";
 import { ColoredBtn, KeyBoxedContent, KeyPairsSection } from "./styles";
 import { PageHeader } from "./../../../components/layouts/styles";
 import Select, { StylesConfig } from "react-select";
 import { CSSProperties, useEffect, useState } from "react";
-import { FetchConfig, StoreConfig } from "../../../../wailsjs/go/main/App";
+import {
+  FetchConfig,
+  RestoreDefaultConfig,
+  StoreConfig,
+} from "../../../../wailsjs/go/main/App";
 import { toast } from "react-toastify";
 import settingsIcon from "../../../assets/images/settings.png";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -73,6 +86,19 @@ const colourStyles: StylesConfig = {
   singleValue: (styles, { data }) => ({ ...styles }),
 };
 
+const renderTooltip = (props: any) => (
+  <Tooltip id="button-tooltip" {...props}>
+    <span>RSA - RSAES-OAEP 3072 bit key with a SHA-256 digest</span>
+    <br />
+    <span>
+      ECIES - The ECIES standard combines ECC-based asymmetric cryptography with
+      symmetric ciphers. ECC is the modern and the more preferable public-key
+      cryptosystem because of smaller keys, shorter signatures and better
+      performance, but some people disagree.
+    </span>
+  </Tooltip>
+);
+
 const ConfigurationPage = () => {
   const { Formik } = formik;
   const [loading, setLoading] = useState(false);
@@ -129,6 +155,32 @@ const ConfigurationPage = () => {
   useEffect(() => {
     fetchData();
   }, [setConfigData]);
+
+  const restoreDefault = () => {
+    setLoading(true);
+    try {
+      RestoreDefaultConfig().then((response) => {
+        if (response && response.Status == "success") {
+          setLoading(false);
+          toast.success(response.Message, {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+
+          fetchData();
+        } else {
+          setLoading(false);
+          toast.error("Something went wrong!", {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+      });
+    } catch (error) {
+      setLoading(false);
+      toast.error("Something went wrong!", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  };
 
   const save = async (data: any) => {
     setLoading(true);
@@ -342,7 +394,20 @@ const ConfigurationPage = () => {
                   <Row className="mt-2">
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Kek Type</Form.Label>
+                        <Form.Label>
+                          Kek Type
+                          <OverlayTrigger
+                            placement="right"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={renderTooltip}
+                          >
+                            <i
+                              style={{ marginLeft: 3 }}
+                              className="fa fa-info-circle"
+                              aria-hidden="true"
+                            ></i>
+                          </OverlayTrigger>
+                        </Form.Label>
                         <Select
                           className="dek-type-select"
                           styles={colourStyles}
@@ -492,6 +557,30 @@ const ConfigurationPage = () => {
                           </div>
                         ) : (
                           "Submit"
+                        )}
+                      </ColoredBtn>
+                      <ColoredBtn
+                        className={`step-button ml-2 ${
+                          loading ? "loadingStatus" : ""
+                        }`}
+                        style={{ marginLeft: 4 }}
+                        disabled={loading}
+                        onClick={restoreDefault}
+                      >
+                        {loading ? (
+                          <div>
+                            <ClipLoader
+                              color="#ffffff"
+                              loading={loading}
+                              cssOverride={override}
+                              size={30}
+                              aria-label="Loading Spinner"
+                              data-testid="loader"
+                            />
+                            <span className="loadingText">Submitting</span>
+                          </div>
+                        ) : (
+                          "Restore Default"
                         )}
                       </ColoredBtn>
                     </Col>

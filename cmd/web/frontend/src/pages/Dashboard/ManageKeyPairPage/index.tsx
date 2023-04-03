@@ -8,7 +8,9 @@ import {
   Form,
   Image,
   InputGroup,
+  OverlayTrigger,
   Row,
+  Tooltip,
 } from "react-bootstrap";
 import {
   KeyBox,
@@ -90,6 +92,19 @@ const kekTypeOptions = [
   { value: "rsa", label: "RSA" },
   { value: "ecies", label: "ECIES" },
 ];
+
+const renderTooltip = (props: any) => (
+  <Tooltip id="button-tooltip" {...props}>
+    <span>RSA - RSAES-OAEP 3072 bit key with a SHA-256 digest</span>
+    <br />
+    <span>
+      ECIES - The ECIES standard combines ECC-based asymmetric cryptography with
+      symmetric ciphers. ECC is the modern and the more preferable public-key
+      cryptosystem because of smaller keys, shorter signatures and better
+      performance, but some people disagree.
+    </span>
+  </Tooltip>
+);
 
 const ManageKeyPairPage = () => {
   const [keys, setKeys] = useState<types.Keys>();
@@ -199,7 +214,20 @@ const ManageKeyPairPage = () => {
                   <Row>
                     <Col md={12} className="mb-3">
                       <Form.Group className="mb-3">
-                        <Form.Label>Kek Type</Form.Label>
+                        <Form.Label>
+                          Kek Type
+                          <OverlayTrigger
+                            placement="right"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={renderTooltip}
+                          >
+                            <i
+                              style={{ marginLeft: 3 }}
+                              className="fa fa-info-circle"
+                              aria-hidden="true"
+                            ></i>
+                          </OverlayTrigger>
+                        </Form.Label>
                         <Select
                           name="KekType"
                           className="dek-type-select"
@@ -272,7 +300,20 @@ const ManageKeyPairPage = () => {
             <>
               <Row>
                 <Col md={12}>
-                  <Form.Label>KEK Type</Form.Label>
+                  <Form.Label>
+                    KEK Type
+                    <OverlayTrigger
+                      placement="right"
+                      delay={{ show: 250, hide: 400 }}
+                      overlay={renderTooltip}
+                    >
+                      <i
+                        style={{ marginLeft: 3 }}
+                        className="fa fa-info-circle"
+                        aria-hidden="true"
+                      ></i>
+                    </OverlayTrigger>
+                  </Form.Label>
                   <InputGroupWrapper>
                     <InputGroup className="mb-3">
                       <Form.Control
@@ -357,7 +398,20 @@ const ManageKeyPairPage = () => {
           <Row>
             <Col md={12} lg={6}>
               <KeyPairsSection className="separator">
-                <h5>Plain text keys</h5>
+                <h5>
+                  Plain text keys
+                  <OverlayTrigger
+                    placement="right"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={renderTooltip}
+                  >
+                    <i
+                      style={{ marginLeft: 5 }}
+                      className="fa fa-info-circle"
+                      aria-hidden="true"
+                    ></i>
+                  </OverlayTrigger>
+                </h5>
                 <KeyPairs>
                   <KeyBox>
                     <span>RSA</span>

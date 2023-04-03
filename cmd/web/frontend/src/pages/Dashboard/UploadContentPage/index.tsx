@@ -1,12 +1,32 @@
-import { Badge, Card, Col, Form, Image, Row } from "react-bootstrap";
+import {
+  Accordion,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Form,
+  Image,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from "react-bootstrap";
 import Select, { StylesConfig } from "react-select";
 
 import { PageHeader } from "./../../../components/layouts/styles";
 
 import uploadIcon from "../../../assets/images/upload.png";
 import { CSSProperties, useState } from "react";
-import { SelectFile, Upload } from "../../../../wailsjs/go/main/App";
-import { readKekType, readKey } from "../../../services/localStorage.service";
+import {
+  GenerateKeyPair,
+  SelectFile,
+  Upload,
+} from "../../../../wailsjs/go/main/App";
+import {
+  persistKekType,
+  persistKey,
+  readKekType,
+  readKey,
+} from "../../../services/localStorage.service";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ColoredBtn } from "./styles";
 import { toast } from "react-toastify";
@@ -70,6 +90,24 @@ const colourStyles: StylesConfig = {
   singleValue: (styles, { data }) => ({ ...styles }),
 };
 
+const renderTooltip = (props: any) => (
+  <Tooltip id="button-tooltip" {...props}>
+    <span>
+      AES 256 GCM - GCM throughput rates for state-of-the-art, high-speed
+      communication channels can be achieved with inexpensive hardware
+      resources. GCM is limited to encrypting 64 GiB of plain text.
+    </span>
+    <br />
+    <span>
+      ChaCha20-Poly1035 - ChaCha20-Poly1305 is an authenticated encryption with
+      additional data (AEAD) algorithm, that combines the ChaCha20 stream cipher
+      with the Poly1305 message authentication code. It has fast software
+      performance, and without hardware acceleration, is usually faster than
+      AES-GCM.
+    </span>
+  </Tooltip>
+);
+
 const UploadContent = () => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [dekType, setDekType] = useState(dekTypeOptions[0]);
@@ -93,10 +131,17 @@ const UploadContent = () => {
     }
   };
 
-  const doUpload = () => {
+  const doUpload = async () => {
     setUploadLoading(true);
     if (filePath) {
       try {
+        let kekType = readKekType();
+        if (!kekType) {
+          kekType = "rsa";
+          const response = await GenerateKeyPair("rsa");
+          persistKey(response.Data);
+          persistKekType("rsa");
+        }
         Upload(filePath, readKekType(), dekType.value, readKey().PublicKey)
           .then((result: any) => {
             if (result && result.Status == "success") {
@@ -152,43 +197,66 @@ const UploadContent = () => {
             <Row>
               <Col md={8}>
                 <Form.Group className="mb-3">
-                  <Form.Label>DEK Type</Form.Label>
-                  <Select
-                    name="dekType"
-                    className="dek-type-select"
-                    styles={colourStyles}
-                    options={dekTypeOptions}
-                    value={dekType}
-                    onChange={(newVal: any) => {
-                      setDekType(newVal);
-                    }}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={4}></Col>
-            </Row>
-            <Row>
-              <Col md={8}>
-                <Form.Group className="mb-3">
-                  <Form.Label>
-                    Chunk Sizes <Badge bg="success">Premium</Badge>{" "}
-                  </Form.Label>
-                  <Form.Control
-                    disabled={true}
-                    readOnly={true}
-                    type="text"
-                    placeholder="Enter Chunk Sizes"
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={4}></Col>
-            </Row>
-            <Row>
-              <Col md={8}>
-                <Form.Group className="mb-3">
                   <Form.Label>Document</Form.Label>
                   <Form.Control type="file" onClick={getFilePath} />
                 </Form.Group>
+              </Col>
+              <Col md={4}></Col>
+            </Row>
+            <Row>
+              <Col md={8}>
+                <Accordion>
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>Advance Options</Accordion.Header>
+                    <Accordion.Body>
+                      <Row>
+                        <Col md={12}>
+                          <Form.Group className="mb-3">
+                            <Form.Label>
+                              DEK Type
+                              <OverlayTrigger
+                                placement="right"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={renderTooltip}
+                              >
+                                <i
+                                  style={{ marginLeft: 3 }}
+                                  className="fa fa-info-circle"
+                                  aria-hidden="true"
+                                ></i>
+                              </OverlayTrigger>
+                            </Form.Label>
+                            <Select
+                              name="dekType"
+                              className="dek-type-select"
+                              styles={colourStyles}
+                              options={dekTypeOptions}
+                              value={dekType}
+                              onChange={(newVal: any) => {
+                                setDekType(newVal);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={12}>
+                          <Form.Group className="mb-3">
+                            <Form.Label>
+                              Chunk Sizes <Badge bg="success">Premium</Badge>{" "}
+                            </Form.Label>
+                            <Form.Control
+                              disabled={true}
+                              readOnly={true}
+                              type="text"
+                              placeholder="Enter Chunk Sizes"
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
               </Col>
               <Col md={4}></Col>
             </Row>

@@ -8,9 +8,13 @@ export function GenerateKeyPair(arg1:string):Promise<types.GenerateKeyPairRespon
 
 export function List(arg1:string):Promise<types.ListContentResponse>;
 
+export function RestoreDefaultConfig():Promise<types.ConfigResponse>;
+
 export function RetrieveByUUID(arg1:string,arg2:string,arg3:string,arg4:string):Promise<types.RetrieveByCIDContentResponse>;
 
 export function RetrieveSharedContent(arg1:string,arg2:string,arg3:string,arg4:string,arg5:string):Promise<types.SharedResponse>;
+
+export function SelectDirectory():Promise<string>;
 
 export function SelectFile():Promise<string>;
 

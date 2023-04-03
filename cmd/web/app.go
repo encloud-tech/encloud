@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encloud/config"
 	"encloud/pkg/api"
 	"encloud/pkg/types"
 	"net/http"
@@ -51,6 +52,14 @@ func (a *App) GenerateKeyPair(kekType string) types.GenerateKeyPairResponse {
 
 func (a *App) SelectFile() string {
 	file, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{})
+	if err != nil {
+		return err.Error()
+	}
+	return file
+}
+
+func (a *App) SelectDirectory() string {
+	file, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{})
 	if err != nil {
 		return err.Error()
 	}
@@ -165,6 +174,29 @@ func (a *App) RetrieveSharedContent(decryptedDekPath string, dekType string, cid
 func (a *App) StoreConfig(conf types.ConfYaml) types.ConfigResponse {
 	var response types.ConfigResponse
 	err := api.Store(conf)
+	if err != nil {
+		response = types.ConfigResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       types.ConfYaml{},
+		}
+	} else {
+		response = types.ConfigResponse{
+			Status:     "success",
+			StatusCode: http.StatusFound,
+			Message:    "Configuration saved successfully",
+			Data:       types.ConfYaml{},
+		}
+	}
+
+	return response
+}
+
+// Restore default config
+func (a *App) RestoreDefaultConfig() types.ConfigResponse {
+	var response types.ConfigResponse
+	err := config.LoadDefaultConf()
 	if err != nil {
 		response = types.ConfigResponse{
 			Status:     "fail",

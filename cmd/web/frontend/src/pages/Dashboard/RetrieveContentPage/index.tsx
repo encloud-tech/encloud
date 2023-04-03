@@ -1,5 +1,3 @@
-import * as Yup from "yup";
-import * as formik from "formik";
 import { Link, useLocation } from "react-router-dom";
 import { Button, Card, Col, Image, Row, Modal, Form } from "react-bootstrap";
 import { ColoredBtn, SectionBox } from "./styles";
@@ -8,7 +6,10 @@ import { PageHeader } from "../../../components/layouts/styles";
 // Images
 import dsRefreshImg from "../../../assets/images/refresh.png";
 import { CSSProperties, useState } from "react";
-import { RetrieveByUUID } from "../../../../wailsjs/go/main/App";
+import {
+  RetrieveByUUID,
+  SelectDirectory,
+} from "../../../../wailsjs/go/main/App";
 import { readKey } from "../../../services/localStorage.service";
 import { toast } from "react-toastify";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -36,41 +37,57 @@ const RetrieveContentPage = () => {
   const location = useLocation();
   const { metadata } = location.state;
 
-  const { Formik } = formik;
+  const [selectedDirectory, setSelectedDirectory] = useState<string>();
 
-  const schema = Yup.object().shape({
-    filePath: Yup.string().required("Please enter download file path"),
-  });
+  const getPath = async (evt: any) => {
+    evt.preventDefault();
+    try {
+      SelectDirectory()
+        .then((result: any) => {
+          var dt = new DataTransfer();
+          dt.items.add(new File([], result));
+          evt.target.files = dt.files;
+          setSelectedDirectory(result);
+        })
+        .catch((err: any) => {
+          console.error(err);
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  const download = (data: any) => {
+  const download = () => {
     setDownloadLoading(true);
     try {
-      RetrieveByUUID(
-        metadata.uuid,
-        readKey().PublicKey,
-        readKey().PrivateKey,
-        data.filePath
-      )
-        .then((result: any) => {
-          if (result && result.Status == "success" && result.Data.uuid) {
-            setDownloadLoading(false);
-            setShowDownloadForm(!showDownloadForm);
-            toast.success("Document downloaded successfully.", {
-              position: toast.POSITION.TOP_RIGHT,
-            });
-          } else {
+      if (selectedDirectory) {
+        RetrieveByUUID(
+          metadata.uuid,
+          readKey().PublicKey,
+          readKey().PrivateKey,
+          selectedDirectory
+        )
+          .then((result: any) => {
+            if (result && result.Status == "success" && result.Data.uuid) {
+              setDownloadLoading(false);
+              setShowDownloadForm(!showDownloadForm);
+              toast.success("Document downloaded successfully.", {
+                position: toast.POSITION.TOP_RIGHT,
+              });
+            } else {
+              setDownloadLoading(false);
+              toast.error("Something went wrong!.Please retry", {
+                position: toast.POSITION.TOP_RIGHT,
+              });
+            }
+          })
+          .catch((err: any) => {
             setDownloadLoading(false);
             toast.error("Something went wrong!.Please retry", {
               position: toast.POSITION.TOP_RIGHT,
             });
-          }
-        })
-        .catch((err: any) => {
-          setDownloadLoading(false);
-          toast.error("Something went wrong!.Please retry", {
-            position: toast.POSITION.TOP_RIGHT,
           });
-        });
+      }
     } catch (err) {
       setDownloadLoading(false);
       toast.error("Something went wrong!.Please retry", {
@@ -111,88 +128,62 @@ const RetrieveContentPage = () => {
           </Card.Header>
           <Card.Body>
             {showDownloadForm ? (
-              <Formik
-                validationSchema={schema}
-                onSubmit={download}
-                initialValues={{
-                  filePath: "",
-                }}
-              >
-                {({
-                  handleSubmit,
-                  handleChange,
-                  handleBlur,
-                  values,
-                  touched,
-                  isValid,
-                  errors,
-                }) => (
-                  <Form noValidate onSubmit={handleSubmit}>
-                    <Row className="mb-3">
-                      <Col>
-                        <span className="fw-bold">
-                          {downloadLoading ? "Download is in progress..." : ""}
-                        </span>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={8}>
-                        <Form.Control
-                          type="text"
-                          placeholder="Download File Path"
-                          aria-label="Download File Path"
-                          name="filePath"
-                          value={values.filePath}
-                          onChange={handleChange}
-                          isInvalid={!!errors.filePath}
-                        />
-                        <span
-                          className="invalid-feedback"
-                          style={{ color: "red", textAlign: "left" }}
-                        >
-                          {errors.filePath}
-                        </span>
-                      </Col>
-                      <Col md={4}></Col>
-                    </Row>
-                    <Row className="mt-3">
-                      <Col md={8}>
-                        <ColoredBtn
-                          className="step-button"
-                          onClick={() => setShowDownloadForm(!showDownloadForm)}
-                          style={{ marginRight: 2 }}
-                        >
-                          Close
-                        </ColoredBtn>
-                        <ColoredBtn
-                          className={`step-button ml-2 ${
-                            downloadLoading ? "loadingStatus" : ""
-                          }`}
-                          disabled={downloadLoading}
-                          onClick={handleSubmit}
-                        >
-                          {downloadLoading ? (
-                            <div>
-                              <ClipLoader
-                                color="#ffffff"
-                                loading={downloadLoading}
-                                cssOverride={override}
-                                size={30}
-                                aria-label="Loading Spinner"
-                                data-testid="loader"
-                              />
-                              <span className="loadingText">Downloading</span>
-                            </div>
-                          ) : (
-                            "Download"
-                          )}
-                        </ColoredBtn>
-                      </Col>
-                      <Col md={4}></Col>
-                    </Row>
-                  </Form>
-                )}
-              </Formik>
+              <>
+                <Row className="mb-3">
+                  <Col>
+                    <span className="fw-bold">
+                      {downloadLoading ? "Download is in progress..." : ""}
+                    </span>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={8}>
+                    <Form.Control
+                      type="file"
+                      placeholder="Download File Path"
+                      aria-label="Download File Path"
+                      name="directoryPath"
+                      onClick={getPath}
+                    />
+                  </Col>
+                  <Col md={4}></Col>
+                </Row>
+                <Row className="mt-3">
+                  <Col md={8}>
+                    <ColoredBtn
+                      className="step-button"
+                      onClick={() => setShowDownloadForm(!showDownloadForm)}
+                      style={{ marginRight: 2 }}
+                    >
+                      Close
+                    </ColoredBtn>
+                    <ColoredBtn
+                      className={`step-button ml-2 ${
+                        downloadLoading ? "loadingStatus" : ""
+                      }`}
+                      disabled={downloadLoading || !selectedDirectory}
+                      onClick={download}
+                    >
+                      {downloadLoading ? (
+                        <div>
+                          <ClipLoader
+                            color="#ffffff"
+                            loading={downloadLoading}
+                            cssOverride={override}
+                            size={30}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                          />
+                          <span className="loadingText">Downloading</span>
+                        </div>
+                      ) : (
+                        "Download"
+                      )}
+                    </ColoredBtn>
+                  </Col>
+                  <Col md={4}></Col>
+                </Row>
+              </>
             ) : (
               <>
                 <Row>
