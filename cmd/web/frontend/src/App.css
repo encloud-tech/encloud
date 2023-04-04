@@ -160,5 +160,12 @@ th:nth-child(0) {
 }
 
 .tooltip-inner {
-    max-width: 960px !important; 
+    max-width: 960px !important;
+    text-align: left !important;
+    background-color: #d94964 !important;
+    padding: 10px 15px !important;
+}
+
+.tooltip-arrow::before {
+    border-right-color: #d94964 !important;
 }
