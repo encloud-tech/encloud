@@ -92,19 +92,17 @@ const colourStyles: StylesConfig = {
 
 const renderTooltip = (props: any) => (
   <Tooltip id="button-tooltip" {...props}>
-    <span>
-      AES 256 GCM - GCM throughput rates for state-of-the-art, high-speed
-      communication channels can be achieved with inexpensive hardware
-      resources. GCM is limited to encrypting 64 GiB of plain text.
-    </span>
-    <br />
-    <span>
-      ChaCha20-Poly1035 - ChaCha20-Poly1305 is an authenticated encryption with
-      additional data (AEAD) algorithm, that combines the ChaCha20 stream cipher
-      with the Poly1305 message authentication code. It has fast software
-      performance, and without hardware acceleration, is usually faster than
-      AES-GCM.
-    </span>
+    <p>
+      <strong>AES 256 GCM</strong> - GCM throughput rates for state-of-the-art,
+      high-speed communication channels can be achieved with inexpensive
+      hardware resources. GCM is limited to encrypting 64 GiB of plain text.
+    </p>
+    <p>
+      <strong>ChaCha20-Poly1035</strong> - ChaCha20-Poly1305 is an AEAD
+      algorithm, that combines the ChaCha20 stream cipher with the Poly1305
+      message authentication code. Without hardware acceleration, it is usually
+      faster than AES-GCM.
+    </p>
   </Tooltip>
 );
 

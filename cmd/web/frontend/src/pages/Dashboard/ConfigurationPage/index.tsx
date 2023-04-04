@@ -88,14 +88,15 @@ const colourStyles: StylesConfig = {
 
 const renderTooltip = (props: any) => (
   <Tooltip id="button-tooltip" {...props}>
-    <span>RSA - RSAES-OAEP 3072 bit key with a SHA-256 digest</span>
-    <br />
-    <span>
-      ECIES - The ECIES standard combines ECC-based asymmetric cryptography with
-      symmetric ciphers. ECC is the modern and the more preferable public-key
-      cryptosystem because of smaller keys, shorter signatures and better
-      performance, but some people disagree.
-    </span>
+    <p>
+      <strong>RSA</strong> - RSAES-OAEP 3072 bit key with a SHA-256 digest
+    </p>
+    <p>
+      <strong>ECIES</strong> - The ECIES standard combines ECC-based asymmetric
+      cryptography with symmetric ciphers. ECC is the modern and the preferable
+      public-key cryptosystem due to smaller keys, shorter signatures and better
+      performance.
+    </p>
   </Tooltip>
 );
 
