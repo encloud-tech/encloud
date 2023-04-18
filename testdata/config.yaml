@@ -1,7 +1,7 @@
 estuary:
   base_api_url: https://api.estuary.tech
-  upload_api_url: https://upload.estuary.tech
-  gateway_api_url: https://gateway.estuary.tech
+  upload_api_url: https://dev-edge.estuary.tech/api/v1
+  gateway_api_url: https://dev-edge.estuary.tech
   cdn_api_url: https://cdn.estuary.tech
   token: EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY
 email:
