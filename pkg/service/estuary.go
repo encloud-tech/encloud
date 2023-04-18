@@ -81,7 +81,7 @@ func (e *Estuary) DownloadContent(filePath string, cid string, baseUrl string) e
 	client := &http.Client{}
 
 	log.Print("Start download data request")
-	resp, err := client.Get(baseUrl + "/gw/ipfs/" + cid)
+	resp, err := client.Get(baseUrl + "/gw/" + cid)
 	if err != nil {
 		return err
 	}

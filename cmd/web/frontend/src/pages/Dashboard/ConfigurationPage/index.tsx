@@ -264,7 +264,7 @@ const ConfigurationPage = () => {
                         <Form.Control
                           type="text"
                           name="Estuary.UploadApiUrl"
-                          placeholder="https://upload.estuary.tech"
+                          placeholder="https://dev-edge.estuary.tech/api/v1"
                           value={values.Estuary.UploadApiUrl}
                           onChange={handleChange}
                         />
@@ -278,7 +278,7 @@ const ConfigurationPage = () => {
                         <Form.Control
                           type="text"
                           name="Estuary.GatewayApiUrl"
-                          placeholder="https://gateway.estuary.tech"
+                          placeholder="https://dev-edge.estuary.tech"
                           value={values.Estuary.GatewayApiUrl}
                           onChange={handleChange}
                         />

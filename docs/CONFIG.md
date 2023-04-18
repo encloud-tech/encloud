@@ -14,13 +14,16 @@ Encloud Encryption and Storage CLI uses Estuary as a means to onboard and retrie
 to generate an API Key which can be requested [here](https://docs.estuary.tech/tutorial-get-an-api-key). While filling out the request [form](https://docs.estuary.tech/get-invite-key)
 please mention "Encloud".
 
+*Note: Estuary is under active development and hence unstable. Please see the latest estuary documentation or the [#ecosystem-dev](https://filecoinproject.slack.com/archives/C016APFREQK) channel on the Filecoin slack for relevant updates on API statuses.*
+
 The Estuary API key needs to be configured under [config.yaml](../config.yaml) as follows under the `estuary` section:
 
 ```yaml
 estuary:
-  base_api_url: "https://api.estuary.tech"
-  download_api_url: "https://dweb.link/ipfs"
-  shuttle_api_url: "https://shuttle-4.estuary.tech"
+  base_api_url: https://api.estuary.tech
+  upload_api_url: https://dev-edge.estuary.tech/api/v1
+  gateway_api_url: https://dev-edge.estuary.tech
+  cdn_api_url: https://cdn.estuary.tech
   token: "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ```
 

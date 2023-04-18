@@ -35,8 +35,8 @@ func LoadDefaultConf() error {
 	conf := types.ConfYaml{
 		Estuary: types.SectionEstuary{
 			BaseApiUrl:    "https://api.estuary.tech",
-			UploadApiUrl:  "https://upload.estuary.tech",
-			GatewayApiUrl: "https://gateway.estuary.tech",
+			UploadApiUrl:  "https://dev-edge.estuary.tech/api/v1",
+			GatewayApiUrl: "https://dev-edge.estuary.tech",
 			CdnApiUrl:     "https://cdn.estuary.tech",
 			Token:         "EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY",
 		},
