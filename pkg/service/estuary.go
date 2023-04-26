@@ -159,13 +159,19 @@ func (e *Estuary) doMultipartApiRequest(method string, url string, filePath stri
 	}
 	defer res.Body.Close()
 
+	var responseObject types.EstuaryUploadResponse
 	responseData, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
 
+	json.Unmarshal(responseData, &responseObject)
 	log.Print("Return api call response: ", string(responseData))
-	return responseData, nil
+	finalResponse, err := json.Marshal(responseObject.Contents[0])
+	if err != nil {
+		return nil, err
+	}
+	return finalResponse, nil
 }
 
 func (e *Estuary) doApiRequest(method string, url string, body io.Reader) []byte {
