@@ -64,8 +64,14 @@ type Content struct {
 }
 
 type UploadResponse struct {
-	CID       string
-	EstuaryId int
+	CID string
+	ID  int
+}
+
+type EstuaryUploadResponse struct {
+	Message  string
+	Status   string
+	Contents []UploadResponse
 }
 
 type ByCidResponse struct {
