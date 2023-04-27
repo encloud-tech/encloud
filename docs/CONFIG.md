@@ -21,8 +21,8 @@ The Estuary API key needs to be configured under [config.yaml](../config.yaml) a
 ```yaml
 estuary:
   base_api_url: https://api.estuary.tech
-  upload_api_url: https://dev-edge.estuary.tech/api/v1
-  gateway_api_url: https://dev-edge.estuary.tech
+  upload_api_url: https://edge.estuary.tech/api/v1
+  gateway_api_url: https://edge.estuary.tech
   cdn_api_url: https://cdn.estuary.tech
   token: "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ```
