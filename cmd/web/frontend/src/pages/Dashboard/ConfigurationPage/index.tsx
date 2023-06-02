@@ -112,10 +112,6 @@ const ConfigurationPage = () => {
       Token: "",
     },
     Email: {
-      Server: "",
-      Port: "",
-      Username: "",
-      Password: "",
       From: "",
     },
     Stat: {
@@ -321,62 +317,10 @@ const ConfigurationPage = () => {
                   <Row className="mt-2">
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Server</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="smtp.mailtrap.io"
-                          name="Email.Server"
-                          value={values.Email.Server}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Port</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="2525"
-                          name="Email.Port"
-                          value={values.Email.Port}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="ac984e52bfd98h"
-                          name="Email.Username"
-                          value={values.Email.Username}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control
-                          type="password"
-                          placeholder="861b495c076987"
-                          name="Email.Password"
-                          value={values.Email.Password}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
                         <Form.Label>From Address</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder="noreply@encloud.tech"
+                          placeholder="contact@encloud.tech"
                           name="Email.From"
                           value={values.Email.From}
                           onChange={handleChange}

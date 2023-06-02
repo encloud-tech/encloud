@@ -41,11 +41,7 @@ func LoadDefaultConf() error {
 			Token:         "EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY",
 		},
 		Email: types.EmailStat{
-			Server:   "sandbox.smtp.mailtrap.io",
-			Port:     2525,
-			Username: "ac984e52bfd35d",
-			Password: "861b495c076713",
-			From:     "noreply@bond180.com",
+			From: "contact@encloud.tech",
 		},
 		Stat: types.SectionStat{
 			KekType:     "ecies",
