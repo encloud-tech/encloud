@@ -18,11 +18,7 @@ type SectionEstuary struct {
 
 // EmailStat is sub section of config.
 type EmailStat struct {
-	Server   string `yaml:"server"`
-	Port     int64  `yaml:"port"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	From     string `yaml:"from"`
+	From string `yaml:"from"`
 }
 
 // SectionStat is sub section of config.
