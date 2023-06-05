@@ -11,10 +11,10 @@
     "email": "contact@encloud.tech"
   },
   "info": {
-        "companyName": "encloud",
-        "productName": "encloud",
-        "productVersion": "0.2.3",
-        "copyright": "Copyright (c) Bond180 Limited. All rights reserved.",
-        "comments": "encloud Desktop Application"
+    "companyName": "encloud",
+    "productName": "encloud",
+    "productVersion": "0.2.3",
+    "copyright": "Copyright (c) Bond180 Limited. All rights reserved.",
+    "comments": "encloud Desktop Application"
   }
 }

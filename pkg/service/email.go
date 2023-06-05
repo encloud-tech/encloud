@@ -84,11 +84,13 @@ func (r *Request) sendMail(cid string, dekType string, timestamp int64) bool {
 	return true
 }
 
-func (r *Request) Send(cid string, dekType string, timestamp int64) {
+func (r *Request) Send(cid string, dekType string, timestamp int64) bool {
 	if ok := r.sendMail(cid, dekType, timestamp); ok {
 		os.Remove(config.Assets + "/" + fmt.Sprint(timestamp) + "_dek.txt")
 		log.Printf("Email has been sent to %s\n", r.to)
+		return true
 	} else {
 		log.Printf("Failed to send the email to %s\n", r.to)
+		return false
 	}
 }
