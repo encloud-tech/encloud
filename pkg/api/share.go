@@ -5,6 +5,7 @@ import (
 	"encloud/pkg/service"
 	"encloud/pkg/types"
 	thirdparty "encloud/third_party"
+	"errors"
 	"fmt"
 	"io/ioutil"
 )
@@ -41,7 +42,9 @@ func Share(uuid string, kek string, privateKey string, email string) (types.File
 
 	subject := "Share content"
 	r := service.NewRequest([]string{email}, subject, cfg)
-	r.Send(fileMetaData.Cid[0], fileMetaData.DekType, fileMetaData.Timestamp)
-
-	return fileMetaData, nil
+	if sent := r.Send(fileMetaData.Cid[0], fileMetaData.DekType, fileMetaData.Timestamp); sent {
+		return fileMetaData, nil
+	} else {
+		return types.FileMetadata{}, errors.New("Failed to send the email")
+	}
 }

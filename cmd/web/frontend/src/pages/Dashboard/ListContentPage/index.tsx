@@ -101,6 +101,12 @@ const ListContentPage = () => {
               toast.success("Document shared successfully.", {
                 position: toast.POSITION.TOP_RIGHT,
               });
+            } else {
+              setOpen(false);
+              setShareLoading(false);
+              toast.error(result.Message, {
+                position: toast.POSITION.TOP_RIGHT,
+              });
             }
           })
           .catch((err: any) => {
