@@ -126,9 +126,6 @@ const ConfigurationPage = () => {
         Username: "",
         Password: "",
       },
-      MailerSend: {
-        ApiKey: "",
-      },
     },
     Stat: {
       KekType: kekTypeOptions[0],
@@ -364,7 +361,7 @@ const ConfigurationPage = () => {
                       </Form.Group>
                     </Col>
                   </Row>
-                  {values.Email.EmailType.value === "smtp" ? (
+                  {values.Email.EmailType.value === "smtp" && (
                     <>
                       <Row>
                         <Col md={6}>
@@ -419,21 +416,6 @@ const ConfigurationPage = () => {
                         </Col>
                       </Row>
                     </>
-                  ) : (
-                    <Row>
-                      <Col md={12}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>API Key</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="MAILERSEND_API_KEY"
-                            name="Email.MailerSend.ApiKey"
-                            value={values.Email.MailerSend.ApiKey}
-                            onChange={handleChange}
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
                   )}
                   <Row>
                     <Col md={12} lg={6}>

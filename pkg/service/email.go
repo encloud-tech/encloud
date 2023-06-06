@@ -87,10 +87,10 @@ func (r *Request) sendSMTPMail(cid string, dekType string, timestamp int64) bool
 	return true
 }
 
-func (r *Request) sendMailerSendMail(cid string, dekType string, timestamp int64, apiKey string) bool {
+func (r *Request) sendMailerSendMail(cid string, dekType string, timestamp int64) bool {
 	log.Println("config", r.config)
 	// Create an instance of the mailersend client
-	ms := mailersend.NewMailersend(apiKey)
+	ms := mailersend.NewMailersend(os.Getenv("MAILERSEND_API_KEY"))
 
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -140,10 +140,10 @@ func (r *Request) sendMailerSendMail(cid string, dekType string, timestamp int64
 	return true
 }
 
-func (r *Request) Send(cid string, dekType string, timestamp int64, emailType string, apiKey string) bool {
+func (r *Request) Send(cid string, dekType string, timestamp int64, emailType string) bool {
 	if emailType == "smtp" {
 		return r.sendSMTPMail(cid, dekType, timestamp)
 	} else {
-		return r.sendMailerSendMail(cid, dekType, timestamp, apiKey)
+		return r.sendMailerSendMail(cid, dekType, timestamp)
 	}
 }
