@@ -128,11 +128,17 @@ worth noting that once the DEK is shared with an entity they can download the da
 
 The following configs need to be made for emails under [config.yaml](../config.yaml), under the `email` section:
 
+`emailType` can be either `smtp` or `mailerSend`. With `smtp` the user can configure their own SMTP server to send sharing emails. With `mailerSend` the user can use the MailerSend Email API which prevents needing an SMTP server of their own. 
+
 ```yaml
 email:
-  server: "smtp.acme.io"
-  port: 2525
-  username: "XXXXXXXXXXXXX"
-  password: "XXXXXXXXXXXXX"
-  from: "noreply@acme.com"
+  emailType: mailerSend
+  from: contact@encloud.tech
+  smtp:
+    server: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: ac984e52bfd35d
+    password: 861b495c076713
+  mailerSend:
+    apiKey: MAILSENDER_API_KEY
 ```
