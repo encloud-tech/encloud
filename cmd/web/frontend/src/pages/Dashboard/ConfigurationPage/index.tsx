@@ -38,6 +38,11 @@ const kekTypeOptions = [
   { value: "ecies", label: "ECIES" },
 ];
 
+const emailTypeOptions = [
+  { value: "smtp", label: "SMTP" },
+  { value: "mailerSend", label: "Mailer Send" },
+];
+
 const colourStyles: StylesConfig = {
   control: (styles, state) => ({
     ...styles,
@@ -103,6 +108,7 @@ const renderTooltip = (props: any) => (
 const ConfigurationPage = () => {
   const { Formik } = formik;
   const [loading, setLoading] = useState(false);
+  const [restoreDefaultLoading, setRestoreDefaultLoading] = useState(false);
   const [config, setConfigData] = useState({
     Estuary: {
       BaseApiUrl: "",
@@ -113,6 +119,16 @@ const ConfigurationPage = () => {
     },
     Email: {
       From: "",
+      EmailType: emailTypeOptions[0],
+      SMTP: {
+        Server: "",
+        Port: "",
+        Username: "",
+        Password: "",
+      },
+      MailerSend: {
+        ApiKey: "",
+      },
     },
     Stat: {
       KekType: kekTypeOptions[0],
@@ -145,6 +161,10 @@ const ConfigurationPage = () => {
         response.Data.Stat.StorageType === "badgerdb"
           ? storageTypeOptions[0]
           : storageTypeOptions[1];
+      response.Data.Email.EmailType =
+        response.Data.Email.EmailType === "smtp"
+          ? emailTypeOptions[0]
+          : emailTypeOptions[1];
       setConfigData(response.Data);
     }
   };
@@ -154,25 +174,25 @@ const ConfigurationPage = () => {
   }, [setConfigData]);
 
   const restoreDefault = () => {
-    setLoading(true);
+    setRestoreDefaultLoading(true);
     try {
       RestoreDefaultConfig().then((response) => {
         if (response && response.Status == "success") {
-          setLoading(false);
+          setRestoreDefaultLoading(false);
           toast.success(response.Message, {
             position: toast.POSITION.TOP_RIGHT,
           });
 
           fetchData();
         } else {
-          setLoading(false);
+          setRestoreDefaultLoading(false);
           toast.error("Something went wrong!", {
             position: toast.POSITION.TOP_RIGHT,
           });
         }
       });
     } catch (error) {
-      setLoading(false);
+      setRestoreDefaultLoading(false);
       toast.error("Something went wrong!", {
         position: toast.POSITION.TOP_RIGHT,
       });
@@ -183,6 +203,7 @@ const ConfigurationPage = () => {
     setLoading(true);
     data.Stat.KekType = data.Stat.KekType.value;
     data.Stat.StorageType = data.Stat.StorageType.value;
+    data.Email.EmailType = data.Email.EmailType.value;
     try {
       StoreConfig(data).then((response) => {
         if (response && response.Status == "success") {
@@ -317,6 +338,21 @@ const ConfigurationPage = () => {
                   <Row className="mt-2">
                     <Col md={6}>
                       <Form.Group className="mb-3">
+                        <Form.Label>Email Type</Form.Label>
+                        <Select
+                          className="dek-type-select"
+                          styles={colourStyles}
+                          options={emailTypeOptions}
+                          name="Email.EmailType"
+                          value={values.Email.EmailType}
+                          onChange={(newVal) => {
+                            setFieldValue("Email.EmailType", newVal);
+                          }}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group className="mb-3">
                         <Form.Label>From Address</Form.Label>
                         <Form.Control
                           type="text"
@@ -327,8 +363,78 @@ const ConfigurationPage = () => {
                         />
                       </Form.Group>
                     </Col>
-                    <Col md={6}></Col>
                   </Row>
+                  {values.Email.EmailType.value === "smtp" ? (
+                    <>
+                      <Row>
+                        <Col md={6}>
+                          <Form.Group className="mb-3">
+                            <Form.Label>Server</Form.Label>
+                            <Form.Control
+                              type="text"
+                              placeholder="smtp.mailtrap.io"
+                              name="Email.SMTP.Server"
+                              value={values.Email.SMTP.Server}
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group className="mb-3">
+                            <Form.Label>Port</Form.Label>
+                            <Form.Control
+                              type="text"
+                              placeholder="2525"
+                              name="Email.SMTP.Port"
+                              value={values.Email.SMTP.Port}
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={6}>
+                          <Form.Group className="mb-3">
+                            <Form.Label>Username</Form.Label>
+                            <Form.Control
+                              type="text"
+                              placeholder="ac984e52bfd98h"
+                              name="Email.SMTP.Username"
+                              value={values.Email.SMTP.Username}
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group className="mb-3">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control
+                              type="password"
+                              placeholder="861b495c076987"
+                              name="Email.SMTP.Password"
+                              value={values.Email.SMTP.Password}
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </>
+                  ) : (
+                    <Row>
+                      <Col md={12}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>API Key</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="MAILERSEND_API_KEY"
+                            name="Email.MailerSend.ApiKey"
+                            value={values.Email.MailerSend.ApiKey}
+                            onChange={handleChange}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  )}
                   <Row>
                     <Col md={12} lg={6}>
                       <KeyPairsSection>
@@ -506,17 +612,17 @@ const ConfigurationPage = () => {
                       </ColoredBtn>
                       <ColoredBtn
                         className={`step-button ml-2 ${
-                          loading ? "loadingStatus" : ""
+                          restoreDefaultLoading ? "loadingStatus" : ""
                         }`}
                         style={{ marginLeft: 4 }}
-                        disabled={loading}
+                        disabled={restoreDefaultLoading}
                         onClick={restoreDefault}
                       >
                         {loading ? (
                           <div>
                             <ClipLoader
                               color="#ffffff"
-                              loading={loading}
+                              loading={restoreDefaultLoading}
                               cssOverride={override}
                               size={30}
                               aria-label="Loading Spinner"

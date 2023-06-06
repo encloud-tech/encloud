@@ -18,7 +18,21 @@ type SectionEstuary struct {
 
 // EmailStat is sub section of config.
 type EmailStat struct {
-	From string `yaml:"from"`
+	EmailType  string            `yaml:"emailType"`
+	From       string            `yaml:"from"`
+	SMTP       SectionSMTP       `yaml:"smtp"`
+	MailerSend SectionMailerSend `yaml:"mailerSend"`
+}
+
+type SectionSMTP struct {
+	Server   string `yaml:"server"`
+	Port     int64  `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+}
+
+type SectionMailerSend struct {
+	ApiKey string `yaml:"apiKey"`
 }
 
 // SectionStat is sub section of config.
