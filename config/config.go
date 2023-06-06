@@ -41,7 +41,17 @@ func LoadDefaultConf() error {
 			Token:         "EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY",
 		},
 		Email: types.EmailStat{
-			From: "contact@encloud.tech",
+			EmailType: "smtp",
+			From:      "contact@encloud.tech",
+			SMTP: types.SectionSMTP{
+				Server:   "sandbox.smtp.mailtrap.io",
+				Port:     2525,
+				Username: "ac984e52bfd35d",
+				Password: "861b495c076713",
+			},
+			MailerSend: types.SectionMailerSend{
+				ApiKey: "MAILERSEND_API_KEY",
+			},
 		},
 		Stat: types.SectionStat{
 			KekType:     "ecies",

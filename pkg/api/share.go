@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 func Share(uuid string, kek string, privateKey string, email string) (types.FileMetadata, error) {
@@ -42,7 +43,8 @@ func Share(uuid string, kek string, privateKey string, email string) (types.File
 
 	subject := "Share content"
 	r := service.NewRequest([]string{email}, subject, cfg)
-	if sent := r.Send(fileMetaData.Cid[0], fileMetaData.DekType, fileMetaData.Timestamp); sent {
+	if sent := r.Send(fileMetaData.Cid[0], fileMetaData.DekType, fileMetaData.Timestamp, cfg.Email.EmailType, cfg.Email.MailerSend.ApiKey); sent {
+		os.Remove(config.Assets + "/" + fmt.Sprint(fileMetaData.Timestamp) + "_dek.txt")
 		return fileMetaData, nil
 	} else {
 		return types.FileMetadata{}, errors.New("Failed to send the email")
