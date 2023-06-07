@@ -49,9 +49,6 @@ func LoadDefaultConf() error {
 				Username: "ac984e52bfd35d",
 				Password: "861b495c076713",
 			},
-			MailerSend: types.SectionMailerSend{
-				ApiKey: "MAILERSEND_API_KEY",
-			},
 		},
 		Stat: types.SectionStat{
 			KekType:     "ecies",
