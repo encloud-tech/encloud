@@ -40,7 +40,7 @@ const kekTypeOptions = [
 
 const emailTypeOptions = [
   { value: "smtp", label: "SMTP" },
-  { value: "mailerSend", label: "Mailer Send" },
+  { value: "mailersend", label: "Mailersend" },
 ];
 
 const colourStyles: StylesConfig = {
