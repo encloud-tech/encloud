@@ -57,6 +57,13 @@ func (d *DB) Store(key string, fileMetaData types.FileMetadata) {
 	}
 }
 
+func (d *DB) FetchKeys() types.ListKeys {
+	var val types.ListKeys
+	couchbase := initCouchBaseDB(&d.config)
+	val = couchbase.FetchKeys()
+	return val
+}
+
 func (d *DB) Fetch(key string) types.FileData {
 	var val types.FileData
 	if d.config.Stat.StorageType == "couchbase" {

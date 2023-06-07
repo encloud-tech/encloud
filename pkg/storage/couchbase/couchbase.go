@@ -78,6 +78,35 @@ func (s *Storage) Create(key string, metadata types.FileMetadata) {
 	}
 }
 
+func (s *Storage) FetchKeys() types.ListKeys {
+	col := s.bucket.Scope(s.config.Stat.Couchbase.Bucket.Scope)
+	var ival types.ListKeys
+	query := "SELECT md5Hash, COUNT(*) As files FROM `" + s.config.Stat.Couchbase.Bucket.Name + "`.`" + s.config.Stat.Couchbase.Bucket.Scope + "`." + s.config.Stat.Couchbase.Bucket.Collection + " GROUP BY md5Hash"
+	queryResult, err := col.Query(
+		query,
+		&gocb.QueryOptions{},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Print each found Row
+	for queryResult.Next() {
+		var result types.FetchKeysResponse
+		err := queryResult.Row(&result)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ival = append(ival, result)
+	}
+
+	if err := queryResult.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return ival
+}
+
 func (s *Storage) Read(key string) types.FileData {
 	col := s.bucket.Scope(s.config.Stat.Couchbase.Bucket.Scope)
 	var ival types.FileData
