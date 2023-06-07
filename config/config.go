@@ -41,7 +41,7 @@ func LoadDefaultConf() error {
 			Token:         "EST6315eb22-5c76-4d47-9b75-1acb4a954070ARY",
 		},
 		Email: types.EmailStat{
-			EmailType: "smtp",
+			EmailType: "mailersend",
 			From:      "contact@encloud.tech",
 			SMTP: types.SectionSMTP{
 				Server:   "sandbox.smtp.mailtrap.io",
