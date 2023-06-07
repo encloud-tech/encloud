@@ -112,6 +112,13 @@ type GenerateKeyPairResponse struct {
 	Data       Keys
 }
 
+type ListKeysResponse struct {
+	Status     string
+	StatusCode int
+	Message    string
+	Data       ListKeys
+}
+
 type UploadContentResponse struct {
 	Status     string
 	StatusCode int
@@ -163,4 +170,11 @@ type Error struct {
 
 type EstuaryError struct {
 	Error Error `json:"error"`
+}
+
+type ListKeys []FetchKeysResponse
+
+type FetchKeysResponse struct {
+	Md5Hash string `json:"md5Hash"`
+	Files   int    `json:"files"`
 }
