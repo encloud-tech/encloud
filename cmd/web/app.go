@@ -103,6 +103,29 @@ func (a *App) List(kek string) types.ListContentResponse {
 	return response
 }
 
+// Fetch data from db
+func (a *App) ListKeys() types.ListKeysResponse {
+	var response types.ListKeysResponse
+	keys, err := api.ListKeys()
+	if err != nil {
+		response = types.ListKeysResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       types.ListKeys{},
+		}
+	} else {
+		response = types.ListKeysResponse{
+			Status:     "success",
+			StatusCode: http.StatusCreated,
+			Message:    "Content fetched successfully.",
+			Data:       keys,
+		}
+	}
+
+	return response
+}
+
 // Retrieve data by uuid
 func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) types.RetrieveByCIDContentResponse {
 	var response types.RetrieveByCIDContentResponse

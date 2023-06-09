@@ -22,15 +22,15 @@ func ListKeys() (types.ListKeys, error) {
 
 		collections := make(map[string]types.FetchKeysResponse)
 		for _, b := range fileMetadata {
-			if collections[b.Md5Hash].Md5Hash != b.Md5Hash {
-				collections[b.Md5Hash] = types.FetchKeysResponse{
-					Md5Hash: b.Md5Hash,
-					Files:   1,
+			if collections[b.PublicKey].PublicKey != b.PublicKey {
+				collections[b.PublicKey] = types.FetchKeysResponse{
+					PublicKey: b.PublicKey,
+					Files:     1,
 				}
 			} else {
-				collections[b.Md5Hash] = types.FetchKeysResponse{
-					Md5Hash: b.Md5Hash,
-					Files:   collections[b.Md5Hash].Files + 1,
+				collections[b.PublicKey] = types.FetchKeysResponse{
+					PublicKey: b.PublicKey,
+					Files:     collections[b.PublicKey].Files + 1,
 				}
 			}
 		}

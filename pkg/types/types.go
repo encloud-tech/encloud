@@ -93,6 +93,7 @@ type FileData []FileMetadata
 
 type FileMetadata struct {
 	Uuid       string   `json:"uuid"`
+	PublicKey  string   `json:"publicKey"`
 	Md5Hash    string   `json:"md5Hash"`
 	Timestamp  int64    `json:"timestamp"`
 	UploadedAt string   `json:"uploadedAt"`
@@ -175,6 +176,6 @@ type EstuaryError struct {
 type ListKeys []FetchKeysResponse
 
 type FetchKeysResponse struct {
-	Md5Hash string `json:"md5Hash"`
-	Files   int    `json:"files"`
+	PublicKey string `json:"publicKey"`
+	Files     int    `json:"files"`
 }

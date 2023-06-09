@@ -3,6 +3,7 @@ import MainLayout from "../../components/layouts/MainLayout";
 import ConfigurationPage from "./ConfigurationPage";
 import ManageKeyPairPage from "./ManageKeyPairPage";
 import ListContentPage from "./ListContentPage";
+import ListKeysPage from "./ListKeysPage";
 import UploadContent from "./UploadContentPage";
 import RetrieveContentPage from "./RetrieveContentPage";
 import RetrieveSharedContentPage from "./RetrieveSharedContentPage";
@@ -14,6 +15,7 @@ const Dashboard = () => {
         <Route path="/" element={<ManageKeyPairPage />} />
         <Route path="/upload" element={<UploadContent />} />
         <Route path="/list" element={<ListContentPage />} />
+        <Route path="/list-keys" element={<ListKeysPage />} />
         <Route path="/retrieve/:id" element={<RetrieveContentPage />} />
         <Route
           path="/retrieve-shared-content"

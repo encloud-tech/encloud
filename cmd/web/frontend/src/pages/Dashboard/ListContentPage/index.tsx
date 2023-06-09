@@ -16,7 +16,7 @@ import menuIcon from "../../../assets/images/menu.png";
 import { List, Share } from "../../../../wailsjs/go/main/App";
 import { readKey } from "../../../services/localStorage.service";
 import { types } from "../../../../wailsjs/go/models";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const columnHelper = createColumnHelper<types.FileMetadata>();
@@ -26,6 +26,8 @@ const ListContentPage = () => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<types.FileMetadata>();
   const [shareLoading, setShareLoading] = useState(false);
+  const location = useLocation();
+  const { metadata } = location.state;
 
   const { Formik } = formik;
 
@@ -74,7 +76,11 @@ const ListContentPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await List(readKey()?.PublicKey);
+      let key = readKey()?.PublicKey;
+      if (metadata && metadata.publicKey) {
+        key = metadata.publicKey;
+      }
+      const response = await List(key);
 
       if (response.Data) {
         setData(response.Data);

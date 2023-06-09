@@ -80,6 +80,19 @@ const LeftNavbar = () => {
               </li>
               <li
                 className={
+                  splitLocation[2] === "list-keys"
+                    ? "menu-item active"
+                    : "menu-item"
+                }
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Link to="list-keys" className="menu-link">
+                  <Image src={downloadIcon} className="menuIcon" />
+                  <div>Keys</div>
+                </Link>
+              </li>
+              <li
+                className={
                   splitLocation[2] === "list" ? "menu-item active" : "menu-item"
                 }
                 onClick={(e) => e.stopPropagation()}

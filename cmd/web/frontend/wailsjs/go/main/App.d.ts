@@ -8,6 +8,8 @@ export function GenerateKeyPair(arg1:string):Promise<types.GenerateKeyPairRespon
 
 export function List(arg1:string):Promise<types.ListContentResponse>;
 
+export function ListKeys():Promise<types.ListKeysResponse>;
+
 export function RestoreDefaultConfig():Promise<types.ConfigResponse>;
 
 export function RetrieveByUUID(arg1:string,arg2:string,arg3:string,arg4:string):Promise<types.RetrieveByCIDContentResponse>;
