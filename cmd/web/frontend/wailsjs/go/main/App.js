@@ -14,6 +14,10 @@ export function List(arg1) {
   return window['go']['main']['App']['List'](arg1);
 }
 
+export function ListKeys() {
+  return window['go']['main']['App']['ListKeys']();
+}
+
 export function RestoreDefaultConfig() {
   return window['go']['main']['App']['RestoreDefaultConfig']();
 }

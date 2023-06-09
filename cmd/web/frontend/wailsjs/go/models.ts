@@ -2,8 +2,23 @@ export namespace types {
 	
 	
 	
+	export class FetchKeysResponse {
+	    publicKey: string;
+	    files: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new FetchKeysResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.publicKey = source["publicKey"];
+	        this.files = source["files"];
+	    }
+	}
 	export class FileMetadata {
 	    uuid: string;
+	    publicKey: string;
 	    md5Hash: string;
 	    timestamp: number;
 	    uploadedAt: string;
@@ -22,6 +37,7 @@ export namespace types {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.uuid = source["uuid"];
+	        this.publicKey = source["publicKey"];
 	        this.md5Hash = source["md5Hash"];
 	        this.timestamp = source["timestamp"];
 	        this.uploadedAt = source["uploadedAt"];
@@ -49,6 +65,7 @@ export namespace types {
 	        this.PrivateKey = source["PrivateKey"];
 	    }
 	}
+	
 	
 	
 	
