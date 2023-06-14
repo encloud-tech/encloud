@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/adrg/xdg"
+	"github.com/spf13/cobra/doc"
 )
 
 func main() {
@@ -17,4 +18,9 @@ func main() {
 	}
 
 	Execute()
+
+	err = doc.GenMarkdownTree(RootCmd, "./../../docs")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
