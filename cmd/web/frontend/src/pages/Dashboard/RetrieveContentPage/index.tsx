@@ -4,7 +4,7 @@ import { ColoredBtn, SectionBox } from "./styles";
 import { PageHeader } from "../../../components/layouts/styles";
 
 // Images
-import dsRefreshImg from "../../../assets/images/refresh.png";
+import dsDownloadImg from "../../../assets/images/download.png";
 import { CSSProperties, useState } from "react";
 import {
   RetrieveByUUID,
@@ -100,7 +100,7 @@ const RetrieveContentPage = () => {
     <>
       <PageHeader>
         <h2>
-          <Image className="titleIcon" src={dsRefreshImg} />
+          <Image className="titleIcon" src={dsDownloadImg} />
           <span>Retrieve Content</span>
         </h2>
       </PageHeader>

@@ -27,7 +27,6 @@ const ListContentPage = () => {
   const [selected, setSelected] = useState<types.FileMetadata>();
   const [shareLoading, setShareLoading] = useState(false);
   const location = useLocation();
-  const { metadata } = location.state;
 
   const { Formik } = formik;
 
@@ -77,8 +76,8 @@ const ListContentPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       let key = readKey()?.PublicKey;
-      if (metadata && metadata.publicKey) {
-        key = metadata.publicKey;
+      if (location && location.state) {
+        key = location.state.metadata.publicKey;
       }
       const response = await List(key);
 

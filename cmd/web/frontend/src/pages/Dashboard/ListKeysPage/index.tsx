@@ -10,7 +10,7 @@ import {
 } from "@tanstack/react-table";
 import { Table as BTable } from "react-bootstrap";
 
-import menuIcon from "../../../assets/images/menu.png";
+import keyIcon from "../../../assets/images/key.png";
 import { ListKeys } from "../../../../wailsjs/go/main/App";
 import { types } from "../../../../wailsjs/go/models";
 import { Link } from "react-router-dom";
@@ -38,7 +38,7 @@ const ListKeysPage = () => {
           style={{ marginRight: 5 }}
           state={{ metadata: info.row.original }}
         >
-          View
+          View Files
         </Link>
       ),
     }),
@@ -66,14 +66,14 @@ const ListKeysPage = () => {
     <>
       <PageHeader>
         <h2>
-          <Image className="titleIcon" src={menuIcon} />
-          <span>Content List</span>
+          <Image className="titleIcon" src={keyIcon} />
+          <span>Key List</span>
         </h2>
       </PageHeader>
       <SectionBox>
         <Card>
           <Card.Body>
-            <BTable bordered hover responsive>
+            <BTable bordered hover responsive className="keyTable">
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
