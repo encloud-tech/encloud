@@ -155,8 +155,8 @@ th {
     color: #f76e5c;
 }
 
-th:nth-child(0) {
-    width: 180px;
+.keyTable th:nth-child(1) {
+    width: 800px !important;
 }
 
 .tooltip-inner {

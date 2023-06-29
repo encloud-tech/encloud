@@ -12,6 +12,7 @@ import settingsIcon from "../../assets/images/settings.png";
 import uploadIcon from "../../assets/images/upload.png";
 import downloadIcon from "../../assets/images/download.png";
 import shareIcon from "../../assets/images/share.png";
+import keyIcon from "../../assets/images/key.png";
 
 const LeftNavbar = () => {
   const [openContent, SetOpenContent] = useState(false);
@@ -80,19 +81,6 @@ const LeftNavbar = () => {
               </li>
               <li
                 className={
-                  splitLocation[2] === "list-keys"
-                    ? "menu-item active"
-                    : "menu-item"
-                }
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Link to="list-keys" className="menu-link">
-                  <Image src={downloadIcon} className="menuIcon" />
-                  <div>Keys</div>
-                </Link>
-              </li>
-              <li
-                className={
                   splitLocation[2] === "list" ? "menu-item active" : "menu-item"
                 }
                 onClick={(e) => e.stopPropagation()}
@@ -113,6 +101,19 @@ const LeftNavbar = () => {
                 <Link to="retrieve-shared-content" className="menu-link">
                   <Image src={shareIcon} className="menuIcon" />
                   <div>Shared Content</div>
+                </Link>
+              </li>
+              <li
+                className={
+                  splitLocation[2] === "list-keys"
+                    ? "menu-item active"
+                    : "menu-item"
+                }
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Link to="list-keys" className="menu-link">
+                  <Image src={keyIcon} className="menuIcon" />
+                  <div>Keys</div>
                 </Link>
               </li>
             </ul>
