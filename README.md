@@ -90,11 +90,16 @@ go build -o $GOPATH/bin/encloud encloud/cmd/cli
 6) Retrieve shared content from other users using your CID, DEK type and DEK.
 
     > encloud retrieve-shared-content -c `<RECEIVED_CID_OF_YOUR_EMAIL>` -d `<RECEIVED_DEK_FILE_PATH>` -e `<RECEIVED_DEK_TYPE>`
-   
-7) Update configurations for the application using a compatible yaml file
+
+7) List all keys along with file metadata stored in the local KV store
+
+   > encloud list-keys 
+
+8) Update configurations for the application using a compatible yaml file
 
    > encloud update-config -f `<CONFIG_YAML_PATH>`
-   
+
+
 
 ## Future features
 - Run bacalhau compute jobs on encrypted data natively via encloud
