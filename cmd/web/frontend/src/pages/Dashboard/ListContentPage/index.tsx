@@ -51,14 +51,16 @@ const ListContentPage = () => {
       header: () => "Actions",
       cell: (info) => (
         <>
-          <Link
-            to={`/retrieve/${info.getValue()}`}
-            className="btn btn-primary list-button"
-            style={{ marginRight: 5 }}
-            state={{ metadata: info.row.original }}
-          >
-            Retrieve
-          </Link>
+          {!location.state && (
+            <Link
+              to={`/retrieve/${info.getValue()}`}
+              className="btn btn-primary list-button"
+              style={{ marginRight: 5 }}
+              state={{ metadata: info.row.original }}
+            >
+              Retrieve
+            </Link>
+          )}
           <Button
             className="list-button"
             onClick={() => {
