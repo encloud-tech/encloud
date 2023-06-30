@@ -36,6 +36,15 @@ Users can see a list of all files they have uploaded and the associated metadata
 * CID - CID of the file in the Filecoin network
 * Retrieve/Share - Button to perform actions; Retrieve opens the file detail page where the user can download the file; Share opens an pop-up where an email can be entered to share the file with
 
+## List Key Metadata 
+<img src="../../.github/Screen 6.png" alt="Screen 1" width="50%" height="50%"/>
+
+Users can view all the KEKs they have generated and the associated metadata from their local storage. This includes
+
+* Public key of the KEK pair
+* Total number of files encrypted and uploaded to Filecoin with the key pair
+* View a list of such files
+
 ## Retrieve Shared Files 
 <img src="../../.github/Screen 4.png" alt="Screen 1" width="50%" height="50%"/>
 
