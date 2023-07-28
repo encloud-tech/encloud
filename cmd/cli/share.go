@@ -44,7 +44,7 @@ func ShareCmd() *cobra.Command {
 				os.Exit(-1)
 			}
 
-			response := types.RetrieveByCIDContentResponse{
+			response := types.RetrieveByUUIDContentResponse{
 				Status:     "success",
 				StatusCode: http.StatusFound,
 				Message:    "Content shared successfully.",
@@ -59,14 +59,14 @@ func ShareCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
-	cmd.Flags().StringP("privateKey", "k", "", "Enter your private key")
-	cmd.Flags().StringP("uuid", "u", "", "Enter your uuid")
-	cmd.Flags().StringP("email", "e", "", "Enter email which you want to share")
-	cmd.Flags().BoolP("readPublicKeyFromPath", "r", false, "Do you want public key read from path you have entered?")
-	cmd.Flags().BoolP("readPrivateKeyFromPath", "o", false, "Do you want private key read from path you have entered?")
-	cmd.MarkFlagRequired("publicKey")
-	cmd.MarkFlagRequired("privateKey")
+	cmd.Flags().StringP("pubkey", "p", "", "KEK public key")
+	cmd.Flags().StringP("privkey", "k", "", "KEK private key")
+	cmd.Flags().StringP("uuid", "u", "", "UUID of file to retrieve")
+	cmd.Flags().StringP("email", "e", "", "Email to share file with")
+	cmd.Flags().BoolP("read_pub_from_path", "r", false, "Allows to read KEK public key from path")
+	cmd.Flags().BoolP("read_priv_from_path", "o", false, "Allows to read KEK private key from path")
+	cmd.MarkFlagRequired("pubkey")
+	cmd.MarkFlagRequired("privkey")
 	cmd.MarkFlagRequired("uuid")
 	cmd.MarkFlagRequired("email")
 	return cmd
