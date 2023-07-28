@@ -16,7 +16,7 @@ func ShareCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "share",
 		Short: "Share content",
-		Long:  `Share your files with other users using the CID and DEK`,
+		Long:  `Share your files with other users using the UUID and DEK`,
 		Run: func(cmd *cobra.Command, args []string) {
 			kek := ""
 			privateKey := ""

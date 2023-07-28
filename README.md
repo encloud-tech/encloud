@@ -76,7 +76,7 @@ go build -o $GOPATH/bin/encloud encloud/cmd/cli
 
    > encloud contents -p `<KEK_PUBLIC_KEY_FILE_PATH>` -r true
 
-4. Retrieve data from Filecoin with a specific CID. This command decrypts encrypted data on Filecoin using the relevant DEK. The DEK is stored in encrypted form in the metadata and is itself decrypted first using the KEK Private Key.
+4. Retrieve data from Filecoin with a specific UUID. This command decrypts encrypted data on Filecoin using the relevant DEK. The DEK is stored in encrypted form in the metadata and is itself decrypted first using the KEK Private Key.
 
    > encloud retrieve -p `<KEK_PUBLIC_KEY>` -k `<KEK_PRIVATE_KEY>` -u `<FILE_UUID>` -s `<DOWNLOAD_PATH>`
 
@@ -84,7 +84,7 @@ go build -o $GOPATH/bin/encloud encloud/cmd/cli
 
    > encloud retrieve -p `<KEK_PUBLIC_KEY_FILE_PATH>` -k `<KEK_PRIVATE_KEY_PATH>` -u `<FILE_UUID>` -s `<DOWNLOAD_PATH>` -r true -o true
 
-5. Share your files with other users using the CID and DEK.
+5. Share your files with other users using the UUID and DEK.
 
    > encloud share -e `<EMAIL>` -p `<KEK_PUBLIC_KEY>` -k `<KEK_PRIVATE_KEY>` -u `<FILE_UUID>`
 
@@ -96,13 +96,13 @@ go build -o $GOPATH/bin/encloud encloud/cmd/cli
 
    > encloud shared -c `<RECEIVED_CID_OF_YOUR_EMAIL>` -d `<RECEIVED_DEK_FILE_PATH>` -t `<RECEIVED_DEK_TYPE>`
 
-7) List all keys along with file metadata stored in the local KV store
+7. List all keys along with file metadata stored in the local KV store
 
    > encloud keys
 
-8Update configurations for the application using a compatible yaml file
+8. Update configurations for the application using a compatible yaml file
 
-   > encloud config -p `<CONFIG_YAML_PATH>`
+> encloud config -p `<CONFIG_YAML_PATH>`
 
 ## Future features
 

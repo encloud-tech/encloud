@@ -4,7 +4,7 @@ Share content
 
 ### Synopsis
 
-Share your files with other users using the CID and DEK
+Share your files with other users using the UUID and DEK
 
 ```
 encloud share [flags]

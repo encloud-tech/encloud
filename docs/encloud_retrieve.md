@@ -4,7 +4,7 @@ Retrieve content by UUID
 
 ### Synopsis
 
-Retrieve data from Filecoin with a specific CID. This command decrypts encrypted data on Filecoin using the relevant DEK. 
+Retrieve data from Filecoin with a specific UUID. This command decrypts encrypted data on Filecoin using the relevant DEK. 
 		The DEK is stored in encrypted form in the metadata and is itself decrypted first using the KEK Private Key.
 
 ```

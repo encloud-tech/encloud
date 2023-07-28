@@ -25,6 +25,7 @@ encloud [flags]
 * [encloud config](encloud_config.md)	 - Update app configurations
 * [encloud contents](encloud_contents.md)	 - List contents
 * [encloud keygen](encloud_keygen.md)	 - Generate new key pair
+* [encloud keys](encloud_keys.md)	 - List keys
 * [encloud retrieve](encloud_retrieve.md)	 - Retrieve content by UUID
 * [encloud share](encloud_share.md)	 - Share content
 * [encloud shared](encloud_shared.md)	 - Retrieve shared content
