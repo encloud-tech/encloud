@@ -12,20 +12,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func ShareCmd() *cobra.Command {
+func RetrieveByUUIDCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "share",
-		Short: "Share content",
-		Long:  `Share your files with other users using the CID and DEK`,
+		Use:   "retrieve",
+		Short: "Retrieve content by UUID",
+		Long: `Retrieve data from Filecoin with a specific CID. This command decrypts encrypted data on Filecoin using the relevant DEK. 
+		The DEK is stored in encrypted form in the metadata and is itself decrypted first using the KEK Private Key.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			kek := ""
 			privateKey := ""
 			publicKey, _ := cmd.Flags().GetString("pubkey")
 			pk, _ := cmd.Flags().GetString("privkey")
 			uuid, _ := cmd.Flags().GetString("uuid")
-			email, _ := cmd.Flags().GetString("email")
 			readPublicKeyFromPath, _ := cmd.Flags().GetBool("read_pub_from_path")
 			readPrivateKeyFromPath, _ := cmd.Flags().GetBool("read_priv_from_path")
+			retrievalFileStoragePath, _ := cmd.Flags().GetString("storage")
 			if readPublicKeyFromPath {
 				kek = thirdparty.ReadKeyFile(publicKey)
 			} else {
@@ -38,16 +39,15 @@ func ShareCmd() *cobra.Command {
 				privateKey = pk
 			}
 
-			fileMetaData, err := api.Share(uuid, kek, privateKey, email)
+			fileMetaData, err := api.RetrieveByUUID(uuid, kek, privateKey, retrievalFileStoragePath)
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
 			}
-
 			response := types.RetrieveByUUIDContentResponse{
 				Status:     "success",
 				StatusCode: http.StatusFound,
-				Message:    "Content shared successfully.",
+				Message:    "Content fetched successfully.",
 				Data:       fileMetaData,
 			}
 			encoded, err := json.MarshalIndent(response, "", "    ")
@@ -62,16 +62,15 @@ func ShareCmd() *cobra.Command {
 	cmd.Flags().StringP("pubkey", "p", "", "KEK public key")
 	cmd.Flags().StringP("privkey", "k", "", "KEK private key")
 	cmd.Flags().StringP("uuid", "u", "", "UUID of file to retrieve")
-	cmd.Flags().StringP("email", "e", "", "Email to share file with")
+	cmd.Flags().StringP("storage", "s", "", "Path to store retrieved file")
 	cmd.Flags().BoolP("read_pub_from_path", "r", false, "Allows to read KEK public key from path")
 	cmd.Flags().BoolP("read_priv_from_path", "o", false, "Allows to read KEK private key from path")
 	cmd.MarkFlagRequired("pubkey")
 	cmd.MarkFlagRequired("privkey")
 	cmd.MarkFlagRequired("uuid")
-	cmd.MarkFlagRequired("email")
 	return cmd
 }
 
 func init() {
-	RootCmd.AddCommand(ShareCmd())
+	RootCmd.AddCommand(RetrieveByUUIDCmd())
 }

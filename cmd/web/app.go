@@ -104,18 +104,18 @@ func (a *App) List(kek string) types.ListContentResponse {
 }
 
 // Retrieve data by uuid
-func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) types.RetrieveByCIDContentResponse {
-	var response types.RetrieveByCIDContentResponse
+func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) types.RetrieveByUUIDContentResponse {
+	var response types.RetrieveByUUIDContentResponse
 	fileMetaData, err := api.RetrieveByUUID(uuid, kek, privateKey, retrievalFileStoragePath)
 	if err != nil {
-		response = types.RetrieveByCIDContentResponse{
+		response = types.RetrieveByUUIDContentResponse{
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
 			Data:       types.FileMetadata{},
 		}
 	} else {
-		response = types.RetrieveByCIDContentResponse{
+		response = types.RetrieveByUUIDContentResponse{
 			Status:     "success",
 			StatusCode: http.StatusCreated,
 			Message:    "Content fetched successfully.",
@@ -127,18 +127,18 @@ func (a *App) RetrieveByUUID(uuid string, kek string, privateKey string, retriev
 }
 
 // Share data via email
-func (a *App) Share(uuid string, kek string, privateKey string, email string) types.RetrieveByCIDContentResponse {
-	var response types.RetrieveByCIDContentResponse
+func (a *App) Share(uuid string, kek string, privateKey string, email string) types.RetrieveByUUIDContentResponse {
+	var response types.RetrieveByUUIDContentResponse
 	fileMetaData, err := api.Share(uuid, kek, privateKey, email)
 	if err != nil {
-		response = types.RetrieveByCIDContentResponse{
+		response = types.RetrieveByUUIDContentResponse{
 			Status:     "fail",
 			StatusCode: http.StatusInternalServerError,
 			Message:    err.Error(),
 			Data:       types.FileMetadata{},
 		}
 	} else {
-		response = types.RetrieveByCIDContentResponse{
+		response = types.RetrieveByUUIDContentResponse{
 			Status:     "success",
 			StatusCode: http.StatusCreated,
 			Message:    "Content shared successfully.",

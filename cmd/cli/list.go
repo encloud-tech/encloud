@@ -14,13 +14,13 @@ import (
 
 func ListContentsCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "List your uploaded contents",
-		Long:  `List your uploaded contents data which contains file meta informations`,
+		Use:   "contents",
+		Short: "List contents",
+		Long:  `List uploaded files and associated metadata`,
 		Run: func(cmd *cobra.Command, args []string) {
 			kek := ""
-			publicKey, _ := cmd.Flags().GetString("publicKey")
-			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
+			publicKey, _ := cmd.Flags().GetString("pubkey")
+			readPublicKeyFromPath, _ := cmd.Flags().GetBool("read_pub_from_path")
 			if readPublicKeyFromPath {
 				kek = thirdparty.ReadKeyFile(publicKey)
 			} else {
@@ -44,9 +44,9 @@ func ListContentsCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
-	cmd.Flags().BoolP("readPublicKeyFromPath", "r", false, "Do you want public key read from path you have entered?")
-	cmd.MarkFlagRequired("publicKey")
+	cmd.Flags().StringP("pubkey", "p", "", "KEK public key")
+	cmd.Flags().BoolP("read_pub_from_path", "r", false, "Allows to read KEK public key from path")
+	cmd.MarkFlagRequired("pubkey")
 	return cmd
 }
 

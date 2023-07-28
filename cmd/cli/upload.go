@@ -15,8 +15,9 @@ import (
 func UploadContentCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upload",
-		Short: "Upload your content to filecoin storage",
-		Long:  `Upload your content to filecoin storage which is encrypted using your public key`,
+		Short: "Upload content",
+		Long: `Upload encrypted data to Filecoin.This command encrypts the specified file using a newly generated DEK. 
+		The DEK is encrypted using the KEK and the metadata is stored on the local KV store`,
 		Run: func(cmd *cobra.Command, args []string) {
 			cfg, err := api.Fetch()
 			if err != nil {
@@ -25,10 +26,10 @@ func UploadContentCmd() *cobra.Command {
 			}
 
 			kek := ""
-			publicKey, _ := cmd.Flags().GetString("publicKey")
-			path, _ := cmd.Flags().GetString("filePath")
-			dekType, _ := cmd.Flags().GetString("dekType")
-			readPublicKeyFromPath, _ := cmd.Flags().GetBool("readPublicKeyFromPath")
+			publicKey, _ := cmd.Flags().GetString("pubkey")
+			path, _ := cmd.Flags().GetString("file")
+			dekType, _ := cmd.Flags().GetString("type")
+			readPublicKeyFromPath, _ := cmd.Flags().GetBool("read_pub_from_path")
 			if readPublicKeyFromPath {
 				kek = thirdparty.ReadKeyFile(publicKey)
 			} else {
@@ -55,12 +56,12 @@ func UploadContentCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("publicKey", "p", "", "Enter your public key")
-	cmd.Flags().BoolP("readPublicKeyFromPath", "r", false, "Do you want public key read from path you have entered?")
-	cmd.Flags().StringP("filePath", "f", "", "Enter your file path")
-	cmd.Flags().StringP("dekType", "e", "chacha20", "Enter which type of encryption do you want?")
-	cmd.MarkFlagRequired("publicKey")
-	cmd.MarkFlagRequired("filepath")
+	cmd.Flags().StringP("pubkey", "p", "", "KEK public key")
+	cmd.Flags().BoolP("read_pub_from_path", "r", false, "Allows to read KEK public key from path")
+	cmd.Flags().StringP("file", "f", "", "Upload file path")
+	cmd.Flags().StringP("type", "t", "chacha20", "DEK type (chacha20/Aes)")
+	cmd.MarkFlagRequired("pubkey")
+	cmd.MarkFlagRequired("file")
 	return cmd
 }
 
