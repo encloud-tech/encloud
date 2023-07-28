@@ -45,7 +45,7 @@ func TestCLICommands(t *testing.T) {
 	uploadContentBuf := new(bytes.Buffer)
 	uploadContentCmd.SetOut(uploadContentBuf)
 	uploadContentCmd.SetErr(uploadContentBuf)
-	uploadContentCmd.SetArgs([]string{"-p", publicKey, "-f", filePath, "-e", "chacha20"})
+	uploadContentCmd.SetArgs([]string{"-p", publicKey, "-f", filePath, "-t", "chacha20"})
 	uploadContentCmd.Execute()
 	var uploadContentResponseObject types.UploadContentResponse
 	json.Unmarshal(uploadContentBuf.Bytes(), &uploadContentResponseObject)
@@ -65,17 +65,17 @@ func TestCLICommands(t *testing.T) {
 	assert.NotNil(t, listContentResponseObject.Data)
 	log.Println(listContentResponseObject.Data)
 
-	// Finally, we have retrieved uploaded content using cid.
-	retrieveContentByCidBuf := new(bytes.Buffer)
-	retrieveContentByCidCmd := RetrieveByCidCmd()
-	retrieveContentByCidCmd.SetOut(retrieveContentByCidBuf)
-	retrieveContentByCidCmd.SetErr(retrieveContentByCidBuf)
-	retrieveContentByCidCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-s", "C:/Users/vivek/Downloads"})
-	retrieveContentByCidCmd.Execute()
-	var retrieveContentByCidResponseObject types.RetrieveByCIDContentResponse
-	json.Unmarshal(retrieveContentByCidBuf.Bytes(), &retrieveContentByCidResponseObject)
-	assert.NotNil(t, retrieveContentByCidResponseObject.Data)
-	log.Println(retrieveContentByCidResponseObject.Data)
+	// Finally, we have retrieved uploaded content using UUID.
+	retrieveContentByUUIDBuf := new(bytes.Buffer)
+	retrieveContentByUUIDCmd := RetrieveByUUIDCmd()
+	retrieveContentByUUIDCmd.SetOut(retrieveContentByUUIDBuf)
+	retrieveContentByUUIDCmd.SetErr(retrieveContentByUUIDBuf)
+	retrieveContentByUUIDCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-s", "C:/Users/vivek/Downloads"})
+	retrieveContentByUUIDCmd.Execute()
+	var retrieveContentByUUIDResponseObject types.RetrieveByUUIDContentResponse
+	json.Unmarshal(retrieveContentByUUIDBuf.Bytes(), &retrieveContentByUUIDResponseObject)
+	assert.NotNil(t, retrieveContentByUUIDResponseObject.Data)
+	log.Println(retrieveContentByUUIDResponseObject.Data)
 
 	// Share content via email.
 	shareBuf := new(bytes.Buffer)
@@ -84,7 +84,7 @@ func TestCLICommands(t *testing.T) {
 	shareCmd.SetErr(shareBuf)
 	shareCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-e", "test@encloud.test"})
 	shareCmd.Execute()
-	var shareResponseObject types.RetrieveByCIDContentResponse
+	var shareResponseObject types.RetrieveByUUIDContentResponse
 	json.Unmarshal(shareBuf.Bytes(), &shareResponseObject)
 	assert.NotNil(t, shareResponseObject.Data)
 	cid := shareResponseObject.Data.Cid[0]
@@ -95,9 +95,9 @@ func TestCLICommands(t *testing.T) {
 	retrieveSharedContentCmd := RetrieveSharedContentCmd()
 	retrieveSharedContentCmd.SetOut(retrieveSharedContentBuf)
 	retrieveSharedContentCmd.SetErr(retrieveSharedContentBuf)
-	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", config.Assets + "/" + fmt.Sprint(shareResponseObject.Data.Timestamp) + "_dek.txt", "-s", "C:/Users/vivek/Downloads", "-f", "shared.csv"})
+	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", config.Assets + "/" + fmt.Sprint(shareResponseObject.Data.Timestamp) + "_dek.txt", "-s", "C:/Users/vivek/Downloads", "-n", "shared.csv"})
 	retrieveSharedContentCmd.Execute()
-	var retrieveSharedContentResponseObject types.RetrieveByCIDContentResponse
+	var retrieveSharedContentResponseObject types.RetrieveByUUIDContentResponse
 	json.Unmarshal(retrieveSharedContentBuf.Bytes(), &retrieveSharedContentResponseObject)
 	assert.NotNil(t, retrieveSharedContentResponseObject.Data)
 	log.Println(retrieveSharedContentResponseObject.Data)

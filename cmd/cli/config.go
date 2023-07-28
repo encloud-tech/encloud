@@ -15,11 +15,11 @@ import (
 
 func ConfigCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-config",
-		Short: "Update default configurations",
-		Long:  `Modify configuration as per your needs`,
+		Use:   "config",
+		Short: "Update app configurations",
+		Long:  `Update configurations for the application using a compatible yaml file`,
 		Run: func(cmd *cobra.Command, args []string) {
-			configFilePath, _ := cmd.Flags().GetString("configFilePath")
+			configFilePath, _ := cmd.Flags().GetString("path")
 			data, err := ioutil.ReadFile(configFilePath)
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
@@ -53,8 +53,8 @@ func ConfigCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("configFilePath", "f", "", "Please enter path of config file.")
-	cmd.MarkFlagRequired("configFilePath")
+	cmd.Flags().StringP("path", "p", "", "Path to config file")
+	cmd.MarkFlagRequired("path")
 	return cmd
 }
 
