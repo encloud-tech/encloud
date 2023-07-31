@@ -57,7 +57,7 @@ go build -o $GOPATH/bin/encloud encloud/cmd/cli
 
 1. Generate ECIES secp256k1 OR RSA 2048 key pair (key encryption key or KEK) to encrypt & decrypt the AES-256 keys (data encryption key or DEK). Run below command from the root of the project to the ECIES/RSA key pair
 
-   > encloud generate-key-pair
+   > encloud keygen
 
 2. Upload encrypted data to Filecoin. This command encrypts the specified file using a newly generated DEK. The DEK is encrypted using the KEK and the metadata is stored on the local KV store.
    This command also provides multiple `DEK_TYPE` options to encrypt data - `aes` or `chacha20`.
