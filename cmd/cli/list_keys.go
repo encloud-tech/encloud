@@ -13,9 +13,9 @@ import (
 
 func ListKeysCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-keys",
-		Short: "List your all keys",
-		Long:  `List your all keys with files count`,
+		Use:   "keys",
+		Short: "List keys",
+		Long:  `List generated keys with number of associated files`,
 		Run: func(cmd *cobra.Command, args []string) {
 			keys, err := api.ListKeys()
 			if err != nil {

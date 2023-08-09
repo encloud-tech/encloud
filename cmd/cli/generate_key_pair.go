@@ -13,9 +13,9 @@ import (
 
 func GenerateKeyPairCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "generate-key-pair",
-		Short: "Generate your key pair",
-		Long:  `Generate your public key and private key which helps to encrypt and decrypt your data`,
+		Use:   "keygen",
+		Short: "Generate new key pair",
+		Long:  `Generate ECIES secp256k1 OR RSA 2048 key pair to encrypt & decrypt the AES-256 keys`,
 		Run: func(cmd *cobra.Command, args []string) {
 			cfg, err := api.Fetch()
 			if err != nil {

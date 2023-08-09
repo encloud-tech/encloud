@@ -133,7 +133,7 @@ type ListContentResponse struct {
 	Data       FileData
 }
 
-type RetrieveByCIDContentResponse struct {
+type RetrieveByUUIDContentResponse struct {
 	Status     string
 	StatusCode int
 	Message    string
