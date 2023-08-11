@@ -24,7 +24,16 @@ func EncryptWithAES(dek []byte, filePath string, encryptedFilePath string) error
 	}
 	defer file.Close()
 
-	buffer := make([]byte, config.ChunkSize)
+	fileInfo, _ := file.Stat()
+
+	var bufSize int
+	if fileInfo.Size() < 1024*32 {
+		bufSize = int(fileInfo.Size())
+	} else {
+		bufSize = 1024 * 32
+	}
+
+	buffer := make([]byte, bufSize)
 	ad_counter := 0 // associated data is a counter
 
 	// Creating block of algorithm
@@ -62,7 +71,7 @@ func EncryptWithAES(dek []byte, filePath string, encryptedFilePath string) error
 		// Decrypt file
 		cipherText := gcm.Seal(nonce, nonce, buffer[:bytesread], []byte(string(ad_counter)))
 
-		f, err := os.OpenFile(encryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		f, err := os.OpenFile(encryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
 		if err != nil {
 			panic(err)
 		}
@@ -102,7 +111,16 @@ func DecryptWithAES(dek []byte, encryptedFilePath string, decryptedFilePath stri
 		return err
 	}
 
-	buffer := make([]byte, gcm.NonceSize()+config.ChunkSize+gcm.Overhead())
+	fileInfo, _ := file.Stat()
+
+	var bufSize int
+	if fileInfo.Size() < 1024*32 {
+		bufSize = int(fileInfo.Size())
+	} else {
+		bufSize = 1024 * 32
+	}
+
+	buffer := make([]byte, gcm.NonceSize()+bufSize+gcm.Overhead())
 	ad_counter := 0 // associated data is a counter
 
 	for {
@@ -124,7 +142,7 @@ func DecryptWithAES(dek []byte, encryptedFilePath string, decryptedFilePath stri
 			return err
 		}
 
-		f, err := os.OpenFile(decryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		f, err := os.OpenFile(decryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			return err
 		}
