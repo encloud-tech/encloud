@@ -1,9 +1,10 @@
 package main
 
 import (
-	"encloud/pkg/api"
 	"fmt"
 	"os"
+
+	"github.com/encloud-tech/encloud/pkg/api"
 
 	"github.com/spf13/cobra"
 )

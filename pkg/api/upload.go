@@ -2,15 +2,16 @@ package api
 
 import (
 	"crypto/rand"
-	"encloud/config"
-	"encloud/pkg/service"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/service"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 )
 
 func Upload(filePath string, kekType string, dekType string, kek string) (string, error) {

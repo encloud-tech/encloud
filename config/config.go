@@ -1,9 +1,10 @@
 package config
 
 import (
-	"encloud/pkg/types"
 	"io/ioutil"
 	"log"
+
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/adrg/xdg"
 	"gopkg.in/yaml.v2"

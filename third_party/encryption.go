@@ -4,11 +4,12 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"encloud/config"
 	"fmt"
 	"io"
 	"log"
 	"os"
+
+	"github.com/encloud-tech/encloud/config"
 
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/chacha20poly1305"

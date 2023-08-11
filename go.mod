@@ -1,4 +1,4 @@
-module encloud
+module github.com/encloud-tech/encloud
 
 go 1.18
 

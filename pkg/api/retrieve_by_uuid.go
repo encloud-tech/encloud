@@ -1,12 +1,13 @@
 package api
 
 import (
-	"encloud/config"
-	"encloud/pkg/service"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"os"
 	"path/filepath"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/service"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 )
 
 func RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) (types.FileMetadata, error) {

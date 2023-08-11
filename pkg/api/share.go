@@ -1,14 +1,15 @@
 package api
 
 import (
-	"encloud/config"
-	"encloud/pkg/service"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/service"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 )
 
 func Share(uuid string, kek string, privateKey string, email string) (types.FileMetadata, error) {

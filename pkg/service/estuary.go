@@ -2,7 +2,6 @@ package service
 
 import (
 	"bytes"
-	"encloud/pkg/types"
 	"encoding/json"
 	"errors"
 	"io"
@@ -12,6 +11,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"golang.org/x/net/html"
 )

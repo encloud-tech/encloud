@@ -1,8 +1,9 @@
 package main
 
 import (
-	"encloud/config"
 	"log"
+
+	"github.com/encloud-tech/encloud/config"
 
 	"github.com/adrg/xdg"
 	"github.com/spf13/cobra/doc"

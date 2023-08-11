@@ -1,10 +1,11 @@
 package api
 
 import (
-	"encloud/pkg/service"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"log"
+
+	"github.com/encloud-tech/encloud/pkg/service"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 )
 
 func List(kek string) types.FileData {
