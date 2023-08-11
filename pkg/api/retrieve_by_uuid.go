@@ -1,6 +1,8 @@
 package api
 
 import (
+	"errors"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -11,6 +13,16 @@ import (
 )
 
 func RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) (types.FileMetadata, error) {
+	if retrievalFileStoragePath == "" {
+		if _, err := os.Stat(config.Download); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(config.Download, os.ModePerm)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		retrievalFileStoragePath = config.Download
+	}
+
 	cfg, err := Fetch()
 	if err != nil {
 		return types.FileMetadata{}, err

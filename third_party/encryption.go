@@ -71,7 +71,7 @@ func EncryptWithAES(dek []byte, filePath string, encryptedFilePath string) error
 		// Decrypt file
 		cipherText := gcm.Seal(nonce, nonce, buffer[:bytesread], []byte(string(ad_counter)))
 
-		f, err := os.OpenFile(encryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
+		f, err := os.OpenFile(encryptedFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			panic(err)
 		}
