@@ -72,5 +72,6 @@ func RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileSto
 	}
 
 	os.Remove(config.Assets + "/" + thirdparty.GenerateFileName(fileMetaData.Timestamp, "retrieve", filepath.Ext(fileMetaData.Name)))
+	log.Print("Downloaded file stored at: " + retrievalFileStoragePath)
 	return fileMetaData, nil
 }
