@@ -8,6 +8,7 @@ require (
 	github.com/dgraph-io/badger/v3 v3.2103.3
 	github.com/ecies/go/v2 v2.0.4
 	github.com/google/uuid v1.3.0
+	github.com/gorilla/mux v1.8.0
 	github.com/mailersend/mailersend-go v1.3.3
 	github.com/shirou/gopsutil/v3 v3.22.9
 	github.com/spf13/cobra v1.6.1
