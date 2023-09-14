@@ -32,7 +32,7 @@ func Fetch() (types.ConfYaml, error) {
 	if err != nil {
 		return types.ConfYaml{}, err
 	}
-	log.Println("Serach config file at:", configFilePath)
+	log.Println("Search config file at:", configFilePath)
 
 	data, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
