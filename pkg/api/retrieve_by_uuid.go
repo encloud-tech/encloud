@@ -1,15 +1,28 @@
 package api
 
 import (
-	"encloud/config"
-	"encloud/pkg/service"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
+	"errors"
+	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/service"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 )
 
 func RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileStoragePath string) (types.FileMetadata, error) {
+	if retrievalFileStoragePath == "" {
+		if _, err := os.Stat(config.Download); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(config.Download, os.ModePerm)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		retrievalFileStoragePath = config.Download
+	}
+
 	cfg, err := Fetch()
 	if err != nil {
 		return types.FileMetadata{}, err
@@ -59,5 +72,6 @@ func RetrieveByUUID(uuid string, kek string, privateKey string, retrievalFileSto
 	}
 
 	os.Remove(config.Assets + "/" + thirdparty.GenerateFileName(fileMetaData.Timestamp, "retrieve", filepath.Ext(fileMetaData.Name)))
+	log.Print("Downloaded file stored at: " + retrievalFileStoragePath)
 	return fileMetaData, nil
 }

@@ -2,11 +2,12 @@ package badger
 
 import (
 	"bytes"
-	"encloud/pkg/types"
 	"encoding/gob"
 	"fmt"
 	"log"
 	"sync"
+
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/adrg/xdg"
 	"github.com/dgraph-io/badger/v3"

@@ -2,11 +2,12 @@ package service
 
 import (
 	"bytes"
-	"encloud/pkg/storage/badger"
-	"encloud/pkg/storage/couchbase"
-	"encloud/pkg/types"
 	"encoding/gob"
 	"fmt"
+
+	"github.com/encloud-tech/encloud/pkg/storage/badger"
+	"github.com/encloud-tech/encloud/pkg/storage/couchbase"
+	"github.com/encloud-tech/encloud/pkg/types"
 )
 
 // New func implements the storage interface

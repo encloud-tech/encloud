@@ -1,10 +1,11 @@
 package couchbase
 
 import (
-	"encloud/pkg/types"
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/couchbase/gocb/v2"
 )

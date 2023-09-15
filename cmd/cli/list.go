@@ -1,13 +1,14 @@
 package main
 
 import (
-	"encloud/pkg/api"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/encloud-tech/encloud/pkg/api"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 
 	"github.com/spf13/cobra"
 )

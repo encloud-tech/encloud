@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
-	"encloud/config"
-	"encloud/pkg/types"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/stretchr/testify/assert"
 )
