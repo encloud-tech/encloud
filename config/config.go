@@ -1,9 +1,10 @@
 package config
 
 import (
-	"encloud/pkg/types"
 	"io/ioutil"
 	"log"
+
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/adrg/xdg"
 	"gopkg.in/yaml.v2"
@@ -13,6 +14,7 @@ var DotKeys = xdg.ConfigHome + "/encloud/.keys"
 var IdRsa = xdg.ConfigHome + "/encloud/.keys/.idRsa"
 var IdRsaPub = xdg.ConfigHome + "/encloud/.keys/.idRsaPub"
 var Assets = xdg.ConfigHome + "/encloud/assets"
+var Download = xdg.ConfigHome + "/encloud/assets/downloads"
 var KeySize = 3072
 
 var SaltSize = 32                  // in bytes

@@ -50,7 +50,7 @@ go mod tidy
 
 # enable encloud cli command
 # make sure $GOPATH environment variable is set
-go build -o $GOPATH/bin/encloud encloud/cmd/cli
+go build -o $GOPATH/bin/encloud github.com/encloud-tech/encloud/cmd/cli
 ```
 
 ## Command reference

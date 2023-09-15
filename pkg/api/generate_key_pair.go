@@ -1,10 +1,11 @@
 package api
 
 import (
-	"encloud/config"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"os"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 )
 
 func GenerateKeyPair(kekType string) (types.Keys, error) {

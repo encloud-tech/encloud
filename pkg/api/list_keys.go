@@ -1,9 +1,10 @@
 package api
 
 import (
-	"encloud/pkg/service"
-	"encloud/pkg/types"
 	"log"
+
+	"github.com/encloud-tech/encloud/pkg/service"
+	"github.com/encloud-tech/encloud/pkg/types"
 )
 
 func ListKeys() (types.ListKeys, error) {

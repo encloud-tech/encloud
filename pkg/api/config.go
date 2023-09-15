@@ -1,9 +1,10 @@
 package api
 
 import (
-	"encloud/pkg/types"
 	"io/ioutil"
 	"log"
+
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/adrg/xdg"
 	"gopkg.in/yaml.v2"
@@ -31,7 +32,7 @@ func Fetch() (types.ConfYaml, error) {
 	if err != nil {
 		return types.ConfYaml{}, err
 	}
-	log.Println("Serach config file at:", configFilePath)
+	log.Println("Search config file at:", configFilePath)
 
 	data, err := ioutil.ReadFile(configFilePath)
 	if err != nil {

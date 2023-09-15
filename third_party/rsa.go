@@ -5,13 +5,14 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
-	"encloud/config"
 	"encoding/asn1"
 	"encoding/base64"
 	"encoding/pem"
 	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/encloud-tech/encloud/config"
 )
 
 func InitCrypto() {

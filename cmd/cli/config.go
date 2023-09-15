@@ -1,13 +1,14 @@
 package main
 
 import (
-	"encloud/pkg/api"
-	"encloud/pkg/types"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/encloud-tech/encloud/pkg/api"
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"

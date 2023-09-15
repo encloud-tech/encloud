@@ -4,9 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"encloud/config"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
@@ -15,6 +12,10 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 
 	mailersend "github.com/mailersend/mailersend-go"
 )

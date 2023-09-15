@@ -2,8 +2,9 @@ package main
 
 import (
 	"embed"
-	"encloud/config"
 	"log"
+
+	"github.com/encloud-tech/encloud/config"
 
 	"github.com/adrg/xdg"
 	"github.com/wailsapp/wails/v2"

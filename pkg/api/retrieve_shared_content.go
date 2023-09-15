@@ -1,12 +1,13 @@
 package api
 
 import (
-	"encloud/config"
-	"encloud/pkg/service"
-	thirdparty "encloud/third_party"
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/service"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 )
 
 func RetrieveSharedContent(decryptedDekPath string, dekType string, cid string, fileName string, retrievalFileStoragePath string) error {

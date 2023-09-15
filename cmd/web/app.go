@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"encloud/config"
-	"encloud/pkg/api"
-	"encloud/pkg/types"
 	"net/http"
+
+	"github.com/encloud-tech/encloud/config"
+	"github.com/encloud-tech/encloud/pkg/api"
+	"github.com/encloud-tech/encloud/pkg/types"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
