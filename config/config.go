@@ -14,6 +14,7 @@ var DotKeys = xdg.ConfigHome + "/encloud/.keys"
 var IdRsa = xdg.ConfigHome + "/encloud/.keys/.idRsa"
 var IdRsaPub = xdg.ConfigHome + "/encloud/.keys/.idRsaPub"
 var Assets = xdg.ConfigHome + "/encloud/assets"
+var TestDir = xdg.ConfigHome + "/encloud/testdata"
 var Download = xdg.ConfigHome + "/encloud/assets/downloads"
 var KeySize = 3072
 

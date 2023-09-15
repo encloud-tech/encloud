@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/encloud-tech/encloud/config"
@@ -14,6 +15,15 @@ import (
 )
 
 func TestCLICommands(t *testing.T) {
+	if _, err := os.Stat(config.TestDir); err != nil {
+		// create it
+		err = os.Mkdir(config.TestDir, 0700)
+		if err != nil {
+			log.Fatalf("ERROR: fail to create test data dir, %s", err.Error())
+			os.Exit(1)
+		}
+	}
+
 	// Update default configuration
 	configFilePath := "../../testdata/config.yaml"
 	updateConfigBuf := new(bytes.Buffer)
@@ -46,7 +56,7 @@ func TestCLICommands(t *testing.T) {
 	uploadContentBuf := new(bytes.Buffer)
 	uploadContentCmd.SetOut(uploadContentBuf)
 	uploadContentCmd.SetErr(uploadContentBuf)
-	uploadContentCmd.SetArgs([]string{"-p", publicKey, "-f", filePath, "-t", "chacha20"})
+	uploadContentCmd.SetArgs([]string{"-p", publicKey, "-f", filePath, "-t", "aes"})
 	uploadContentCmd.Execute()
 	var uploadContentResponseObject types.UploadContentResponse
 	json.Unmarshal(uploadContentBuf.Bytes(), &uploadContentResponseObject)
@@ -71,7 +81,7 @@ func TestCLICommands(t *testing.T) {
 	retrieveContentByUUIDCmd := RetrieveByUUIDCmd()
 	retrieveContentByUUIDCmd.SetOut(retrieveContentByUUIDBuf)
 	retrieveContentByUUIDCmd.SetErr(retrieveContentByUUIDBuf)
-	retrieveContentByUUIDCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-s", "C:/Users/vivek/Downloads"})
+	retrieveContentByUUIDCmd.SetArgs([]string{"-p", publicKey, "-k", privateKey, "-u", Uuid, "-s", config.TestDir})
 	retrieveContentByUUIDCmd.Execute()
 	var retrieveContentByUUIDResponseObject types.RetrieveByUUIDContentResponse
 	json.Unmarshal(retrieveContentByUUIDBuf.Bytes(), &retrieveContentByUUIDResponseObject)
@@ -96,10 +106,12 @@ func TestCLICommands(t *testing.T) {
 	retrieveSharedContentCmd := RetrieveSharedContentCmd()
 	retrieveSharedContentCmd.SetOut(retrieveSharedContentBuf)
 	retrieveSharedContentCmd.SetErr(retrieveSharedContentBuf)
-	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", config.Assets + "/" + fmt.Sprint(shareResponseObject.Data.Timestamp) + "_dek.txt", "-s", "C:/Users/vivek/Downloads", "-n", "shared.csv"})
+	retrieveSharedContentCmd.SetArgs([]string{"-c", cid, "-d", config.Assets + "/" + fmt.Sprint(shareResponseObject.Data.Timestamp) + "_dek.txt", "-s", config.TestDir, "-n", "shared.csv"})
 	retrieveSharedContentCmd.Execute()
 	var retrieveSharedContentResponseObject types.RetrieveByUUIDContentResponse
 	json.Unmarshal(retrieveSharedContentBuf.Bytes(), &retrieveSharedContentResponseObject)
 	assert.NotNil(t, retrieveSharedContentResponseObject.Data)
 	log.Println(retrieveSharedContentResponseObject.Data)
+
+	defer os.RemoveAll(config.TestDir)
 }
