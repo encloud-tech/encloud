@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -239,7 +240,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	kek := ""
 
-	file, _, err := r.FormFile("file")
+	file, handle, err := r.FormFile("file")
 	pubkey := r.Form.Get("pubkey")
 	readPublicKeyFromPath := r.Form.Get("readPubFromPath")
 	dekType := r.Form.Get("type")
@@ -251,7 +252,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create a temporary file.
-	tempFile, err := os.CreateTemp("", "upload-*.tmp")
+	tempFile, err := os.CreateTemp("", "*"+filepath.Ext(handle.Filename))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -301,8 +302,8 @@ func main() {
 		Handler: router,
 		Addr:    "127.0.0.1:9000",
 		// Good practice to enforce timeouts for servers you create!
-		WriteTimeout: 30 * time.Second,
-		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		ReadTimeout:  60 * time.Second,
 	}
 	log.Fatal(srv.ListenAndServe())
 }
