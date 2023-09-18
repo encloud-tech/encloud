@@ -12,6 +12,7 @@ encloud has three offerings
   - [Readme](cmd/web/README.md)
   - [How to guide](cmd/web/HOWTO.md)
 - The [encloud API](cmd/api/) is a REST API that can be used to integrate encloud into your web applications.
+
 # Encloud CLI
 
 encloud lets users manage encryption keys and onboard their encrypted data to Filecoin
@@ -98,9 +99,10 @@ go build -o $GOPATH/bin/encloud github.com/encloud-tech/encloud/cmd/cli
 
 ## Support
 
-- Please file an issue to get help or report a bug.
+- Please file an issue to get help or report a bug
 - Storage Providers and Clients : we want to work with you to integrate our tooling and offer bespoke support, please reach
   out at [contact@encloud.tech](mailto:contact@encloud.tech)
+- Also check out encloud's [Sentinel and Guardian](https://www.youtube.com/watch?v=JDB6T1_Rj2s&ab_channel=encloud) products for compute on encrypted data using TEEs
 
 ## License
 
