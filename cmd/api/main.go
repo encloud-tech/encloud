@@ -1,9 +1,6 @@
 package main
 
 import (
-	"encloud/pkg/api"
-	"encloud/pkg/types"
-	thirdparty "encloud/third_party"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +9,10 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/encloud-tech/encloud/pkg/api"
+	"github.com/encloud-tech/encloud/pkg/types"
+	thirdparty "github.com/encloud-tech/encloud/third_party"
 
 	"github.com/gorilla/mux"
 )
