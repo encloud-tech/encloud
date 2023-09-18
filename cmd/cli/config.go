@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -21,15 +20,15 @@ func ConfigCmd() *cobra.Command {
 		Long:  `Update configurations for the application using a compatible yaml file`,
 		Run: func(cmd *cobra.Command, args []string) {
 			configFilePath, _ := cmd.Flags().GetString("path")
-			data, err := ioutil.ReadFile(configFilePath)
+			data, err := os.ReadFile(configFilePath)
 			if err != nil {
-				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				fmt.Fprint(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
 			}
 
 			var conf types.ConfYaml
 			if err := yaml.Unmarshal(data, &conf); err != nil {
-				fmt.Fprintf(cmd.OutOrStderr(), err.Error())
+				fmt.Fprint(cmd.OutOrStderr(), err.Error())
 				os.Exit(-1)
 			}
 

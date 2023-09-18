@@ -15,6 +15,7 @@ var IdRsa = xdg.ConfigHome + "/encloud/.keys/.idRsa"
 var IdRsaPub = xdg.ConfigHome + "/encloud/.keys/.idRsaPub"
 var Assets = xdg.ConfigHome + "/encloud/assets"
 var Download = xdg.ConfigHome + "/encloud/assets/downloads"
+var TestDir = xdg.ConfigHome + "/encloud/testdata"
 var KeySize = 3072
 
 var SaltSize = 32                  // in bytes

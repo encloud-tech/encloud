@@ -5,13 +5,13 @@ clouds like Filecoin, don't offer privacy natively rendering them unuseful for s
 
 **encloud solves this.**
 
-encloud has two offerings
+encloud has three offerings
 
-- The encloud CLI enables users to easily on-board sensitive data to the Filecoin network.
-- The encloud Desktop Application is a lightweight GUI built on top of the CLI and can be downloaded via the [encloud website](https://encloud.tech/).
+- The [encloud CLI](cmd/cli/) enables users to easily on-board sensitive data to the Filecoin network.
+- The [encloud Desktop Application](cmd/web/) is a lightweight GUI built on top of the CLI and can be downloaded via the [encloud website](https://encloud.tech/).
   - [Readme](cmd/web/README.md)
   - [How to guide](cmd/web/HOWTO.md)
-
+- The [encloud API](cmd/api/) is a REST API that can be used to integrate encloud into your web applications.
 # Encloud CLI
 
 encloud lets users manage encryption keys and onboard their encrypted data to Filecoin
@@ -21,14 +21,6 @@ encloud lets users manage encryption keys and onboard their encrypted data to Fi
 - Upload encrypted files to Filecoin
 - Retrieve encrypted files from Filecoin and decrypt them
 - Share encrypted files by transferring the DEK to a specified email
-
-encloud currently uses the [**Estuary**](https://estuary.tech/) API to upload and retrieve data from Filecoin. This allows clients to interact with the
-Filecoin network without needing to deal with crypto wallets, tokens or deal making with Filecoin storage providers as
-Estuary manages this in the background.
-
-We plan to add more flows to enable clients to control their deal making with specific Storage Providers.
-To this end we want to integrate with Singularity and its deal preparation module to generate encrypted CAR files and make deals
-with specific storage providers.
 
 **Watch the encloud CLI demo in action!**
 
@@ -103,14 +95,6 @@ go build -o $GOPATH/bin/encloud github.com/encloud-tech/encloud/cmd/cli
 8. Update configurations for the application using a compatible yaml file
 
 > encloud config -p `<CONFIG_YAML_PATH>`
-
-## Future features
-
-- Run bacalhau compute jobs on encrypted data natively via encloud
-- Offering on-boarding and pinning alternatives to Estuary, e.x., Delta
-- Deal Preparation module to generate encrypted CAR files for direct SP ingestion (Premium)
-- Distributed key management for KEKs (Premium)
-- Chunking for performant file uploads (Premium)
 
 ## Support
 
