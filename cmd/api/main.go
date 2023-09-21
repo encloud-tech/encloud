@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/encloud-tech/encloud/pkg/api"
@@ -288,6 +289,38 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func RetrieveDecryptedDEKsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
+	r.ParseForm()
+	uuid := r.FormValue("uuid")
+	kek := r.FormValue("kek")
+	privkey := r.FormValue("privkey")
+
+	uuids := strings.Split(uuid, ",")
+
+	var response types.ListContentResponse
+	fileList, err := api.RetrieveDecryptedDEKsWithFileMetadataByUUID(uuids, kek, privkey)
+	if err != nil {
+		response = types.ListContentResponse{
+			Status:     "fail",
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       types.FileData{},
+		}
+	} else {
+		response = types.ListContentResponse{
+			Status:     "success",
+			StatusCode: http.StatusCreated,
+			Message:    "Content retrieved successfully.",
+			Data:       fileList,
+		}
+	}
+
+	json.NewEncoder(w).Encode(response)
+}
+
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", home)
@@ -298,13 +331,20 @@ func main() {
 	router.HandleFunc("/retrieve", RetrieveHandler).Methods("POST")
 	router.HandleFunc("/share", ShareHandler).Methods("POST")
 	router.HandleFunc("/shared", SharedHandler).Methods("POST")
+	router.HandleFunc("/decrypted-deks", RetrieveDecryptedDEKsHandler).Methods("POST")
 
+	port := ":9000"
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "127.0.0.1:9000",
+		Addr:    port,
 		// Good practice to enforce timeouts for servers you create!
-		WriteTimeout: 60 * time.Second,
-		ReadTimeout:  60 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		ReadTimeout:  30 * time.Second,
 	}
-	log.Fatal(srv.ListenAndServe())
+
+	log.Printf("Listening on Port: %s", port)
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
